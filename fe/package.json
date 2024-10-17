@@ -3,16 +3,21 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "scripts_yarn-dev": "vite khởi chạy khi run 'yarn dev'",
+  "scripts_yarn-build": "vite build khởi chạy khi run 'yarn build', đẩy code lên môi trường production", 
+  "scripts_yarn-preview": "vite preview khởi chạy khi run 'yarn preview', nhảy vào dist check preview trước khi deploy production",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "vite --host",
+    "build": "vite build --base=./",
     "lint": "eslint .",
     "preview": "vite preview"
   },
+  "_commentDependencies": "Thư viện", 
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
+  "_commentDevDependencies": "Thư viện môi trường Dev",
   "devDependencies": {
     "@eslint/js": "^9.11.1",
     "@types/react": "^18.3.10",
