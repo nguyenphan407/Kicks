@@ -5,7 +5,12 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['Open Sans', 'sans-serif'], // Sử dụng Open Sans cho font sans
+        rubik: ['Rubik', 'sans-serif'], // Sử dụng Rubik cho font rubik
+      }
+    },
   },
   plugins: [],
 }
