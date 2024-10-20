@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const ListingPage = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+    return <div></div>;
+};
 
-export default ListingPage
+export default ListingPage;
