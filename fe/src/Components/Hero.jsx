@@ -1,41 +1,58 @@
 import React from "react";
-import MainHero from "../assets/images/mainHero.jpg"
+import MainHero from "../assets/images/mainHero.jpg";
+import SecondHero1 from "../assets/images/secondHero_1.jpg";
+import SecondHero2 from "../assets/images/secondHero_2.jpg";
 
 const Hero = () => {
     return (
-        <div >
-            {/* Main text "DO IT RIGHT" */}
-            <div className="my-7 font-bold text-big/normal leading-[1.15] font-rubik text-center">
+        <div className="h-[5000px]">
+            {/* slogan "DO IT RIGHT" */}
+            <div className="text-6xl sm:text-9xl md:text-[120px] lg:text-[130px] xl:text-[173px] 2xl:text-big font-bold my-7 leading-[1.15] font-rubik text-center">
                 <h1>
                     DO IT <span className="text-primary_blue">RIGHT</span>
                 </h1>
             </div>
 
             {/* Image and Product details */}
-            <div className="relative">
-                {/* Product tag on the left */}
-                <div className="absolute left-0 top-11 -rotate-90">
-                    <span className="bg-black text-white py-1 px-3">Nike product of the year</span>
+            <div className="w-full relative">
+                {/* Note lại chỗ này đ hiểu tại sao top nó bị lệch :)) nên để 237 + 80 */}
+                <div className="absolute p-2 sm:p-4 xl:p-6 -left-[0] top-[200px] xl:top-[317px] origin-top-left -rotate-90 bg-[#232321] rounded-bl-lg rounded-br-lg xl:rounded-bl-2xl xl:rounded-br-2xl inline-flex justify-center items-center">
+                    <span className="text-[#e7e7e3] text-xs xl:text-base font-semibold font-['Rubik']">
+                        Nike product of the year{" "}
+                    </span>
                 </div>
 
                 {/* Main image */}
-                <img 
-                    src={ MainHero } 
-                    alt="Nike Air Max" 
-                     className="w-full h-[750px] object-cover rounded-xl"
+                <img
+                    src={MainHero}
+                    alt="Nike Air Max"
+                    className="w-full h-[382px] xl:h-[750px] object-cover rounded-3xl xl:rounded-[64px]"
                 />
 
-                {/* Product details */}
-                <div className="absolute bottom-10 left-10 text-white">
-                    <h2 className="text-4xl font-bold">NIKE AIR MAX</h2>
-                    <p className="text-lg">Nike introducing the new air max for everyone comfort</p>
-                    <button className="bg-primary_blue py-2 px-4 mt-4 rounded-lg">Shop Now</button>
+                <div className="absolute w-[235px] xl:w-[490px] bottom-4 xl:bottom-12 left-4 xl:left-12 text-white">
+                    <h2 className="font-rubik font-semibold text-2xl xl:text-medium/normal">
+                        NIKE AIR MAX
+                    </h2>
+                    <p className="text-sm xl:text-2xl font-semibold text-wrap">
+                        Nike introducing the new air max for everyone comfort
+                    </p>
+                    <button className="font-rubik font-medium bg-primary_blue px-4 py-2 xl:px-8 xl:py-[15.5px] mt-2 xl:mt-8 rounded-lg">
+                        Shop Now
+                    </button>
                 </div>
 
                 {/* Small images on the right */}
-                <div className="absolute bottom-10 right-10 flex flex-col gap-4">
-                    <img src="/path/to/small-image-1.png" alt="Nike Air Max" className="w-20 h-20 rounded-lg"/>
-                    <img src="/path/to/small-image-2.png" alt="Nike Air Max" className="w-20 h-20 rounded-lg"/>
+                <div className="absolute bottom-4 right-4 xl:bottom-10 xl:right-10 flex flex-col gap-2 xl:gap-4">
+                    <img
+                        src={SecondHero1}
+                        alt="Nike Air Max"
+                        className="rounded-[32px] w-16 h-16 border xl:w-40 xl:h-40 rounded-lg xl:rounded-[32px] xl:border-2 border-[#e7e7e3]"
+                    />
+                    <img
+                        src={SecondHero2}
+                        alt="Nike Air Max"
+                        className="rounded-[32px] w-16 h-16 border xl:w-40 xl:h-40 rounded-lg xl:rounded-[32px] xl:border-2 border-[#e7e7e3]"
+                    />
                 </div>
             </div>
         </div>

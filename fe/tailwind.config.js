@@ -28,15 +28,17 @@ export default {
                     DEFAULT: "auto", // Margin tự động để căn giữa container
                 },
             },
+            fontSize: {
+                big: "223px",
+                medium: "74px",
+                small: "60px",
+            },
+            colors: {
+                primary_blue: '#4A69E2', // Màu chủ đạo (blue)
+                secondary_yellow: '#FFA52F', // Màu phụ (Yellow)
+            },
         },
-        fontSize: {
-            big: "223px",
-            small: "60px",
-        },
-        colors: {
-            primary_blue: '#4A69E2', // Màu chủ đạo (blue)
-            secondary_yellow: '#FFA52F', // Màu phụ (Yellow)
-        },
+
     },
     plugins: ["prettier-plugin-tailwindcss"],
 };

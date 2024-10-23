@@ -28,7 +28,7 @@ const Header = () => {
     }, [sidebarRef]);
 
     return (
-        <div className="flex items-center justify-between p-4 sm:p-6 xl:p-8 font-semibold font-rubik bg-[#FAFAFA] rounded-3xl mt-8 ">
+        <div className="flex items-center justify-between p-4 sm:p-6 xl:p-8 font-semibold font-rubik bg-[#FAFAFA] rounded-xl sm:rounded-3xl mt-8 ">
             <img
                 onClick={() => setVisible(true)}
                 src={MenuIcon}
@@ -81,7 +81,7 @@ const Header = () => {
                     alt="Logo"
                 />
             </Link>
-            <div className="flex items-center lg:w-[301px] justify-end gap-10">
+            <div className="flex items-center xl:w-[301px] justify-end gap-10">
                 <img
                     src={SearchIcon}
                     className="w-7 hidden xl:block cursor-pointer"
