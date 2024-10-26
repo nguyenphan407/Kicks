@@ -1,9 +1,12 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+// Auth route
 Route::group([
 
     'middleware' => 'api',
@@ -22,4 +25,32 @@ Route::group([
     });
 });
 
+// User route
+Route::group([
+
+    'middleware' => 'api',
+    'namespace' => 'App\Http\Controllers',
+    'prefix'=> 'user'
+
+], function ($router) {
+    Route::get('{id}', [UserController::class,'show']);
+    Route::put('update', [UserController::class,'update']);
+});
+Route::get('/', [AuthController::class,'login']);
+
+// Product route
+Route::group([
+
+    'middleware' => 'api',
+    'namespace' => 'App\Http\Controllers',
+    'prefix'=> 'product'
+
+], function ($router) {
+    Route::get('/', [ProductController::class,'index']);
+    Route::get('/{id}', [ProductController::class,'show']);
+    Route::post('store', [ProductController::class,'store']);
+    Route::put('update', [ProductController::class,'update']);
+    Route::delete('delete/{id}', [ProductController::class,'destroy']);
+    Route::get('filter', [ProductController::class,'filter']);
+});
 Route::get('/', [AuthController::class,'login']);
