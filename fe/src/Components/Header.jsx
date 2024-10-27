@@ -1,10 +1,6 @@
-import React, { useEffect, useRef } from "react";
-import LogoIcon from "../assets/icons/Logo.svg";
+import React, { useEffect, useRef, useState } from "react";
+import { icons } from "../assets/assets";
 import { Link, NavLink } from "react-router-dom";
-import SearchIcon from "../assets/icons/Search_icon.svg";
-import UserIcon from "../assets/icons/User_icon.svg";
-import MenuIcon from "../assets/icons/menu_icon.svg";
-import { useState } from "react";
 
 const Header = () => {
     const [visible, setVisible] = useState(false);
@@ -13,10 +9,7 @@ const Header = () => {
     // useEffect để lắng nghe sự kiện click ngoài sidebar
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (
-                sidebarRef.current &&
-                !sidebarRef.current.contains(event.target)
-            ) {
+            if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
                 setVisible(false);
             }
         };
@@ -31,7 +24,7 @@ const Header = () => {
         <div className="flex items-center justify-between p-4 sm:p-6 xl:p-8 font-semibold font-rubik bg-[#FAFAFA] rounded-xl sm:rounded-3xl mt-8 ">
             <img
                 onClick={() => setVisible(true)}
-                src={MenuIcon}
+                src={icons.MenuIcon} // Icon menu từ assets.js
                 className="w-5 cursor-pointer xl:hidden"
                 alt="Menu Icon"
             />
@@ -76,21 +69,21 @@ const Header = () => {
             </ul>
             <Link to="/">
                 <img
-                    src={LogoIcon}
+                    src={icons.LogoIcon} // Logo từ assets.js
                     className="sm:scale-[0.8] scale-[0.625] xl:scale-100 cursor-pointer"
                     alt="Logo"
                 />
             </Link>
             <div className="flex items-center xl:w-[301px] justify-end gap-10">
                 <img
-                    src={SearchIcon}
+                    src={icons.SearchIcon} // Icon tìm kiếm từ assets.js
                     className="w-7 hidden xl:block cursor-pointer"
                     alt="Search Icon"
                 />
                 <div className="group relative">
                     <img
                         className="sm:scale-[0.8] scale-[0.625] xl:scale-100 w-6 cursor-pointer items-center"
-                        src={UserIcon}
+                        src={icons.UserIcon} // Icon người dùng từ assets.js
                         alt="User Icon"
                     />
                     <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4">
@@ -112,7 +105,7 @@ const Header = () => {
             {/* Sidebar menu */}
             <div
                 ref={sidebarRef}
-                className={`absolute top-0 left-0 bottom-0 overflow-hidden bg-white transition-all ${visible ? "w-[75%]" : "w-0"}`}
+                className={`z-10 absolute top-0 left-0 bottom-0 overflow-hidden bg-white transition-all ${visible ? "w-[75%]" : "w-0"}`}
             >
                 <div className="flex flex-col text-black">
                     <div
@@ -121,7 +114,7 @@ const Header = () => {
                     >
                         <img
                             className="h-4 rotate-180 pl-6"
-                            src={MenuIcon}
+                            src={icons.MenuIcon} // Icon back từ assets.js
                             alt="Back"
                         />
                     </div>

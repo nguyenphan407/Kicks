@@ -1,11 +1,9 @@
 import React from "react";
-import MainHero from "../assets/images/mainHero.jpg";
-import SecondHero1 from "../assets/images/secondHero_1.jpg";
-import SecondHero2 from "../assets/images/secondHero_2.jpg";
+import { images } from "../assets/assets";
 
 const Hero = () => {
     return (
-        <div className="h-[5000px]">
+        <div>
             {/* slogan "DO IT RIGHT" */}
             <div className="text-6xl sm:text-9xl md:text-[120px] lg:text-[130px] xl:text-[173px] 2xl:text-big font-bold my-7 leading-[1.15] font-rubik text-center">
                 <h1>
@@ -24,7 +22,7 @@ const Hero = () => {
 
                 {/* Main image */}
                 <img
-                    src={MainHero}
+                    src={images.MainHeroImage}
                     alt="Nike Air Max"
                     className="w-full h-[382px] xl:h-[750px] object-cover rounded-3xl xl:rounded-[64px]"
                 />
@@ -44,12 +42,12 @@ const Hero = () => {
                 {/* Small images on the right */}
                 <div className="absolute bottom-4 right-4 xl:bottom-10 xl:right-10 flex flex-col gap-2 xl:gap-4">
                     <img
-                        src={SecondHero1}
+                        src={images.SecondHeroImage1}
                         alt="Nike Air Max"
                         className="rounded-[32px] w-16 h-16 border xl:w-40 xl:h-40 rounded-lg xl:rounded-[32px] xl:border-2 border-[#e7e7e3]"
                     />
                     <img
-                        src={SecondHero2}
+                        src={images.SecondHeroImage2}
                         alt="Nike Air Max"
                         className="rounded-[32px] w-16 h-16 border xl:w-40 xl:h-40 rounded-lg xl:rounded-[32px] xl:border-2 border-[#e7e7e3]"
                     />

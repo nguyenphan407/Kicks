@@ -36,6 +36,7 @@ export default {
             colors: {
                 primary_blue: '#4A69E2', // Màu chủ đạo (blue)
                 secondary_yellow: '#FFA52F', // Màu phụ (Yellow)
+                secondary_black: '#232321',
             },
         },
 
