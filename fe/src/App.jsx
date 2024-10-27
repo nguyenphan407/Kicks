@@ -11,8 +11,8 @@ import Header from "./Components/Header";
 
 const App = () => {
     return (
-        <div className="container mx-auto">
-            <Header />
+        <div className="">
+            <div className="container"><Header /></div>
             <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/cart" element={<CartPage />} />

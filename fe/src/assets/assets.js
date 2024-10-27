@@ -14,6 +14,10 @@ import p1_Img1 from './images/product_id-img1.png';
 import p1_Img2 from './images/product_id-img2.png';
 import p1_Img3 from './images/product_id-img3.png';
 import p1_Img4 from './images/product_id-img4.png';
+import LifestyleShoes from './images/categories-lifestyle.png'
+import BasketBall from './images/categories-basketball.png'
+import Running from './images/categories-running.png'
+import Soccer from './images/categories-soccer.png'
 
 // Export all icons in a single object
 export const icons = {
@@ -32,6 +36,8 @@ export const images = {
   p1_Img2,
   p1_Img3,
   p1_Img4,
+  LifestyleShoes,
+  BasketBall,
 };
 
 // Define and export products object
@@ -135,4 +141,27 @@ export const products = [
     updated_at: new Date(),
   },
   // Add more products as needed
+];
+
+export const categories = [
+  {
+    category_id: 1,
+    category_name: "Lifestyle Shoes",
+    image: LifestyleShoes, // Đảm bảo biến này đã được import chính xác
+  },
+  {
+    category_id: 2,
+    category_name: "Basketball Shoes",
+    image: BasketBall,
+  },
+  {
+    category_id: 3,
+    category_name: "Running Shoes",
+    image: Running,
+  },
+  {
+    category_id: 4,
+    category_name: "Soccer Shoes",
+    image: Soccer,
+  },
 ];

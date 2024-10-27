@@ -9,11 +9,15 @@ import Footer from '../Components/Footer';
 const LandingPage = () => {
   return (
     <div>
-      <Hero />
-      <NewDrops />
+      <div className="container mx-auto">
+        <Hero />
+        <NewDrops />
+      </div>
       <Categories />
-      <Reviews />
-      <Footer />
+      <div className="container mx-auto">
+        <Reviews />
+        <Footer />
+      </div>
     </div>
   );
 };

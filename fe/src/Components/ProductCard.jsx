@@ -5,12 +5,15 @@ import PropTypes from "prop-types"; // Import PropTypes
 const ProductCard = ({ product, currency }) => {
     return (
         <Link to={`/productDetail/${product.product_id}`} className="flex flex-col items-center justify-center">
-            <div className="cursor-pointer relative bg-white rounded-2xl xl:rounded-[28px] truncate p-2 w-full h-[180px] xl:h-[350px] overflow-hidden mb-4">
-                <img
-                    src={product.image[0]}
-                    alt={product.name}
-                    className="object-cover rounded-2xl xl:rounded-[28px] w-full h-full overflow-hidden"
-                />
+            <div className="relative cursor-pointer bg-white rounded-2xl xl:rounded-[28px] p-2 w-full h-[180px] xl:h-[350px] overflow-hidden mb-4">
+                {/* Image Wrapper */}
+                <div className="overflow-hidden rounded-2xl xl:rounded-[28px] w-full h-full">
+                    <img
+                        src={product.image[0]}
+                        alt={product.name}
+                        className="object-cover w-full h-full transition-transform duration-300 ease-in-out hover:scale-105"
+                    />
+                </div>
                 <span className="absolute top-2 left-2 bg-primary_blue text-white flex justify-center items-center text-xs font-semibold px-2 py-1 xl:px-4 xl:py-3 rounded-tl-xl rounded-br-xl xl:rounded-tl-3xl xl:rounded-br-3xl">
                     New
                 </span>
@@ -22,7 +25,7 @@ const ProductCard = ({ product, currency }) => {
                 <span className="text-white">
                     View Product -{" "}
                     <span className="text-secondary_yellow">
-                        {currency} {product.price}
+                        {currency}{product.price}
                     </span>
                 </span>
             </button>
@@ -30,7 +33,7 @@ const ProductCard = ({ product, currency }) => {
     );
 };
 
-// Định nghĩa PropTypes cho ProductCard
+// Define PropTypes for ProductCard
 ProductCard.propTypes = {
     product: PropTypes.shape({
         product_id: PropTypes.number.isRequired,
