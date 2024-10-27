@@ -1,5 +1,3 @@
-import { useState } from "react";
-import viteLogo from "/vite.svg";
 import { Routes, Route } from "react-router-dom";
 import React from "react";
 import LandingPage from "./Pages/LandingPage";
@@ -21,10 +19,7 @@ const App = () => {
                 <Route path="/checkOut" element={<CheckOutPage />} />
                 <Route path="/listing" element={<ListingPage />} />
                 <Route path="/login" element={<Login />} />
-                <Route
-                    path="/productDetail:productId"
-                    element={<ProductDetailPage />}
-                />
+                <Route path="/productDetail/:productId" element={<ProductDetailPage />} />
                 <Route path="/register" element={<Register />} />
             </Routes>
         </div>

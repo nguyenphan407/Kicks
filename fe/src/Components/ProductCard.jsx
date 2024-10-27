@@ -1,0 +1,44 @@
+import React from "react";
+import { Link } from "react-router-dom";
+import PropTypes from "prop-types"; // Import PropTypes
+
+const ProductCard = ({ product, currency }) => {
+    return (
+        <Link to={`/productDetail/${product.product_id}`} className="flex flex-col items-center justify-center">
+            <div className="cursor-pointer relative bg-white rounded-2xl xl:rounded-[28px] truncate p-2 w-full h-[180px] xl:h-[350px] overflow-hidden mb-4">
+                <img
+                    src={product.image[0]}
+                    alt={product.name}
+                    className="object-cover rounded-2xl xl:rounded-[28px] w-full h-full overflow-hidden"
+                />
+                <span className="absolute top-2 left-2 bg-primary_blue text-white flex justify-center items-center text-xs font-semibold px-2 py-1 xl:px-4 xl:py-3 rounded-tl-xl rounded-br-xl xl:rounded-tl-3xl xl:rounded-br-3xl">
+                    New
+                </span>
+            </div>
+            <h3 className="cursor-pointer px-2 text-[16px] xl:text-[24px] font-semibold text-start">
+                {product.name}
+            </h3>
+            <button className="mt-2 xl:mt-4 bg-secondary_black px-4 py-2 xl:px-[82px] xl:py-4 text-center rounded-lg whitespace-nowrap transform transition duration-400 hover:bg-primary_blue hover:scale-[1.02]">
+                <span className="text-white">
+                    View Product -{" "}
+                    <span className="text-secondary_yellow">
+                        {currency} {product.price}
+                    </span>
+                </span>
+            </button>
+        </Link>
+    );
+};
+
+// Định nghĩa PropTypes cho ProductCard
+ProductCard.propTypes = {
+    product: PropTypes.shape({
+        product_id: PropTypes.number.isRequired,
+        name: PropTypes.string.isRequired,
+        price: PropTypes.number.isRequired,
+        image: PropTypes.arrayOf(PropTypes.string).isRequired,
+    }).isRequired,
+    currency: PropTypes.string.isRequired,
+};
+
+export default ProductCard;
