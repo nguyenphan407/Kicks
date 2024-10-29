@@ -7,7 +7,12 @@
     background: #E7E7E3;
 }
 
-
+@media (max-width: 400px) {
+    .text-small {
+      font-size: 55px;
+    }
+  }
+  
 
 *,
 ::before,

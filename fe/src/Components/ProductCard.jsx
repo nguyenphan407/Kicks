@@ -19,10 +19,10 @@ const ProductCard = ({ product, currency }) => {
                 </span>
             </div>
             <h3 className="cursor-pointer px-2 text-[16px] xl:text-[24px] font-semibold text-start">
-                {product.name}
+                {product.name}  
             </h3>
-            <button className="mt-2 xl:mt-4 bg-secondary_black px-4 py-2 xl:px-[82px] xl:py-4 text-center rounded-lg whitespace-nowrap transform transition duration-400 hover:bg-primary_blue hover:scale-[1.02]">
-                <span className="text-white">
+            <button className="mt-2 xl:mt-4 bg-secondary_black px-4 py-2 xl:px-[82px] xl:py-4 text-center rounded-lg whitespace-nowrap transform transition duration-400 hover:bg-primary_blue hover:scale-[1.02] max-sm:text-xs">
+                <span className="text-white ">
                     View Product -{" "}
                     <span className="text-secondary_yellow">
                         {currency}{product.price}

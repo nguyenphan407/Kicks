@@ -2,9 +2,18 @@ import React, { useState } from "react";
 import CategoryCard from "./CategoriesCard";
 import { categories } from "../assets/assets";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { useEffect } from "react";
 
 const Categories = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 1280);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 1280);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+    
 
     const handlePrev = () => {
         setCurrentIndex((prevIndex) =>
@@ -39,26 +48,28 @@ const Categories = () => {
                     </button>
                 </div>
             </div>
-            <div className="grid grid-cols-1 xl:grid-cols-2 container mx-auto">
-                {/* 
-                Gap bugs khi lam transition...
-                <div className="overflow-hidden">
+            <div className="container">
+                <div className="overflow-hidden max-h-[696px] xl:max-h-none">
                     <div
-                        className="flex transition-transform duration-700 ease-in-out"
+                        className="flex flex-col xl:flex-row transition-transform duration-500 ease-out"
                         style={{
-                            transform: `translateX(-${currentIndex * 50}%)`,
+                            // cuộn categories
+                            transform: isMobile
+                                ? `translateY(-${currentIndex * 25}%)` // chiều dọc đối với mobile
+                                : `translateX(-${currentIndex * 50}%)`, // chiều ngang đối với desktop
                         }}
                     >
-                        {categories.slice(0, 4).map((category, index) => (
+                        {categories.map((category, index) => (
                             <div
+                                className=" flex-shrink-0"
                                 key={category.category_id}
-                                className="w-full xl:w-1/2 flex-shrink-0"
                             >
                                 <CategoryCard
                                     image={category.image}
                                     title={category.category_name}
                                     link={`/categories/${category.category_id}`}
                                     extraClasses={
+                                        // tại vị trí đang đứng áp dụng bo góc theo responsive
                                         index === currentIndex
                                             ? "xl:rounded-tl-[64px] rounded-tl-3xl"
                                             : ""
@@ -67,22 +78,7 @@ const Categories = () => {
                             </div>
                         ))}
                     </div>
-                </div> */}
-                {categories
-                    .slice(currentIndex, currentIndex + 2)
-                    .map((category, index) => (
-                        <CategoryCard
-                            key={category.category_id}
-                            image={category.image}
-                            title={category.category_name}
-                            link={`/categories/${category.category_id}`}
-                            extraClasses={
-                                index === 0
-                                    ? "xl:rounded-tl-[64px] rounded-tl-3xl"
-                                    : ""
-                            }
-                        />
-                    ))}
+                </div>
             </div>
         </div>
     );

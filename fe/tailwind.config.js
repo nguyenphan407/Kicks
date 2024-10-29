@@ -23,6 +23,8 @@ export default {
                     lg: "1088px", // Đặt chiều rộng tối đa cho màn hình lớn
                     xl: "1344x", // Đặt chiều rộng tối đa cho màn hình rất lớn
                     "2xl": "1448px", // Đặt chiều rộng tối đa cho màn hình cực lớn
+                    'max-sm': { 'max': '640px' },
+                    xxs: "400px",
                 },
                 margin: {
                     DEFAULT: "auto", // Margin tự động để căn giữa container
