@@ -149,6 +149,14 @@ class ProductController extends Controller
             $query->where('stock_quantity', '>=', $request->input('stock_quantity'));
         }
 
+        if ($request->has('sort')) {
+            $query->orderBy($request->input('sort'), 'desc');
+        }
+
+        if ($request->has('limit')) {
+            $query->limit($request->input('limit'));
+        }
+
         // Lấy danh sách sản phẩm sau khi lọc
         $products = $query->get();
 
