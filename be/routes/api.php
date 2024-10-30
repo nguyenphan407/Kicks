@@ -46,11 +46,11 @@ Route::group([
     'prefix'=> 'product'
 
 ], function ($router) {
-    Route::get('/', [ProductController::class,'index']);
-    Route::get('/{id}', [ProductController::class,'show']);
-    Route::post('store', [ProductController::class,'store']);
-    Route::put('update', [ProductController::class,'update']);
-    Route::delete('delete/{id}', [ProductController::class,'destroy']);
-    Route::get('filter', [ProductController::class,'filter']);
+    Route::get('/', [ProductController::class, 'index']); // URL: /product
+    Route::get('show/{id}', [ProductController::class, 'show']); // URL: /product/show/{id}
+    Route::get('filter', [ProductController::class, 'filter']); // URL: /product/filter
+    Route::post('store', [ProductController::class, 'store']); // URL: /product/store
+    Route::put('update/{id}', [ProductController::class, 'update']); // URL: /product/update/{id}
+    Route::delete('delete/{id}', [ProductController::class, 'destroy']); // URL: /product/delete/{id}
 });
-Route::get('/', [AuthController::class,'login']);
+Route::get('/', [AuthController::class, 'login']); // URL: /

@@ -154,7 +154,7 @@ class ProductController extends Controller
 
         // Trả về kết quả dưới dạng JSON
         return response()->json($products);
-    }
 
+    }
 
 }
