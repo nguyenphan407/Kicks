@@ -61,7 +61,7 @@ const Categories = () => {
                     >
                         {categories.map((category, index) => (
                             <div
-                                className=" flex-shrink-0"
+                                className=" xl:flex-shrink-0"
                                 key={category.category_id}
                             >
                                 <CategoryCard

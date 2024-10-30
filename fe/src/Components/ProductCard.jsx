@@ -5,7 +5,7 @@ import PropTypes from "prop-types"; // Import PropTypes
 const ProductCard = ({ product, currency }) => {
     return (
         <Link to={`/productDetail/${product.product_id}`} className="flex flex-col items-center justify-center">
-            <div className="relative cursor-pointer bg-white rounded-2xl xl:rounded-[28px] p-2 w-full h-[180px] xl:h-[350px] overflow-hidden mb-4">
+            <div className="relative cursor-pointer bg-white rounded-2xl xl:rounded-[28px] p-2 w-full h-[180px] xl:h-[280px] 2xl:h-[350px] overflow-hidden mb-4">
                 {/* Image Wrapper */}
                 <div className="overflow-hidden rounded-2xl xl:rounded-[28px] w-full h-full">
                     <img
@@ -21,7 +21,7 @@ const ProductCard = ({ product, currency }) => {
             <h3 className="cursor-pointer px-2 text-[16px] xl:text-[24px] font-semibold text-start">
                 {product.name}  
             </h3>
-            <button className="mt-2 xl:mt-4 bg-secondary_black px-4 py-2 xl:px-[82px] xl:py-4 text-center rounded-lg whitespace-nowrap transform transition duration-400 hover:bg-primary_blue hover:scale-[1.02] max-sm:text-xs">
+            <button className="mt-2 xl:mt-4 bg-secondary_black px-4 py-2 w-[100%] xl:py-4 text-center rounded-lg whitespace-nowrap transform transition duration-400 hover:bg-primary_blue hover:scale-[1.02] max-sm:text-xs">
                 <span className="text-white ">
                     View Product -{" "}
                     <span className="text-secondary_yellow">

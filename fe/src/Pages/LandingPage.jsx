@@ -5,6 +5,7 @@ import NewDrops from '../Components/NewDrops';
 import Categories from '../Components/Categories';
 import Reviews from '../Components/Reviews';
 import Footer from '../Components/Footer';
+import NewsletterSignup from "../Components/NewsletterSignup"
 
 const LandingPage = () => {
   return (
@@ -16,7 +17,6 @@ const LandingPage = () => {
       <Categories />
       <div className="container mx-auto">
         <Reviews />
-        <Footer />
       </div>
     </div>
   );

@@ -5,9 +5,9 @@ const Hero = () => {
     return (
         <div>
             {/* slogan "DO IT RIGHT" */}
-            <div className="text-small xxs:text-[55px] text-6xl sm:text-9xl md:text-[120px] lg:text-[130px] xl:text-[173px] 2xl:text-big font-bold my-7 leading-[1.15] font-rubik text-center">
+            <div className="text-small xxs:text-[55px] text-6xl  sm:text-9xl md:text-[120px] xl:text-[173px] 2xl:text-big font-bold my-7 leading-[1.15] font-rubik text-center">
                 <h1>
-                    DO IT <span className="text-primary_blue">RIGHT</span>
+                    DO IT <span className="w-full text-primary_blue">RIGHT</span>
                 </h1>
             </div>
 

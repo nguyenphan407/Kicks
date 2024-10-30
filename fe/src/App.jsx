@@ -8,6 +8,9 @@ import Login from "./Pages/Login";
 import ProductDetailPage from "./Pages/ProductDetailPage";
 import Register from "./Pages/Register";
 import Header from "./Components/Header";
+import Footer from "./Components/Footer"
+import NewsletterSignup from "./Components/NewsletterSignup";
+
 
 const App = () => {
     return (
@@ -21,7 +24,12 @@ const App = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/productDetail/:productId" element={<ProductDetailPage />} />
                 <Route path="/register" element={<Register />} />
+                
             </Routes>
+            <div className="container">
+                <NewsletterSignup/>
+                <Footer />
+            </div>
         </div>
     );
 };
