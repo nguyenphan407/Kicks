@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CartController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -36,7 +37,6 @@ Route::group([
     Route::get('{id}', [UserController::class,'show']);
     Route::put('update', [UserController::class,'update']);
 });
-Route::get('/', [AuthController::class,'login']);
 
 // Product route
 Route::group([
@@ -53,4 +53,18 @@ Route::group([
     Route::put('update/{id}', [ProductController::class, 'update']); // URL: /product/update/{id}
     Route::delete('delete/{id}', [ProductController::class, 'destroy']); // URL: /product/delete/{id}
 });
-Route::get('/', [AuthController::class, 'login']); // URL: /
+
+// Cart route
+Route::group([
+
+    'middleware' => 'api',
+    'namespace' => 'App\Http\Controllers',
+    'prefix'=> 'cart'
+
+], function ($router) {
+    Route::get('/', [CartController::class, 'index']);
+    Route::post('/', [CartController::class, 'add']);
+    Route::put('/{id}', [CartController::class, 'update']);
+    Route::delete('/{id}', [CartController::class, 'remove']);
+    Route::delete('/', [CartController::class, 'clear']);
+});
