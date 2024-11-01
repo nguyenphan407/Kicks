@@ -8,30 +8,33 @@ import Login from "./Pages/Login";
 import ProductDetailPage from "./Pages/ProductDetailPage";
 import Register from "./Pages/Register";
 import Header from "./Components/Header";
-import Footer from "./Components/Footer"
+import Footer from "./Components/Footer";
 import NewsletterSignup from "./Components/NewsletterSignup";
 
-
 const App = () => {
-    return (
-        <div className="">
-            <div className="container"><Header /></div>
-            <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/cart" element={<CartPage />} />
-                <Route path="/checkOut" element={<CheckOutPage />} />
-                <Route path="/listing" element={<ListingPage />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/productDetail/:productId" element={<ProductDetailPage />} />
-                <Route path="/register" element={<Register />} />
-                
-            </Routes>
-            <div className="container">
-                <NewsletterSignup/>
-                <Footer />
-            </div>
-        </div>
-    );
+  return (
+    <div className="">
+      <div className="container">
+        <Header />
+      </div>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/checkOut" element={<CheckOutPage />} />
+        <Route path="/listing" element={<ListingPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/productDetail/:productId"
+          element={<ProductDetailPage />}
+        />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+      <div className="container">
+        <NewsletterSignup />
+        <Footer />
+      </div>
+    </div>
+  );
 };
 
 export default App;
