@@ -162,7 +162,7 @@ const OrderSummary = () => {
                         fontWeight: "600",
                       }}
                     >
-                      Men’s Road Running Shoes
+                      Men's Road Running Shoes
                     </div>
                     <div
                       style={{
@@ -364,7 +364,7 @@ const OrderSummary = () => {
                   wordWrap: "break-word",
                 }}
               >
-                1 ITEM
+                {selectedQuantity} ITEM
               </div>
               <div
                 style={{
@@ -376,7 +376,7 @@ const OrderSummary = () => {
                   wordWrap: "break-word",
                 }}
               >
-                $130.00
+                ${selectedQuantity * product.price.toFixed(2)}
               </div>
             </div>
             <div
@@ -472,7 +472,7 @@ const OrderSummary = () => {
                   wordWrap: "break-word",
                 }}
               >
-                $136.99
+                ${selectedQuantity * product.price.toFixed(2) + 6.99}
               </div>
             </div>
           </div>
