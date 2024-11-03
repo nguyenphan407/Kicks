@@ -1,11 +1,13 @@
-import React from 'react'
-
+import React from "react";
+import LoginComponent from "../Components/LoginComponent";
 const Login = () => {
   return (
-    <div>
-      
+    <div style={{ margin: "16px" }}>
+      <div className="container mx-auto">
+        <LoginComponent />
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

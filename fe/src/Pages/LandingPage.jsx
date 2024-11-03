@@ -1,11 +1,11 @@
-import React from 'react';
-import Header from '../Components/Header';
-import Hero from '../Components/Hero';
-import NewDrops from '../Components/NewDrops';
-import Categories from '../Components/Categories';
-import Reviews from '../Components/Reviews';
-import Footer from '../Components/Footer';
-import NewsletterSignup from "../Components/NewsletterSignup"
+import React from "react";
+import Header from "../Components/Header";
+import Hero from "../Components/Hero";
+import NewDrops from "../Components/NewDrops";
+import Categories from "../Components/Categories";
+import Reviews from "../Components/Reviews";
+import Footer from "../Components/Footer";
+import NewsletterSignup from "../Components/NewsletterSignup";
 
 const LandingPage = () => {
   return (
