@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redis;
 
 class ProductController extends Controller
 {
@@ -21,6 +23,10 @@ class ProductController extends Controller
     // 2. Hiển thị chi tiết sản phẩm
     public function show($id)
     {
+        $userId = Auth::user()->user_id;
+
+        // Theo dõi lượt xem sản phẩm cho người dùng
+        Redis::zincrby("user:{$userId}:viewed_products", 1, $id);
         // Tìm sản phẩm theo ID
         $product = Product::find($id);
 
@@ -163,6 +169,29 @@ class ProductController extends Controller
         // Trả về kết quả dưới dạng JSON
         return response()->json($products);
 
+    }
+
+    // Recommendation
+    public function recommendedProducts()
+    {
+        $userId = Auth::user()->user_id;
+
+        // Lấy top 5 sản phẩm người dùng đã xem nhiều nhất
+        $viewedProducts = Redis::zrevrange("user:{$userId}:viewed_products", 0, 4);
+
+        // Tìm các sản phẩm thuộc cùng danh mục với những sản phẩm đã xem
+        $recommendedProducts = Product::whereIn('product_id', $viewedProducts)
+                                    ->orWhereHas('category', function ($query) use ($viewedProducts) {
+                                        $query->whereIn('product_id', function ($q) use ($viewedProducts) {
+                                            $q->select('category_id')
+                                                ->from('products')
+                                                ->whereIn('product_id', $viewedProducts);
+                                        });
+                                    })
+                                    ->take(5)
+                                    ->get();
+
+        return response()->json($recommendedProducts);
     }
 
 }

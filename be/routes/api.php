@@ -51,9 +51,11 @@ Route::group([
     Route::get('/', [ProductController::class, 'index']); // URL: /product
     Route::get('show/{id}', [ProductController::class, 'show']); // URL: /product/show/{id}
     Route::get('filter', [ProductController::class, 'filter']); // URL: /product/filter
+    Route::get('recommend', [ProductController::class, 'recommendedProducts']); // URL: /product/recommend
     Route::post('store', [ProductController::class, 'store']); // URL: /product/store
     Route::put('update/{id}', [ProductController::class, 'update']); // URL: /product/update/{id}
     Route::delete('delete/{id}', [ProductController::class, 'destroy']); // URL: /product/delete/{id}
+    
 });
 
 // Cart route

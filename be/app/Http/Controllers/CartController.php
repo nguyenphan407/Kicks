@@ -55,7 +55,7 @@ class CartController extends Controller
     public function clear()
     {
         $user = Auth::user();
-        Cart::where('user_id', $user->id)->delete();
+        Cart::where('user_id', $user->user_id)->delete();
         return response()->json(['message' => 'Cart cleared']);
     }
 }
