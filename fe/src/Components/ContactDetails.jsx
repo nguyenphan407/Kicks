@@ -2,22 +2,6 @@ import React, { useState } from "react";
 import { products } from "../assets/assets";
 
 const ContactDetails = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    firstName: "",
-    lastName: "",
-    address: "",
-    phone: "",
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
   return (
     <div className="w-full h-full flex justify-start items-center gap-12">
       <div className="inline-flex flex-col justify-start items-start gap-8">
@@ -37,15 +21,10 @@ const ContactDetails = () => {
 
           <div className="flex flex-col justify-start items-start gap-2">
             <div className="w-full">
-              <div className="w-full h-12 px-4 py-2.5 rounded-lg border border-[#232321] flex items-center">
-                <input
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Email"
-                  className="flex-1 text-gray-500 text-base font-normal font-['Inter'] tracking-wide outline-none"
-                />
-              </div>
+              <input
+                placeholder="Email"
+                className="w-full h-12 px-4 py-2.5 rounded-lg border border-[#232321] text-base font-normal font-['Inter'] text-[#79767C] tracking-wide"
+              />
             </div>
           </div>
         </div>
@@ -58,55 +37,35 @@ const ContactDetails = () => {
           <div className="flex flex-col justify-start items-start gap-5">
             <div className="flex justify-start items-start gap-5">
               <div className="w-[342px] flex flex-col gap-2">
-                <div className="w-full h-12 px-4 py-2.5 rounded-lg border border-[#232321] flex items-center">
-                  <input
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    placeholder="First Name*"
-                    className="flex-1 text-gray-500 text-base font-normal font-['Inter'] tracking-wide outline-none"
-                  />
-                </div>
+                <input
+                  placeholder="First Name"
+                  className="w-full h-12 px-4 py-2.5 rounded-lg border border-[#232321] text-base font-normal font-['Inter'] text-[#79767C] tracking-wide"
+                />
               </div>
 
               <div className="w-[342px] flex flex-col gap-2">
-                <div className="w-full h-12 px-4 py-2.5 rounded-lg border border-[#232321] flex items-center">
-                  <input
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    placeholder="Last Name*"
-                    className="flex-1 text-gray-500 text-base font-normal font-['Inter'] tracking-wide outline-none"
-                  />
-                </div>
+                <input
+                  placeholder="Last Name"
+                  className="w-full h-12 px-4 py-2.5 rounded-lg border border-[#232321] text-base font-normal font-['Inter'] text-[#79767C] tracking-wide"
+                />
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <div className="w-full h-12 px-4 py-2.5 rounded-lg border border-[#232321] flex items-center">
-                <input
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  placeholder="Find Delivery Address*"
-                  className="flex-1 text-gray-500 text-base font-normal font-['Inter'] tracking-wide outline-none"
-                />
-              </div>
+              <input
+                placeholder="Delivery address"
+                className="w-full h-12 px-4 py-2.5 rounded-lg border border-[#232321] text-base font-normal font-['Inter'] text-[#79767C] tracking-wide"
+              />
               <div className="text-[#36323B] text-xs font-normal font-['Inter'] tracking-wide">
                 Start typing your street address or zip code for suggestion
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <div className="w-full h-12 px-4 py-2.5 rounded-lg border border-[#232321] flex items-center">
-                <input
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="Phone Number*"
-                  className="flex-1 text-gray-500 text-base font-normal font-['Inter'] tracking-wide outline-none"
-                />
-              </div>
+              <input
+                placeholder="Phone number"
+                className="w-full h-12 px-4 py-2.5 rounded-lg border border-[#232321] text-base font-normal font-['Inter'] text-[#79767C] tracking-wide"
+              />
               <div className="text-[#36323B] text-xs font-normal font-['Inter'] tracking-wide">
                 E.g. (123) 456-7890
               </div>

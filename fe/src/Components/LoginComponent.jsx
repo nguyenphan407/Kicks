@@ -1,19 +1,7 @@
-import { useState, React } from "react";
+import { React } from "react";
 import { FaGoogle, FaFacebook, FaApple } from "react-icons/fa";
 import { IoIosArrowForward } from "react-icons/io";
 const LoginComponent = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
   return (
     <div className="w-full h-full flex justify-start items-start gap-12">
       <div className="w-[544px] h-full px-10 flex flex-col justify-start items-start gap-6">
@@ -29,45 +17,26 @@ const LoginComponent = () => {
         {/* Email Input */}
         <div className="flex flex-col gap-2">
           <div className="flex flex-col gap-1">
-            <div className="h-12 px-4 py-2.5 rounded-lg border border-[#232321] flex items-center gap-2">
-              <input
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Email"
-                className="flex-1 text-gray-500 text-base font-normal font-['Inter'] tracking-wide outline-none"
-              />
-            </div>
+            <input
+              placeholder="Email"
+              className="w-full h-12 px-4 py-2.5 rounded-lg border border-[#232321] text-base font-normal font-['Inter'] text-[#79767C] tracking-wide"
+            />
           </div>
         </div>
 
         {/* Password Input */}
         <div className="flex flex-col gap-2">
           <div className="flex flex-col gap-1">
-            <div className="h-12 px-4 py-2.5 rounded-lg border border-[#232321] flex items-center gap-2">
-              <input
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Password"
-                className="flex-1 text-gray-500 text-base font-normal font-['Inter'] tracking-wide outline-none"
-              />
-            </div>
+            <input
+              placeholder="Password"
+              className="w-full h-12 px-4 py-2.5 rounded-lg border border-[#232321] text-base font-normal font-['Inter'] text-[#79767C] tracking-wide"
+            />
           </div>
         </div>
 
         {/* Keep me logged in */}
         <div className="w-[480px] flex items-center gap-2">
-          <div className="relative w-6 h-6">
-            <div className="w-[14.4px] h-[14.4px] absolute left-[4.8px] top-[4.8px] bg-white" />
-            <div className="absolute inset-0">
-              <img
-                className="w-[18px] h-[18px] absolute left-[3px] top-[3px]"
-                src="https://via.placeholder.com/18x18"
-                alt="checkbox"
-              />
-            </div>
-          </div>
+          <input type="checkbox" className="w-6 h-6" />
           <div className="flex-1">
             <span className="text-[#232321] text-base font-semibold font-opensans">
               Keep me logged in - applies to all log in options below.{" "}

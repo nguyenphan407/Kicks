@@ -39,21 +39,27 @@ const CheckboxItem = ({ children }) => {
 
 const ReviewPay = () => {
   return (
-    <div className="flex w-full flex-col items-start justify-start gap-6">
-      <CheckboxItem>
-        My billing and delivery information are the same
-      </CheckboxItem>
-
-      <CheckboxItem>I'm 13+ years old</CheckboxItem>
-
-      <div className="flex flex-col items-start justify-start gap-2">
-        <div className="break-words text-base font-semibold text-[#232321] font-['Rubik']">
-          Also want product updates with our newsletter?
-        </div>
-
-        <CheckboxItem>
+    <div>
+      <div className="w-[480px] flex gap-2 mt-2">
+        <input type="checkbox" className="w-6 h-6" />
+        <p className="flex-1 text-base font-semibold font-['Open_Sans'] text-[#232321]">
+          My billing and delivery information are the sames
+        </p>
+      </div>
+      <div className="w-[480px] flex gap-2 mt-2">
+        <input type="checkbox" className="w-6 h-6" />
+        <p className="flex-1 text-base font-semibold font-['Open_Sans'] text-[#232321]">
+          I'm 13+ year old
+        </p>
+      </div>
+      <p className="font-bold mt-4">
+        Also want product updates with our newsletter?
+      </p>
+      <div className="w-[480px] flex gap-2 ">
+        <input type="checkbox" className="w-6 h-6" />
+        <p className="flex-1 text-base font-semibold font-['Open_Sans'] text-[#232321]">
           Yes, I'd like to receive emails about exclusive sales and more.
-        </CheckboxItem>
+        </p>
       </div>
     </div>
   );
