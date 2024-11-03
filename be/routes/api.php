@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderItemController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -67,4 +69,17 @@ Route::group([
     Route::put('/{id}', [CartController::class, 'update']);
     Route::delete('/{id}', [CartController::class, 'remove']);
     Route::delete('/', [CartController::class, 'clear']);
+});
+
+// Order & OrderItem route
+Route::group([
+
+    'middleware' => 'api',
+    'namespace' => 'App\Http\Controllers',
+    'prefix'=> 'orders'
+
+], function ($router) {
+    Route::get('/', [OrderController::class, 'index']);
+    Route::post('/', [OrderController::class, 'store']);
+    Route::get('/items/{order_id}', [OrderItemController::class, 'index']);
 });
