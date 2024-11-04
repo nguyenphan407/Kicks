@@ -21,7 +21,7 @@ const ProductCard = ({ product, currency }) => {
           New
         </span>
       </div>
-      <h3 className="cursor-pointer px-2 text-[16px] xl:text-[24px] font-semibold text-center h-[48px] xl:h-[35px] overflow-hidden">
+      <h3 className="font-rubik cursor-pointer px-2 text-[16px] xl:text-[24px] font-semibold text-center h-[48px] xl:h-[35px] overflow-hidden">
   {product.name}
 </h3>
 

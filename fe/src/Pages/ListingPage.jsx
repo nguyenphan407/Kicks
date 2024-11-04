@@ -3,6 +3,7 @@ import LoginComponent from "../Components/LoginComponent";
 import { images } from "../assets/assets";
 import { ShopConText } from "../context/ShopContext";
 import { FiChevronUp, FiChevronDown } from "react-icons/fi";
+import ProductCard from "../Components/ProductCard";
 
 const ListingPage = () => {
     const { products } = useContext(ShopConText);
@@ -46,34 +47,34 @@ const ListingPage = () => {
     const options = ["DEFAULT", "A → Z", "Z → A", "LOW TO HIGH", "HIGH TO LOW"];
 
     // toggle Dropdown Refine
-    const [isOpenRefine, setIsOpenRefine] = useState(false);
+    const [isOpenRefine, setIsOpenRefine] = useState(true);
     const toggleDropdownRefine = () => {
         setIsOpenRefine(!isOpenRefine);
     };
 
     // toggle Dropdown Size
-    const [isOpenSize, setIsOpenSize] = useState(false);
+    const [isOpenSize, setIsOpenSize] = useState(true);
     const toggleDropdownSize = () => {
         setIsOpenSize(!isOpenSize);
     };
 
     // toggle Dropdown Color
-    const [isOpenColor, setIsOpenColor] = useState(false);
+    const [isOpenColor, setIsOpenColor] = useState(true);
     const toggleDropdownColor = () => {
         setIsOpenColor(!isOpenColor);
     };
 
     // toggle Dropdown Categories
-    const [isOpenCategories, setIsOpenCategories] = useState(false);
+    const [isOpenCategories, setIsOpenCategories] = useState(true);
     const toggleDropdownCategories = () => {
         setIsOpenCategories(!isOpenCategories);
     };
     // toggle Dropdown Gender
-    const [isOpenGender, setIsOpenGender] = useState(false);
+    const [isOpenGender, setIsOpenGender] = useState(true);
     const toggleDropdownGender = () => setIsOpenGender(!isOpenGender);
 
     // toggle Dropdown Price
-    const [isOpenPrice, setIsOpenPrice] = useState(false);
+    const [isOpenPrice, setIsOpenPrice] = useState(true);
     const toggleDropdownPrice = () => {
         setIsOpenPrice(!isOpenPrice);
     };
@@ -102,7 +103,7 @@ const ListingPage = () => {
                 </div>
             </div>
 
-            <div className="flex xl:flex-col xl:mt-8">
+            <div className="flex gap-5 xl:mt-8">
                 {/* div bọc sort và filter */}
                 <div className="flex flex-row-reverse xl:flex-col">
                     {/* Sidebar Sort */}
@@ -399,7 +400,13 @@ const ListingPage = () => {
                 </div>
 
                 {/* Product List Section */}
-                <div className=" grid lg:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+                <div className=" grid lg:grid-cols-3 gap-4">
+                {
+                        filterProducts.map((item, index) => (
+                            <ProductCard key={index} product={item} currency="$" />
+                        ))
+                    }
+                </div>
             </div>
         </div>
     );
