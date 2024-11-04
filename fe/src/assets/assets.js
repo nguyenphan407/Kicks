@@ -25,6 +25,7 @@ import ReviewImg3 from "./images/review-img3.png";
 import AvatarUser1 from "./images/avatar-user1.jpg";
 import AvatarUser2 from "./images/avatar-user2.png";
 import AvatarUser3 from "./images/avatar-user3.jpg";
+import Thumbnail from "./images/Thumbnail.jpg"
 
 // Export all icons in a single object
 export const icons = {
@@ -52,6 +53,7 @@ export const images = {
   AvatarUser1,
   AvatarUser2,
   AvatarUser3,
+  Thumbnail,
 };
 
 // Define and export products object

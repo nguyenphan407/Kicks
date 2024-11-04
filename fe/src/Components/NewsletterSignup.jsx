@@ -7,7 +7,7 @@ const NewsletterSignup = () => {
     }
 
     return (
-        <div className="flex flex-col xl:flex-row justify-between bg-primary_blue h-[340px] xl:h-[545px] xl:py-14 xl:px-[72px] p-4 rounded-tl-[24px] rounded-tr-[24px] xl:rounded-[48px]">
+        <div className="flex flex-col lg:flex-row justify-between bg-primary_blue h-[340px] xl:h-[545px] xl:py-14 xl:px-[72px] p-4 rounded-tl-[24px] rounded-tr-[24px] xl:rounded-[48px]">
             <div className="xl:w-[510px]">
                 <div className="mb-6 xl:mb-8">
                     <h2 className="font-rubik text-white xl:mb-4 font-semibold xl:uppercase text-[32px] xl:text-5xl">
@@ -34,7 +34,7 @@ const NewsletterSignup = () => {
                     </button>
                 </form>
             </div>
-            <img className="lg:mr-[30px] 2xl:mr-[112px] mt-8 xl:mt-[80px] h-[48px] w-[191px] xl:h-[88px] xl:w-[351px]" src={icons.LogoIconWhite} alt="" />
+            <img className="lg:mr-[30px] 2xl:mr-[112px] mt-8 xl:mt-[80px] mb-10 xl:mb-0 h-[48px] w-[191px] xl:h-[88px] xl:w-[351px]" src={icons.LogoIconWhite} alt="" />
         </div>
     );
 };

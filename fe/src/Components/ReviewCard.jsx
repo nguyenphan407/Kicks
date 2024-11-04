@@ -61,10 +61,9 @@ const ReviewCard = ({
 
 ReviewCard.propTypes = {
     image: PropTypes.string.isRequired,
-    rating: PropTypes.number.isRequired, // Sửa "string" thành "number"
+    rating: PropTypes.number.isRequired, 
     reviewTitle: PropTypes.string.isRequired,
     reviewText: PropTypes.string.isRequired,
-    reviewDate: PropTypes.string.isRequired,
     image_avatar: PropTypes.string.isRequired,
 };
 

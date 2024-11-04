@@ -21,9 +21,10 @@ const ProductCard = ({ product, currency }) => {
           New
         </span>
       </div>
-      <h3 className="cursor-pointer px-2 text-[16px] xl:text-[24px] font-semibold text-start">
-        {product.name}
-      </h3>
+      <h3 className="cursor-pointer px-2 text-[16px] xl:text-[24px] font-semibold text-center h-[48px] xl:h-[35px] overflow-hidden">
+  {product.name}
+</h3>
+
       <button className="mt-2 xl:mt-4 bg-secondary_black px-4 py-2 w-[100%] xl:py-4 text-center rounded-lg whitespace-nowrap transform transition duration-400 hover:bg-primary_blue hover:scale-[1.02] max-sm:text-xs">
         <span className="text-white ">
           View Product -{" "}
@@ -42,7 +43,7 @@ ProductCard.propTypes = {
   product: PropTypes.shape({
     product_id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
+    price: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
     image: PropTypes.arrayOf(PropTypes.string).isRequired,
   }).isRequired,
   currency: PropTypes.string.isRequired,

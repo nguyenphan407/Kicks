@@ -21,7 +21,7 @@ export default {
                     sm: "100%", // Chiều rộng 100% cho màn hình nhỏ
                     md: "832px", // Chiều rộng 100% cho màn hình vừa
                     lg: "1088px", // Đặt chiều rộng tối đa cho màn hình lớn
-                    xl: "1344x", // Đặt chiều rộng tối đa cho màn hình rất lớn
+                    xl: "1344px", // Đặt chiều rộng tối đa cho màn hình rất lớn
                     "2xl": "1448px", // Đặt chiều rộng tối đa cho màn hình cực lớn
                     'max-sm': { 'max': '640px' },
                     xxs: "400px",
