@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import React, { useContext, useEffect, useState } from "react";
-import { ShopConText } from "../context/ShopContext";
-import ProductCard from "../Components/ProductCard";
+import { ShopConText } from "../../context/ShopContext";
+import ProductCard from "../Product/ProductCard";
 import { Link, NavLink } from "react-router-dom";
 
 const NewDrops = () => {

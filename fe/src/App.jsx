@@ -7,9 +7,9 @@ import ListingPage from "./Pages/ListingPage";
 import Login from "./Pages/Login";
 import ProductDetailPage from "./Pages/ProductDetailPage";
 import Register from "./Pages/Register";
-import Header from "./Components/Header";
-import Footer from "./Components/Footer";
-import NewsletterSignup from "./Components/NewsletterSignup";
+import Header from "./Components/Layout/Header";
+import Footer from "./Components/Layout/Footer";
+import NewsletterSignup from "./Components/User/NewsletterSignup";
 
 const App = () => {
   return (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { reviews } from "../assets/assets";
-import ReviewCard from "./ReviewCard";
+import { reviews } from "../../assets/assets";
+import ReviewCard from "../Review/ReviewCard";
 
 const Reviews = () => {
     const [displayedReviews, setDisplayedReviews] = useState([]);

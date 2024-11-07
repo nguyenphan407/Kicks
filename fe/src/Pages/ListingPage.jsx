@@ -1,25 +1,23 @@
 import React, { useContext, useEffect, useState } from "react";
-import LoginComponent from "../Components/LoginComponent";
 import { images } from "../assets/assets";
 import { ShopConText } from "../context/ShopContext";
 import { FiChevronUp, FiChevronDown } from "react-icons/fi";
-import ProductCard from "../Components/ProductCard";
+import ProductCard from "../Components/Product/ProductCard";
 
 const ListingPage = () => {
-    const { products } = useContext(ShopConText);
     const { showFilter, setShowFilter } = useState(false);
 
-    const [selectedSize, setSelectedSize] = useState(null);
-    const outOfStockSizes = [39, 41, 44];
-    const sizes = [38, 39, 40, 41, 42, 43, 44, 45, 46, 47];
+    const [selectedSize, setSelectedSize] = useState(null); // lưu size người dùng chọn
+    const outOfStockSizes = [39, 41, 44]; 
+    const sizes = [38, 39, 40, 41, 42, 43, 44, 45, 46, 47];  
     const handleSizeClick = (size) => {
-        if (!outOfStockSizes.includes(size)) {
+        if (!outOfStockSizes.includes(size)) { // nếu không có trong hết hàng thì cập nhật size người dùng chọn
             setSelectedSize(size);
         }
     };
 
     // Select Color
-    const [selectedColor, setSelectedColor] = useState(null);
+    const [selectedColors, setSelectedColors] = useState([]);
     const colors = [
         { name: "Dark Blue", colorClass: "#4A69E2" },
         { name: "Bright Orange", colorClass: "#FFA52F" },
@@ -33,9 +31,35 @@ const ListingPage = () => {
         { name: "Light Brown", colorClass: "#BB8056" },
     ];
     const handleColorClick = (color) => {
-        setSelectedColor(color);
+        setSelectedColors(color);
     };
 
+    const handleColorClick1 = (colorName) => {
+        setSelectedColors((prevSelectedColors) => {
+            if (prevSelectedColors.includes(colorName)) {
+                // Nếu màu đã được chọn, bỏ chọn nó
+                return prevSelectedColors.filter((color) => color !== colorName);
+            } else {
+                // Nếu màu chưa được chọn, thêm nó vào danh sách đã chọn
+                return [...prevSelectedColors, colorName];
+            }
+        });
+    };
+
+    const handleColorClick2 = (colorName) => {
+        setSelectedColors((prevSelectedColors) => {
+            if (prevSelectedColors.includes(colorName)) {
+                // nếu màu đã được chọn thì bỏ chọn
+                return prevSelectedColors.filter((color) => color !== colorName)
+            } else {
+                // nếu màu chưa được chọn thì thêm màu vào []
+                return [...prevSelectedColors, colorName]
+            }
+        });
+    } 
+
+
+    const { products } = useContext(ShopConText);
     const [filterProducts, setFilterProducts] = useState([]);
     useEffect(() => {
         setFilterProducts(products);
@@ -80,6 +104,10 @@ const ListingPage = () => {
     };
 
     const [price, setPrice] = useState(0);
+
+    // Phân trang
+    const ITEM_PER_PAGE = 9;
+    
     return (
         <div className="container">
             {/* Thumbnail */}
@@ -230,13 +258,13 @@ const ListingPage = () => {
                                                     size
                                                 )}
                                                 className={`w-[50px] h-[50px] py-2 rounded-lg font-semibold ${
-                                                    selectedSize === size
+                                                    selectedSize === size // nếu nút hiện tại là nút được chọn thì css nền đen
                                                         ? "bg-black text-white"
                                                         : outOfStockSizes.includes(
                                                                 size
-                                                            )
+                                                            ) // nếu không có hàng thì nền xám
                                                           ? "bg-[#D2D1D3] text-[#8F8C91] cursor-not-allowed "
-                                                          : "bg-white hover:bg-gray-300"
+                                                          : "bg-white hover:bg-gray-300" 
                                                 }`}
                                             >
                                                 {size}
@@ -265,16 +293,13 @@ const ListingPage = () => {
                                             <div
                                                 key={color.name}
                                                 onClick={() =>
-                                                    handleColorClick(color.name)
+                                                    handleColorClick2(color.name)
                                                 }
                                                 style={{
-                                                    backgroundColor:
-                                                        color.colorClass,
-                                                    border:
-                                                        selectedColor ===
-                                                        color.name
-                                                            ? "2px solid white"
-                                                            : "none",
+                                                    backgroundColor: color.colorClass,
+                                                    border: selectedColors.includes(color.name)
+                                                        ? "2px solid white"
+                                                        : "none",
                                                 }}
                                                 className="w-12 h-12 rounded-lg cursor-pointer"
                                             ></div>
