@@ -8,10 +8,11 @@ const ListingPage = () => {
     const { showFilter, setShowFilter } = useState(false);
 
     const [selectedSize, setSelectedSize] = useState(null); // lưu size người dùng chọn
-    const outOfStockSizes = [39, 41, 44]; 
-    const sizes = [38, 39, 40, 41, 42, 43, 44, 45, 46, 47];  
+    const outOfStockSizes = [39, 41, 44];
+    const sizes = [38, 39, 40, 41, 42, 43, 44, 45, 46, 47];
     const handleSizeClick = (size) => {
-        if (!outOfStockSizes.includes(size)) { // nếu không có trong hết hàng thì cập nhật size người dùng chọn
+        if (!outOfStockSizes.includes(size)) {
+            // nếu không có trong hết hàng thì cập nhật size người dùng chọn
             setSelectedSize(size);
         }
     };
@@ -38,7 +39,9 @@ const ListingPage = () => {
         setSelectedColors((prevSelectedColors) => {
             if (prevSelectedColors.includes(colorName)) {
                 // Nếu màu đã được chọn, bỏ chọn nó
-                return prevSelectedColors.filter((color) => color !== colorName);
+                return prevSelectedColors.filter(
+                    (color) => color !== colorName
+                );
             } else {
                 // Nếu màu chưa được chọn, thêm nó vào danh sách đã chọn
                 return [...prevSelectedColors, colorName];
@@ -50,20 +53,15 @@ const ListingPage = () => {
         setSelectedColors((prevSelectedColors) => {
             if (prevSelectedColors.includes(colorName)) {
                 // nếu màu đã được chọn thì bỏ chọn
-                return prevSelectedColors.filter((color) => color !== colorName)
+                return prevSelectedColors.filter(
+                    (color) => color !== colorName
+                );
             } else {
                 // nếu màu chưa được chọn thì thêm màu vào []
-                return [...prevSelectedColors, colorName]
+                return [...prevSelectedColors, colorName];
             }
         });
-    } 
-
-
-    const { products } = useContext(ShopConText);
-    const [filterProducts, setFilterProducts] = useState([]);
-    useEffect(() => {
-        setFilterProducts(products);
-    });
+    };
 
     // Sort Option
     const [selected, setSelected] = useState("DEFAULT");
@@ -106,7 +104,32 @@ const ListingPage = () => {
     const [price, setPrice] = useState(0);
 
     // Phân trang
-    const ITEM_PER_PAGE = 9;
+    const { products } = useContext(ShopConText);
+    const [filterProducts, setFilterProducts] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEM_PER_PAGE = 9; // Số sản phẩm tối đa hiển thị trên mỗi trang
+
+    useEffect(() => {
+        setFilterProducts(products);
+    }, [products]);
+
+    // Tính tổng số trang làm tròn lên
+    const totalPages = Math.ceil(filterProducts.length / ITEM_PER_PAGE);
+
+    // Tính toán các sản phẩm hiển thị trên trang hiện tại
+    const startIndex = (currentPage - 1) * ITEM_PER_PAGE;
+    const endIndex = startIndex + ITEM_PER_PAGE;
+    const currentProducts = filterProducts.slice(startIndex, endIndex);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+    useEffect(() => {
+        // Cuộn lên đầu trang khi `currentPage` thay đổi
+        window.scrollTo(0, 0);
+    }, [currentPage]);
+
     
     return (
         <div className="container">
@@ -264,7 +287,7 @@ const ListingPage = () => {
                                                                 size
                                                             ) // nếu không có hàng thì nền xám
                                                           ? "bg-[#D2D1D3] text-[#8F8C91] cursor-not-allowed "
-                                                          : "bg-white hover:bg-gray-300" 
+                                                          : "bg-white hover:bg-gray-300"
                                                 }`}
                                             >
                                                 {size}
@@ -293,11 +316,16 @@ const ListingPage = () => {
                                             <div
                                                 key={color.name}
                                                 onClick={() =>
-                                                    handleColorClick2(color.name)
+                                                    handleColorClick2(
+                                                        color.name
+                                                    )
                                                 }
                                                 style={{
-                                                    backgroundColor: color.colorClass,
-                                                    border: selectedColors.includes(color.name)
+                                                    backgroundColor:
+                                                        color.colorClass,
+                                                    border: selectedColors.includes(
+                                                        color.name
+                                                    )
                                                         ? "2px solid white"
                                                         : "none",
                                                 }}
@@ -424,13 +452,87 @@ const ListingPage = () => {
                     </div>
                 </div>
 
-                {/* Product List Section */}
-                <div className=" grid lg:grid-cols-3 gap-4">
-                {
-                        filterProducts.map((item, index) => (
-                            <ProductCard key={index} product={item} currency="$" />
-                        ))
-                    }
+                <div className="flex flex-col flex-col flex-1">
+                    {/* Product List Section */}
+                    <div className=" grid lg:grid-cols-3 gap-4">
+                        {currentProducts.map((item, index) => (
+                            <ProductCard
+                                key={index}
+                                product={item}
+                                currency="$"
+                            />
+                        ))}
+                    </div>
+
+                    {/* Pagination */}
+                    <div className="flex items-center justify-center xl:py-[30px] xl:rounded-lg gap-4">
+                        <div className="flex items-center justify-between px-4 py-2 border border-black bg-transparent rounded-lg gap-1 cursor-pointer">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                            >
+                                <path
+                                    d="M10.5 12.5L6 8L10.5 3.5"
+                                    stroke="#232321"
+                                    strokeWidth="1.5"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            </svg>
+                            <p
+                                onClick={() =>
+                                    handlePageChange(currentPage - 1)
+                                }
+                                disabled={currentPage === 1}
+                                className="font-rubik"
+                            >
+                                PREVIOUS
+                            </p>
+                        </div>
+
+                        {Array.from({ length: totalPages }, (_, i) => (
+                            <button
+                                key={i + 1}
+                                onClick={() => handlePageChange(i + 1)}
+                                className={`font-rubik px-6 py-2 border rounded-lg border-black ${
+                                    currentPage === i + 1
+                                        ? "bg-black text-white"
+                                        : "bg-transparent text-black"
+                                }`}
+                            >
+                                {i + 1}
+                            </button>
+                        ))}
+                        <div className="flex items-center justify-between px-4 py-2 border border-black bg-transparent rounded-lg gap-1 cursor-pointer">
+                            <p
+                                onClick={() =>
+                                    handlePageChange(currentPage - 1)
+                                }
+                                disabled={currentPage === 1}
+                                className="font-rubik"
+                            >
+                                NEXT
+                            </p>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                            >
+                                <path
+                                    d="M6 3.5L10.5 8L6 12.5"
+                                    stroke="#232321"
+                                    strokeWidth="1.5"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            </svg>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
