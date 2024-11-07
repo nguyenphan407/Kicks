@@ -1,5 +1,5 @@
 import React from "react";
-import { icons } from "../assets/assets"
+import { icons } from "../../assets/assets"
 
 const NewsletterSignup = () => {
     const onSubmitHandler = (e) => {

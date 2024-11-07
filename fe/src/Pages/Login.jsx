@@ -1,5 +1,5 @@
 import React from "react";
-import LoginComponent from "../Components/LoginComponent";
+import LoginComponent from "../Components/User/LoginComponent";
 const Login = () => {
   return (
     <div style={{ margin: "16px" }}>

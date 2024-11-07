@@ -1,7 +1,7 @@
 import React from "react";
 import ContactDetails from "../Components/ContactDetails";
 import DeliveryOptions from "../Components/DeliveryOptions";
-import ReviewPay from "../Components/ReviewPay";
+import ReviewPay from "../Components/Review/ReviewPay";
 import RPButton from "../Components/RPButton";
 
 const CheckOutPage = () => {

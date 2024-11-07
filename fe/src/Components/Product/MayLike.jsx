@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { ShopConText } from "../context/ShopContext";
-import ProductCard from "../Components/ProductCard";
+import { ShopConText } from "../../context/ShopContext";
+import ProductCard from "../Product/ProductCard";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 const MayLike = () => {

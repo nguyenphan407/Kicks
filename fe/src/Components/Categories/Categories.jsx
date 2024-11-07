@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import CategoryCard from "./CategoriesCard";
-import { categories } from "../assets/assets";
+import { categories } from "../../assets/assets";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useEffect } from "react";
 

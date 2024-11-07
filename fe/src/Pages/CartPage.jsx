@@ -1,5 +1,5 @@
 import React from "react";
-import MayLike from "../Components/MayLike";
+import MayLike from "../Components/Product/MayLike";
 import { images } from "../assets/assets";
 import OrderSummary from "../Components/OrderSummary";
 const CartPage = () => {
