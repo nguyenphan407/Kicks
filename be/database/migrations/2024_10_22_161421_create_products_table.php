@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('size', 10);
             $table->string('color', 30);
             $table->foreignId('category_id')->references('category_id')->on('categories')->onDelete('cascade');
-            $table->string('image', 255)->nullable();
             $table->timestamps();
         });
     }

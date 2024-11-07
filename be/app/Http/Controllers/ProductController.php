@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\ProductImage;
+use Cloudinary\Api\Upload\UploadApi;
+use Cloudinary\Cloudinary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
+use Cloudinary\Configuration\Configuration;
 
 class ProductController extends Controller
 {
@@ -14,7 +18,7 @@ class ProductController extends Controller
     public function index()
     {
         // Lấy tất cả sản phẩm
-        $products = Product::all();
+        $products = Product::with("images")->get();
 
         // Trả về JSON danh sách sản phẩm
         return response()->json($products);
@@ -23,12 +27,14 @@ class ProductController extends Controller
     // 2. Hiển thị chi tiết sản phẩm
     public function show($id)
     {
-        $userId = Auth::user()->user_id;
-
-        // Theo dõi lượt xem sản phẩm cho người dùng
-        Redis::zincrby("user:{$userId}:viewed_products", 1, $id);
+        $user = Auth::user();
+        if ($user) {
+            $userId = $user->user_id;
+            // Theo dõi lượt xem sản phẩm cho người dùng
+            Redis::zincrby("user:{$userId}:viewed_products", 1, $id);
+        }
         // Tìm sản phẩm theo ID
-        $product = Product::find($id);
+        $product = Product::with("images")->where("product_id", $id)->get();
 
         // Nếu không tìm thấy sản phẩm
         if (!$product) {
@@ -52,12 +58,22 @@ class ProductController extends Controller
             'color'       => 'nullable|string|max:30',
             'category_id' => 'required|integer|exists:categories,category_id',
             'brand'       => 'nullable|string|max:50',
-            'image'       => 'nullable|string|max:255',
         ]);
-
         // Tạo sản phẩm mới
         $product = Product::create($validatedData);
+        try {
+            $images = $request->file('images');
 
+            if (!is_array($images)) {
+                $images = [$images];
+            }
+
+            foreach ($images as $image) {
+                ProductImageController::upload($image->getRealPath(), $product->product_id);
+            }
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage());
+        }
         // Trả về sản phẩm mới tạo
         return response()->json($product, 201);
     }
@@ -75,19 +91,38 @@ class ProductController extends Controller
 
         // Validate dữ liệu
         $validatedData = $request->validate([
-            'name'        => 'sometimes|required|string|max:100',
+            'name'        => 'sometimes|nullable|string|max:100',
             'description' => 'nullable|string',
-            'price'       => 'sometimes|required|numeric',
-            'stock_quantity' => 'sometimes|required|integer',
+            'price'       => 'sometimes|nullable|numeric',
+            'stock_quantity' => 'sometimes|nullable|integer',
             'size'        => 'nullable|string|max:10',
             'color'       => 'nullable|string|max:30',
-            'category_id' => 'sometimes|required|integer|exists:categories,category_id',
+            'category_id' => 'sometimes|nullable|integer|exists:categories,category_id',
             'brand'       => 'nullable|string|max:50',
-            'image'       => 'nullable|string|max:255',
         ]);
 
         // Cập nhật sản phẩm
         $product->update($validatedData);
+
+        // Cap nhat anh san pham
+        if ($request->hasFile("images")) {
+            // Xoa anh
+            $productImage = ProductImage::where("product_id", $id)->get();
+            foreach ($productImage as $image) {
+                ProductImageController::delete($image->public_id);
+                $image->delete();
+            }
+
+            // Tai anh
+            $images = $request->file('images');
+            if (!is_array($images)){
+                $images = [$images]; 
+            }
+
+            foreach($images as $image){
+                ProductImageController::upload($image->getRealPath(), $id);
+            }
+        }
 
         // Trả về sản phẩm sau khi cập nhật
         return response()->json($product);
@@ -104,8 +139,15 @@ class ProductController extends Controller
             return response()->json(['error' => 'Product not found'], 404);
         }
 
-        // Xóa sản phẩm
+        $productImage = ProductImage::where("product_id", $id)->get();
+
         $product->delete();
+
+        foreach ($productImage as $image) {
+            ProductImageController::delete($image->public_id);
+            $image->delete();
+        }
+        // Xóa sản phẩm
 
         // Trả về thông báo đã xóa
         return response()->json(['message' => 'Product deleted successfully']);

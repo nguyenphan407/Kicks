@@ -53,7 +53,7 @@ Route::group([
     Route::get('filter', [ProductController::class, 'filter']); // URL: /product/filter
     Route::get('recommend', [ProductController::class, 'recommendedProducts']); // URL: /product/recommend
     Route::post('store', [ProductController::class, 'store']); // URL: /product/store
-    Route::put('update/{id}', [ProductController::class, 'update']); // URL: /product/update/{id}
+    Route::patch('update/{id}', [ProductController::class, 'update']); // URL: /product/update/{id}
     Route::delete('delete/{id}', [ProductController::class, 'destroy']); // URL: /product/delete/{id}
     
 });
