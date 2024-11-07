@@ -16,7 +16,7 @@ const ShopContextProvider = ({ children }) => {
                 const response = await productApi.getAll();
                 const productsData = response.data.map(product => {
                     // Tách chuỗi image thành mảng URL
-                    const imageUrls = product.image.split(',').map(url => `http://localhost:8000/${url.trim()}`);
+                    const imageUrls = product.image.split(',').map(url => `http://localhost/${url.trim()}`);
                     return { ...product, image: imageUrls };
                 });
                 setProducts(productsData);

@@ -10,7 +10,7 @@ const ReviewCard = ({
     image_avatar,
 }) => {
     return (
-        <div className="bg-[#FAFAFA] rounded-2xl xl:rounded-[32px] xl:w-full xl:max-w-[428px] h-[339px] xl:h-[400px] 2xl:h-[500px] overflow-hidden ">
+        <div className="bg-[#FAFAFA] rounded-2xl xl:rounded-[32px] xl:w-full xl:max-w-[428px] h-[339px] xl:h-[400px] 2xl:h-[500px] overflow-hidden transition duration-300 hover:shadow-2xl transform hover:-translate-y-4">
             <div className="p-4 xl:p-8">
                 <div className="flex items-center justify-between gap-2 mb-2">
                     <div className="flex-1 flex flex-col gap-2">
@@ -35,7 +35,7 @@ const ReviewCard = ({
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
                             className="text-yellow-500 xl:w-6 xl:h-6 w-4 h-4"
-                        >   
+                        >
                             <g id="ic:round-star-rate">
                                 <path
                                     id="Vector"
@@ -61,7 +61,7 @@ const ReviewCard = ({
 
 ReviewCard.propTypes = {
     image: PropTypes.string.isRequired,
-    rating: PropTypes.number.isRequired, 
+    rating: PropTypes.number.isRequired,
     reviewTitle: PropTypes.string.isRequired,
     reviewText: PropTypes.string.isRequired,
     image_avatar: PropTypes.string.isRequired,

@@ -5,7 +5,21 @@ import { FiChevronUp, FiChevronDown } from "react-icons/fi";
 import ProductCard from "../Components/Product/ProductCard";
 
 const ListingPage = () => {
-    const { showFilter, setShowFilter } = useState(false);
+    const [showFilter, setShowFilter] = useState(false);
+
+    // Reset lại filter cho button reset
+    const resetFilters = () => {
+        setSelectedSize(null);
+        setSelectedColors([]);
+        setPrice(0);
+        setFilterProducts(products);
+        setSelectedCategories([]);
+        setSelectedGender([]);
+    };
+
+    const handleShowFilter = (showFilter) => {
+        setShowFilter(!showFilter);
+    };
 
     const [selectedSize, setSelectedSize] = useState(null); // lưu size người dùng chọn
     const outOfStockSizes = [39, 41, 44];
@@ -31,25 +45,7 @@ const ListingPage = () => {
         { name: "Dark Brown", colorClass: "#925513" },
         { name: "Light Brown", colorClass: "#BB8056" },
     ];
-    const handleColorClick = (color) => {
-        setSelectedColors(color);
-    };
-
-    const handleColorClick1 = (colorName) => {
-        setSelectedColors((prevSelectedColors) => {
-            if (prevSelectedColors.includes(colorName)) {
-                // Nếu màu đã được chọn, bỏ chọn nó
-                return prevSelectedColors.filter(
-                    (color) => color !== colorName
-                );
-            } else {
-                // Nếu màu chưa được chọn, thêm nó vào danh sách đã chọn
-                return [...prevSelectedColors, colorName];
-            }
-        });
-    };
-
-    const handleColorClick2 = (colorName) => {
+    const handleColorClick = (colorName) => {
         setSelectedColors((prevSelectedColors) => {
             if (prevSelectedColors.includes(colorName)) {
                 // nếu màu đã được chọn thì bỏ chọn
@@ -63,10 +59,40 @@ const ListingPage = () => {
         });
     };
 
+    const [price, setPrice] = useState(0);
+    const [selectedCategories, setSelectedCategories] = useState([]);
+    const [selectedGender, setSelectedGender] = useState([]);
+    // cập nhật khi người dùng chọn hoặc bỏ chọn các mục trong Categories
+    const handleCategoryChange = (category) => {
+        setSelectedCategories((prevSelectedCategories) => {
+            if (prevSelectedCategories.includes(category)) {
+                // Nếu đã chọn thì bỏ chọn
+                return prevSelectedCategories.filter(
+                    (item) => item !== category
+                );
+            } else {
+                // Nếu chưa chọn thì thêm vào
+                return [...prevSelectedCategories, category];
+            }
+        });
+    };
+    // cập nhật khi người dùng chọn hoặc bỏ chọn các mục trong Gender
+    const handleGenderChange = (gender) => {
+        setSelectedGender((prevSelectedGender) => {
+            if (prevSelectedGender.includes(gender)) {
+                // Nếu đã chọn thì bỏ chọn
+                return prevSelectedGender.filter((item) => item !== gender);
+            } else {
+                // Nếu chưa chọn thì thêm vào
+                return [...prevSelectedGender, gender];
+            }
+        });
+    };
+
     // Sort Option
-    const [selected, setSelected] = useState("DEFAULT");
+    const [selected, setSelected] = useState("Default");
     const [isOpen, setIsOpen] = useState(false);
-    const options = ["DEFAULT", "A → Z", "Z → A", "LOW TO HIGH", "HIGH TO LOW"];
+    const options = ["Default", "a → z", "z → a", "Low to high", "High to low"];
 
     // toggle Dropdown Refine
     const [isOpenRefine, setIsOpenRefine] = useState(true);
@@ -101,8 +127,6 @@ const ListingPage = () => {
         setIsOpenPrice(!isOpenPrice);
     };
 
-    const [price, setPrice] = useState(0);
-
     // Phân trang
     const { products } = useContext(ShopConText);
     const [filterProducts, setFilterProducts] = useState([]);
@@ -130,7 +154,6 @@ const ListingPage = () => {
         window.scrollTo(0, 0);
     }, [currentPage]);
 
-    
     return (
         <div className="container">
             {/* Thumbnail */}
@@ -154,15 +177,16 @@ const ListingPage = () => {
                 </div>
             </div>
 
-            <div className="flex gap-5 xl:mt-8">
+            {/* div bọc cụm filter và productList */}
+            <div className="flex gap-5 flex-col xl:flex-row mt-6 xl:mt-8">
                 {/* div bọc sort và filter */}
-                <div className="flex flex-row-reverse xl:flex-col">
+                <div className="flex flex-row-reverse items-start justify-between xl:justify-start xl:flex-col">
                     {/* Sidebar Sort */}
-                    <div className="relative  items-center">
+                    <div className="relative items-center">
                         <button
                             onClick={() => setIsOpen(!isOpen)}
-                            className="flex items-center justify-between bg-[#F4F2F2]  px-4 py-2 xl:p-4 font-semibold rounded-2xl font-rubik xl:w-[184px] text-secondary_black
-                        hover:bg-[#cccccc] transition-all duration-300 ease-in-out"
+                            className="flex items-center justify-between bg-[#F4F2F2] px-4 py-2 xl:p-4 font-semibold rounded-lg lg:rounded-2xl lg:font-rubik w-[160px] lg:w-[184px] text-secondary_black text-[14px] lg:text-[16px]  
+                        hover:bg-[#cccccc] transition-all xl:uppercase duration-300 ease-in-out"
                         >
                             <span>{selected}</span>
                             <svg
@@ -184,7 +208,7 @@ const ListingPage = () => {
                         </button>
 
                         {isOpen && (
-                            <ul className="absolute bg-[#F4F2F2] text-secondary_black xl:w-[184px] xl:mt-[10px] xl:rounded-2xl z-10">
+                            <ul className="absolute bg-[#F4F2F2] text-secondary_black w-[160px] lg:w-[184px] mt-[5px] lg:mt-[10px] rounded-lg lg:rounded-2xl z-10">
                                 {options.map((option, index) => (
                                     <li
                                         key={index}
@@ -201,8 +225,11 @@ const ListingPage = () => {
                         )}
                     </div>
                     {/* Sidebar Filter */}
-                    <div className="w-64 xl:mt-5 xl:w-[315px]">
-                        <div className="flex items-center justify-between xl:mb-6">
+                    <div className="xl:mt-6 xl:w-[315px]">
+                        <div
+                            className="flex w-[160px] items-center justify-between xl:mb-6 px-4 py-2 lg:px-0 lg:py-0 rounded-lg lg:rounded-none bg-[#F4F2F2] lg:bg-transparent"
+                            onClick={() => setShowFilter(!showFilter)}
+                        >
                             <h2 className="font-semibold text-[14px] xl:text-2xl xl:font-rubik text-secondary_black">
                                 Filters
                             </h2>
@@ -212,7 +239,7 @@ const ListingPage = () => {
                                 height="17"
                                 viewBox="0 0 16 17"
                                 fill="none"
-                                className={`block xl:hidden`}
+                                className={`block lg:hidden`}
                             >
                                 <path
                                     d="M7.33333 12.5C7.14444 12.5 6.98622 12.436 6.85867 12.308C6.73067 12.1804 6.66667 12.0222 6.66667 11.8333C6.66667 11.6444 6.73067 11.4862 6.85867 11.3587C6.98622 11.2307 7.14444 11.1667 7.33333 11.1667H8.66667C8.85556 11.1667 9.014 11.2307 9.142 11.3587C9.26956 11.4862 9.33333 11.6444 9.33333 11.8333C9.33333 12.0222 9.26956 12.1804 9.142 12.308C9.014 12.436 8.85556 12.5 8.66667 12.5H7.33333ZM2.66667 5.83333C2.47778 5.83333 2.31956 5.76956 2.192 5.642C2.064 5.514 2 5.35556 2 5.16667C2 4.97778 2.064 4.81933 2.192 4.69133C2.31956 4.56378 2.47778 4.5 2.66667 4.5H13.3333C13.5222 4.5 13.6804 4.56378 13.808 4.69133C13.936 4.81933 14 4.97778 14 5.16667C14 5.35556 13.936 5.514 13.808 5.642C13.6804 5.76956 13.5222 5.83333 13.3333 5.83333H2.66667ZM4.66667 9.16667C4.47778 9.16667 4.31933 9.10267 4.19133 8.97467C4.06378 8.84711 4 8.68889 4 8.5C4 8.31111 4.06378 8.15267 4.19133 8.02467C4.31933 7.89711 4.47778 7.83333 4.66667 7.83333H11.3333C11.5222 7.83333 11.6804 7.89711 11.808 8.02467C11.936 8.15267 12 8.31111 12 8.5C12 8.68889 11.936 8.84711 11.808 8.97467C11.6804 9.10267 11.5222 9.16667 11.3333 9.16667H4.66667Z"
@@ -221,16 +248,44 @@ const ListingPage = () => {
                             </svg>
                         </div>
                         {/* Filter */}
-                        <div>
+                        <div
+                            className={`${showFilter ? "" : "hidden lg:block"} absolute xl:relative transition-all lg:relative top-0 left-0 right-0 z-10 lg:z-0 xl:bg-transparent bg-[#E7E7E3]`}
+                        >
+                            {/* Filter mobile */}
+                            <div className="block lg:hidden bg-white xl:bg-transparent">
+                                <div
+                                    className={`flex items-center justify-between p-4`}
+                                    onClick={() => setShowFilter(!showFilter)}
+                                >
+                                    <h3 className="font-semibold text-xl font-rubik text-secondary_black">
+                                        Filters
+                                    </h3>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="24"
+                                        height="24"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                    >
+                                        <path
+                                            d="M6.75781 17.2428L12.0008 11.9998M17.2438 6.75684L11.9998  11.9998M11.9998 11.9998L6.75781 6.75684M12.0008 11.9998L17.2438 17.2428"
+                                            stroke="black"
+                                            strokeWidth="1.5"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        />
+                                    </svg>
+                                </div>
+                            </div>
                             {/* Refine By */}
-                            <div className="mb-6">
+                            <div className="mt-4 lg:mt-0 mb-4 xl:mb-6 mx-4 xl:mx-0">
                                 <div className="mb-6">
                                     {/* Refine By Header */}
                                     <div
                                         className="flex justify-between items-center cursor-pointer"
                                         onClick={toggleDropdownRefine}
                                     >
-                                        <h3 className="text-secondary_black xl:text-[16px] font-semibold font-rubik xl:uppercase">
+                                        <h3 className="text-secondary_black text-[16px] font-semibold font-rubik uppercase">
                                             Refine By
                                         </h3>
                                         <FiChevronUp
@@ -242,11 +297,11 @@ const ListingPage = () => {
 
                                     {/* Buttons */}
                                     {isOpenRefine && (
-                                        <div className="flex gap-4 xl:mt-4">
-                                            <button className="font-rubik xl:text-xs xl:w-[63px] xl:h-[38px] px-3 py-1 xl:rounded-xl bg-primary_blue text-white font-semibold">
+                                        <div className="flex gap-4 mt-4">
+                                            <button className="font-rubik text-xs w-[63px] h-[38px] px-3 py-1 rounded-xl bg-primary_blue text-white font-semibold">
                                                 Mens
                                             </button>
-                                            <button className="font-rubik xl:text-xs xl:w-[63px] xl:h-[38px] px-3 py-1 xl:rounded-xl bg-primary_blue text-white font-semibold">
+                                            <button className="font-rubik text-xs w-[63px] h-[38px] px-3 py-1 rounded-xl bg-primary_blue text-white font-semibold">
                                                 Casual
                                             </button>
                                         </div>
@@ -255,7 +310,7 @@ const ListingPage = () => {
                             </div>
 
                             {/* Size */}
-                            <div className="mb-6">
+                            <div className="mb-4 xl:b-6 mx-4 xl:mx-0">
                                 <div
                                     className="flex justify-between items-center"
                                     onClick={toggleDropdownSize}
@@ -270,7 +325,7 @@ const ListingPage = () => {
                                     />
                                 </div>
                                 {isOpenSize && (
-                                    <div className="flex flex-wrap gap-4 xl:mt-4">
+                                    <div className="flex flex-wrap gap-4 mt-4">
                                         {sizes.map((size) => (
                                             <button
                                                 key={size}
@@ -298,7 +353,7 @@ const ListingPage = () => {
                             </div>
 
                             {/* Color Filter */}
-                            <div className="mb-6">
+                            <div className="mb-4 xl:mb-6 mx-4 xl:mx-0">
                                 <div
                                     className="flex justify-between items-center cursor-pointer"
                                     onClick={toggleDropdownColor}
@@ -311,14 +366,12 @@ const ListingPage = () => {
                                     />
                                 </div>
                                 {isOpenColor && (
-                                    <div className="grid grid-cols-5 gap-2 xl:mt-4">
+                                    <div className="grid grid-cols-5 gap-2 mt-4">
                                         {colors.map((color) => (
                                             <div
                                                 key={color.name}
                                                 onClick={() =>
-                                                    handleColorClick2(
-                                                        color.name
-                                                    )
+                                                    handleColorClick(color.name)
                                                 }
                                                 style={{
                                                     backgroundColor:
@@ -337,7 +390,7 @@ const ListingPage = () => {
                             </div>
 
                             {/* Categories */}
-                            <div className="mb-6">
+                            <div className="mb-4 xl:mb-6 mx-4 xl:mx-0">
                                 <div
                                     className="flex justify-between items-center cursor-pointer"
                                     onClick={toggleDropdownCategories}
@@ -346,11 +399,13 @@ const ListingPage = () => {
                                         Categories
                                     </h3>
                                     <FiChevronUp
-                                        className={`xl:w-6 xl:h-6 transform transition-transform duration-300 ${isOpenCategories ? "rotate-180" : ""}`}
+                                        className={`xl:w-6 xl:h-6 transform transition-transform duration-300 ${
+                                            isOpenCategories ? "rotate-180" : ""
+                                        }`}
                                     />
                                 </div>
                                 {isOpenCategories && (
-                                    <div className="flex flex-col gap-2 xl:mt-4">
+                                    <div className="flex flex-col gap-2 mt-4">
                                         {[
                                             "Casual shoes",
                                             "Runners",
@@ -367,6 +422,14 @@ const ListingPage = () => {
                                                 <input
                                                     type="checkbox"
                                                     className="mr-4 w-4 h-4 outline-none border-2 border-gray-400 rounded-sm accent-[#1F1A24]"
+                                                    checked={selectedCategories.includes(
+                                                        category
+                                                    )}
+                                                    onChange={() =>
+                                                        handleCategoryChange(
+                                                            category
+                                                        )
+                                                    }
                                                 />
                                                 <span className="text-secondary_black text-x[16px] font-semibold">
                                                     {category}
@@ -378,7 +441,7 @@ const ListingPage = () => {
                             </div>
 
                             {/* Gender */}
-                            <div className="mb-6">
+                            <div className="mb-4 xl:mb-6 mx-4 xl:mx-0">
                                 <div
                                     className="flex justify-between items-center cursor-pointer"
                                     onClick={toggleDropdownGender}
@@ -387,22 +450,32 @@ const ListingPage = () => {
                                         Gender
                                     </h3>
                                     <FiChevronUp
-                                        className={`xl:w-6 xl:h-6 transform transition-transform duration-300 ${isOpenGender ? "rotate-180" : ""}`}
+                                        className={`xl:w-6 xl:h-6 transform transition-transform duration-300 ${
+                                            isOpenGender ? "rotate-180" : ""
+                                        }`}
                                     />
                                 </div>
                                 {isOpenGender && (
-                                    <div className="flex flex-col gap-2 xl:mt-4">
-                                        {["Men", "Women"].map((category) => (
+                                    <div className="flex flex-col gap-2 mt-4">
+                                        {["Men", "Women"].map((gender) => (
                                             <label
-                                                key={category}
+                                                key={gender}
                                                 className="flex items-center"
                                             >
                                                 <input
                                                     type="checkbox"
                                                     className="mr-4 w-4 h-4 outline-none border-2 border-gray-400 rounded-sm accent-[#1F1A24]"
+                                                    checked={selectedGender.includes(
+                                                        gender
+                                                    )}
+                                                    onChange={() =>
+                                                        handleGenderChange(
+                                                            gender
+                                                        )
+                                                    }
                                                 />
                                                 <span className="text-secondary_black text-x[16px] font-semibold">
-                                                    {category}
+                                                    {gender}
                                                 </span>
                                             </label>
                                         ))}
@@ -411,7 +484,7 @@ const ListingPage = () => {
                             </div>
 
                             {/* Price */}
-                            <div className="mb-6">
+                            <div className="mb-4 xl:mb-6 mx-4 xl:mx-0">
                                 <div
                                     className="flex justify-between items-center cursor-pointer"
                                     onClick={toggleDropdownPrice}
@@ -448,13 +521,33 @@ const ListingPage = () => {
                                     </div>
                                 )}
                             </div>
+
+                            {/* Apply & Reset cho mobile */}
+                            <div className="block lg:hidden border-b-2 border-black rounded-2xl">
+                                <div className="flex justify-between items-center mx-4 xl:mx-0 mb-10  flex-1 gap-4">
+                                    <button
+                                        className="flex-1 px-4 py-2 border border-black text-[#232321] rounded-lg font-rubik font-medium text-xs"
+                                        onClick={resetFilters}
+                                    >
+                                        RESET
+                                    </button>
+                                    <button
+                                        className="flex-1 px-4 py-2 border border-black bg-black text-white rounded-lg font-rubik font-medium text-xs"
+                                        onClick={() =>
+                                            setShowFilter(!showFilter)
+                                        }
+                                    >
+                                        APPLY
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex flex-col flex-col flex-1">
+                <div className="flex flex-col flex-1">
                     {/* Product List Section */}
-                    <div className=" grid lg:grid-cols-3 gap-4">
+                    <div className=" grid grid-cols-2 lg:grid-cols-3 gap-4">
                         {currentProducts.map((item, index) => (
                             <ProductCard
                                 key={index}
@@ -465,8 +558,12 @@ const ListingPage = () => {
                     </div>
 
                     {/* Pagination */}
-                    <div className="flex items-center justify-center xl:py-[30px] xl:rounded-lg gap-4">
-                        <div className="flex items-center justify-between px-4 py-2 border border-black bg-transparent rounded-lg gap-1 cursor-pointer">
+                    <div className="flex items-center justify-center py-[20px] lg:py-[30px] xl:rounded-lg gap-4">
+                        <div
+                            className="flex items-center justify-between px-4 py-2 border border-black bg-transparent rounded-lg gap-1 cursor-pointer
+                        hover:bg-[#D1D1D1] transition duration-300
+                        "
+                        >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="16"
@@ -487,7 +584,7 @@ const ListingPage = () => {
                                     handlePageChange(currentPage - 1)
                                 }
                                 disabled={currentPage === 1}
-                                className="font-rubik"
+                                className="font-rubik hidden lg:block"
                             >
                                 PREVIOUS
                             </p>
@@ -497,7 +594,7 @@ const ListingPage = () => {
                             <button
                                 key={i + 1}
                                 onClick={() => handlePageChange(i + 1)}
-                                className={`font-rubik px-6 py-2 border rounded-lg border-black ${
+                                className={`font-rubik px-6 py-2 border rounded-lg border-black hover:bg-[#D1D1D1] transition duration-300 ${
                                     currentPage === i + 1
                                         ? "bg-black text-white"
                                         : "bg-transparent text-black"
@@ -506,13 +603,16 @@ const ListingPage = () => {
                                 {i + 1}
                             </button>
                         ))}
-                        <div className="flex items-center justify-between px-4 py-2 border border-black bg-transparent rounded-lg gap-1 cursor-pointer">
+                        <div
+                            className="flex items-center justify-between px-4 py-2 border border-black bg-transparent rounded-lg gap-1 cursor-pointer
+                        hover:bg-[#D1D1D1] transition duration-300"
+                        >
                             <p
                                 onClick={() =>
                                     handlePageChange(currentPage - 1)
                                 }
                                 disabled={currentPage === 1}
-                                className="font-rubik"
+                                className="font-rubik hidden lg:block"
                             >
                                 NEXT
                             </p>
