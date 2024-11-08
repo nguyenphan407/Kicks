@@ -5,13 +5,18 @@
 
 
 -- Insert data into the categories table
-INSERT INTO categories (category_name) 
-VALUES 
-('Casual shoes'),
-('Runners'),
-('Sandals'),
-('Hiking'),
-('Sneaker'),
-('Basketball'),
-('Golf'),
-('Outdoor');
+-- INSERT INTO categories (category_name) 
+-- VALUES 
+-- ('Casual shoes'),
+-- ('Runners'),
+-- ('Sandals'),
+-- ('Hiking'),
+-- ('Sneaker'),
+-- ('Basketball'),
+-- ('Golf'),
+-- ('Outdoor');
+-- Xóa tất cả các bản ghi trong bảng products
+DELETE FROM products;
+
+-- Đặt lại AUTO_INCREMENT về 1
+ALTER TABLE products AUTO_INCREMENT = 1;
