@@ -1,14 +1,14 @@
-use kicks;
+-- use kicks;
 
-delete from users where user_id = 1 or user_id = 2;
+-- delete from users where user_id = 1 or user_id = 2;
 
-select * from users;
+-- select * from users;
 
-select * from `users` where `email` = 'nguyen12345@gmail.com' limit 1;
+-- select * from `users` where `email` = 'nguyen12345@gmail.com' limit 1;
 
-select * from products;
+-- select * from products;
 
-select * from personal_access_tokens;
+-- select * from personal_access_tokens;
 
 -- Insert data into the locations table
 INSERT INTO locations (user_id, address, province, district, city) 

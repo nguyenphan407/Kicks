@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 export const ShopConText = createContext();
 
 const ShopContextProvider = ({ children }) => {
-    const [products, setProducts] = useState([]); // Thay thế products tĩnh bằng state
+    const [products, setProducts] = useState([]);
     const currency = "$";
     const delivery_fee = "6.99";
 
@@ -15,9 +15,9 @@ const ShopContextProvider = ({ children }) => {
             try {
                 const response = await productApi.getAll();
                 const productsData = response.data.map(product => {
-                    // Tách chuỗi image thành mảng URL
-                    const imageUrls = product.image.split(',').map(url => `http://localhost:8000/${url.trim()}`);
-                    return { ...product, image: imageUrls };
+                    // Chuyển đổi mảng đối tượng images thành mảng URL
+                    const imageUrls = product.images.map(imageObj => imageObj.image);
+                    return { ...product, images: imageUrls }; // Lưu imageUrls vào product.images
                 });
                 setProducts(productsData);
             } catch (error) {

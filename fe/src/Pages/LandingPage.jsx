@@ -8,18 +8,18 @@ import Footer from "../Components/Layout/Footer";
 import NewsletterSignup from "../Components/User/NewsletterSignup";
 
 const LandingPage = () => {
-  return (
-    <div>
-      <div className="container mx-auto">
-        <Hero />
-        <NewDrops />
-      </div>
-      <Categories />
-      <div className="container mx-auto">
-        <Reviews />
-      </div>
-    </div>
-  );
+    return (
+        <div>
+            <div className="container mx-auto">
+                <Hero />
+                <NewDrops />
+            </div>
+            <Categories />
+            <div className="container mx-auto">
+                <Reviews />
+            </div>
+        </div>
+    );
 };
 
 export default LandingPage;
