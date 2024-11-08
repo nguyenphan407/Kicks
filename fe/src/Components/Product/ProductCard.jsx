@@ -12,7 +12,7 @@ const ProductCard = ({ product, currency }) => {
         {/* Image Wrapper */}
         <div className="overflow-hidden rounded-2xl xl:rounded-[28px] w-full h-full">
           <img
-            src={product.image[0]}
+            src={product.images[0]} // Sử dụng product.images thay vì product.image
             alt={product.name}
             className="object-cover w-full h-full transition-transform duration-300 ease-in-out hover:scale-105"
           />
@@ -22,8 +22,8 @@ const ProductCard = ({ product, currency }) => {
         </span>
       </div>
       <h3 className="font-rubik cursor-pointer px-2 text-[16px] xl:text-[24px] font-semibold text-center h-[48px] xl:h-[35px] overflow-hidden">
-  {product.name}
-</h3>
+        {product.name}
+      </h3>
 
       <button className="mt-2 xl:mt-4 bg-secondary_black px-4 py-2 w-[100%] xl:py-4 text-center rounded-lg whitespace-nowrap transform transition duration-400 hover:bg-primary_blue hover:scale-[1.02] max-sm:text-xs">
         <span className="text-white ">
@@ -44,7 +44,7 @@ ProductCard.propTypes = {
     product_id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
     price: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-    image: PropTypes.arrayOf(PropTypes.string).isRequired,
+    images: PropTypes.arrayOf(PropTypes.string).isRequired, // Cập nhật từ 'image' thành 'images'
   }).isRequired,
   currency: PropTypes.string.isRequired,
 };
