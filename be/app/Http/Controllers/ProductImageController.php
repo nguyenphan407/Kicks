@@ -16,11 +16,6 @@ class ProductImageController extends Controller
         $uploadApi = new UploadApi();
         $uploadResult = $uploadApi->upload($image, [
             'folder' => 'home',
-            'transformation' => [
-                'width' => 400,
-                'height' => 300,
-                'crop' => 'fill',
-            ],
         ]);
 
         $productImage = new  ProductImage();
