@@ -5,9 +5,10 @@ import { FiChevronUp, FiChevronDown } from "react-icons/fi";
 import ProductCard from "../Components/Product/ProductCard";
 
 const ListingPage = () => {
+    // State hiển thị filer
     const [showFilter, setShowFilter] = useState(false);
 
-    // Reset lại filter cho button reset
+    // Đặt lại filter
     const resetFilters = () => {
         setSelectedSize(null);
         setSelectedColors([]);
@@ -17,21 +18,24 @@ const ListingPage = () => {
         setSelectedGender([]);
     };
 
+    // Hiển thị hoặc ẩn bộ lọc
     const handleShowFilter = (showFilter) => {
         setShowFilter(!showFilter);
     };
 
-    const [selectedSize, setSelectedSize] = useState(null); // lưu size người dùng chọn
-    const outOfStockSizes = [39, 41, 44];
-    const sizes = [38, 39, 40, 41, 42, 43, 44, 45, 46, 47];
+    // State lưu các lựa chọn của người dùng
+    const [selectedSize, setSelectedSize] = useState(null); // Lựa chọn size
+    const outOfStockSizes = [39, 41, 44]; // Các size hết hàng
+    const sizes = [38, 39, 40, 41, 42, 43, 44, 45, 46, 47]; // Danh sách size khả dụng
+
+    // Lựa chọn size, kiểm tra size có sẵn
     const handleSizeClick = (size) => {
         if (!outOfStockSizes.includes(size)) {
-            // nếu không có trong hết hàng thì cập nhật size người dùng chọn
             setSelectedSize(size);
         }
     };
 
-    // Select Color
+    // Lựa chọn màu
     const [selectedColors, setSelectedColors] = useState([]);
     const colors = [
         { name: "Dark Blue", colorClass: "#4A69E2" },
@@ -45,114 +49,165 @@ const ListingPage = () => {
         { name: "Dark Brown", colorClass: "#925513" },
         { name: "Light Brown", colorClass: "#BB8056" },
     ];
+
+    // Xử lý lựa chọn màu
     const handleColorClick = (colorName) => {
         setSelectedColors((prevSelectedColors) => {
             if (prevSelectedColors.includes(colorName)) {
-                // nếu màu đã được chọn thì bỏ chọn
                 return prevSelectedColors.filter(
                     (color) => color !== colorName
                 );
             } else {
-                // nếu màu chưa được chọn thì thêm màu vào []
                 return [...prevSelectedColors, colorName];
             }
         });
     };
 
+    // State lưu giá, danh mục, giới tính
     const [price, setPrice] = useState(0);
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [selectedGender, setSelectedGender] = useState([]);
-    // cập nhật khi người dùng chọn hoặc bỏ chọn các mục trong Categories
-    const handleCategoryChange = (category) => {
+
+    // Bảng ánh xạ tên danh mục thành id
+    const categoryNameToId = {
+        "Casual shoes": "1",
+        Runners: "2",
+        Hiking: "3",
+        Sneaker: "4",
+        Basketball: "5",
+        Golf: "6",
+        Outdoor: "7",
+    };
+
+    // Cập nhật lựa chọn danh mục
+    const handleCategoryChange = (index) => {
         setSelectedCategories((prevSelectedCategories) => {
-            if (prevSelectedCategories.includes(category)) {
-                // Nếu đã chọn thì bỏ chọn
-                return prevSelectedCategories.filter(
-                    (item) => item !== category
-                );
+            if (prevSelectedCategories.includes(index)) {
+                return prevSelectedCategories.filter((item) => item !== index);
             } else {
-                // Nếu chưa chọn thì thêm vào
-                return [...prevSelectedCategories, category];
+                return [...prevSelectedCategories, index];
             }
         });
     };
-    // cập nhật khi người dùng chọn hoặc bỏ chọn các mục trong Gender
+
+    // Cập nhật lựa chọn giới tính
     const handleGenderChange = (gender) => {
         setSelectedGender((prevSelectedGender) => {
             if (prevSelectedGender.includes(gender)) {
-                // Nếu đã chọn thì bỏ chọn
                 return prevSelectedGender.filter((item) => item !== gender);
             } else {
-                // Nếu chưa chọn thì thêm vào
                 return [...prevSelectedGender, gender];
             }
         });
     };
 
-    // Sort Option
+    // State cho tuỳ chọn sắp xếp
     const [selected, setSelected] = useState("Default");
     const [isOpen, setIsOpen] = useState(false);
     const options = ["Default", "a → z", "z → a", "Low to high", "High to low"];
 
-    // toggle Dropdown Refine
+    // Các state để điều khiển mở/đóng dropdown
     const [isOpenRefine, setIsOpenRefine] = useState(true);
-    const toggleDropdownRefine = () => {
-        setIsOpenRefine(!isOpenRefine);
-    };
+    const toggleDropdownRefine = () => setIsOpenRefine(!isOpenRefine);
 
-    // toggle Dropdown Size
     const [isOpenSize, setIsOpenSize] = useState(true);
-    const toggleDropdownSize = () => {
-        setIsOpenSize(!isOpenSize);
-    };
+    const toggleDropdownSize = () => setIsOpenSize(!isOpenSize);
 
-    // toggle Dropdown Color
     const [isOpenColor, setIsOpenColor] = useState(true);
-    const toggleDropdownColor = () => {
-        setIsOpenColor(!isOpenColor);
-    };
+    const toggleDropdownColor = () => setIsOpenColor(!isOpenColor);
 
-    // toggle Dropdown Categories
     const [isOpenCategories, setIsOpenCategories] = useState(true);
-    const toggleDropdownCategories = () => {
+    const toggleDropdownCategories = () =>
         setIsOpenCategories(!isOpenCategories);
-    };
-    // toggle Dropdown Gender
+
     const [isOpenGender, setIsOpenGender] = useState(true);
     const toggleDropdownGender = () => setIsOpenGender(!isOpenGender);
 
-    // toggle Dropdown Price
     const [isOpenPrice, setIsOpenPrice] = useState(true);
-    const toggleDropdownPrice = () => {
-        setIsOpenPrice(!isOpenPrice);
-    };
+    const toggleDropdownPrice = () => setIsOpenPrice(!isOpenPrice);
 
     // Phân trang
     const { products } = useContext(ShopConText);
     const [filterProducts, setFilterProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const ITEM_PER_PAGE = 9; // Số sản phẩm tối đa hiển thị trên mỗi trang
+    const ITEM_PER_PAGE = 9; // Số sản phẩm hiển thị mỗi trang
 
-    useEffect(() => {
-        setFilterProducts(products);
-    }, [products]);
-
-    // Tính tổng số trang làm tròn lên
+    // Tính tổng số trang và sản phẩm của trang hiện tại
     const totalPages = Math.ceil(filterProducts.length / ITEM_PER_PAGE);
-
-    // Tính toán các sản phẩm hiển thị trên trang hiện tại
     const startIndex = (currentPage - 1) * ITEM_PER_PAGE;
     const endIndex = startIndex + ITEM_PER_PAGE;
     const currentProducts = filterProducts.slice(startIndex, endIndex);
 
-    const handlePageChange = (page) => {
-        setCurrentPage(page);
-    };
+    // Thay đổi trang
+    const handlePageChange = (page) => setCurrentPage(page);
 
+    // Cuộn lên đầu trang khi trang thay đổi
     useEffect(() => {
-        // Cuộn lên đầu trang khi `currentPage` thay đổi
         window.scrollTo(0, 0);
     }, [currentPage]);
+
+    // Áp dụng bộ lọc
+    const applyFilter = () => {
+        let productsCopy = products.slice();
+
+        if (selectedCategories.length > 0) {
+            productsCopy = productsCopy.filter((item) =>
+                selectedCategories.includes(item.category_id)
+            );
+        }
+        if (selectedColors.length > 0) {
+            productsCopy = productsCopy.filter((item) =>
+                selectedColors.includes(item.color)
+            );
+        }
+        if (selectedGender.length > 0) {
+            productsCopy = productsCopy.filter((item) =>
+                selectedGender.includes(item.gender)
+            );
+        }
+        if (price > 0) {
+            productsCopy = productsCopy.filter((item) => item.price <= price);
+        }
+
+        setFilterProducts(productsCopy);
+    };
+
+    // Thiết lập danh sách sản phẩm khi dữ liệu thay đổi
+    useEffect(() => {
+        setFilterProducts(products);
+    }, [products]);
+
+    // Áp dụng bộ lọc khi lựa chọn thay đổi
+    useEffect(() => {
+        applyFilter();
+    }, [selectedCategories, selectedColors, price]);
+
+    // Sắp xếp sản phẩm
+    const sortProduct = () => {
+        let fpCopy = filterProducts.slice();
+
+        switch (selected) {
+            case "Low to high":
+                setFilterProducts(fpCopy.sort((a, b) => a.price - b.price));
+                break;
+            case "High to low":
+                setFilterProducts(fpCopy.sort((a, b) => b.price - a.price));
+                break;
+            case "a -> z":
+                setFilterProducts(fpCopy.sort((a, b) => a.name.localeCompare(b.name)));
+                break;
+            case "z -> a":
+                setFilterProducts(fpCopy.sort((a, b) => b.name.localeCompare(a.name)));
+                break;
+            default:
+                applyFilter();
+                break;
+        }
+    };
+    // Gọi hàm sortProduct khi `selected` thay đổi
+    useEffect(() => {
+        sortProduct();
+    }, [selected]);
 
     return (
         <div className="container">
@@ -388,7 +443,6 @@ const ListingPage = () => {
                                     </div>
                                 )}
                             </div>
-
                             {/* Categories */}
                             <div className="mb-4 xl:mb-6 mx-4 xl:mx-0">
                                 <div
@@ -409,12 +463,13 @@ const ListingPage = () => {
                                         {[
                                             "Casual shoes",
                                             "Runners",
+                                            "Sandals",
                                             "Hiking",
                                             "Sneaker",
                                             "Basketball",
                                             "Golf",
                                             "Outdoor",
-                                        ].map((category) => (
+                                        ].map((category, index) => (
                                             <label
                                                 key={category}
                                                 className="flex items-center"
@@ -423,11 +478,11 @@ const ListingPage = () => {
                                                     type="checkbox"
                                                     className="mr-4 w-4 h-4 outline-none border-2 border-gray-400 rounded-sm accent-[#1F1A24]"
                                                     checked={selectedCategories.includes(
-                                                        category
+                                                        index + 1
                                                     )}
                                                     onChange={() =>
                                                         handleCategoryChange(
-                                                            category
+                                                            index + 1
                                                         )
                                                     }
                                                 />
