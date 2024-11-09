@@ -34,7 +34,7 @@ class ProductController extends Controller
             Redis::zincrby("user:{$userId}:viewed_products", 1, $id);
         }
         // Tìm sản phẩm theo ID
-        $product = Product::with("images")->where("product_id", $id)->get();
+        $product = Product::with(["images", "sizes"])->where("product_id", $id)->get();
 
         // Nếu không tìm thấy sản phẩm
         if (!$product) {

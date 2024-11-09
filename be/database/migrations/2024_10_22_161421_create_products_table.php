@@ -18,7 +18,6 @@ return new class extends Migration
             $table->text('description');
             $table->decimal('price', 10, 2);
             $table->integer('stock_quantity');
-            $table->string('size', 10);
             $table->string('color', 30);
             $table->foreignId('category_id')->references('category_id')->on('categories')->onDelete('cascade');
             $table->timestamps();
