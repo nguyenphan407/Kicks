@@ -25,9 +25,9 @@ const MayLike = () => {
   };
 
   return (
-    <div className="mt-[24px] xl:mt-[90px] mb-[128px] font-rubik">
+    <div className="mt-[24px] xl:mt-[90px] font-rubik">
       <div className="flex items-end justify-between mb-[24px] xl:mb-8">
-        <h2 className="xl:uppercase w-[172px] xl:w-[589px] font-semibold xl:text-medium text-[24px] leading-[95%]">
+        <h2 className=" w-[172px] xl:w-[589px] font-semibold xl:text-5xl text-[24px] leading-[95%]">
           You may also like
         </h2>
         <div className="flex gap-4">
