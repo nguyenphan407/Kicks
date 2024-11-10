@@ -25,7 +25,8 @@ const ProductCard = ({ product, currency }) => {
         {product.name}
       </h3>
 
-      <button className="font-rubik mt-2 xl:mt-4 bg-secondary_black px-4 py-2 w-[100%] xl:py-4 text-center rounded-lg whitespace-nowrap transform transition duration-400 hover:bg-primary_blue hover:scale-[1.02] max-sm:text-xs">
+      <button className="font-rubik mt-2 xl:mt-4 bg-secondary_black px-4 py-2 w-[100%] xl:py-4 text-center rounded-lg whitespace-nowrap 
+      transform transition duration-400 hover:bg-primary_blue hover:scale-[1.02] max-sm:text-xs">
         <span className="text-white ">
           View Product -{" "}
           <span className="text-secondary_yellow">
