@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('brand', 50);
             $table->text('description');
             $table->decimal('price', 10, 2);
-            $table->integer('stock_quantity');
+            $table->integer('stock_quantity')->default(0);
             $table->string('color', 30);
             $table->foreignId('category_id')->references('category_id')->on('categories')->onDelete('cascade');
             $table->timestamps();

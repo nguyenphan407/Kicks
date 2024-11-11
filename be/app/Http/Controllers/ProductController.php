@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\ProductSize;
 use Cloudinary\Api\Upload\UploadApi;
 use Cloudinary\Cloudinary;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class ProductController extends Controller
     public function index()
     {
         // Lấy tất cả sản phẩm
-        $products = Product::with("images")->get();
+        $products = Product::with(["images", "sizes"])->get();
 
         // Trả về JSON danh sách sản phẩm
         return response()->json($products);
@@ -53,14 +54,19 @@ class ProductController extends Controller
             'name'        => 'required|string|max:100',
             'description' => 'nullable|string',
             'price'       => 'required|numeric',
-            'stock_quantity' => 'required|integer',
-            'size'        => 'nullable|string|max:10',
             'color'       => 'nullable|string|max:30',
             'category_id' => 'required|integer|exists:categories,category_id',
             'brand'       => 'nullable|string|max:50',
         ]);
         // Tạo sản phẩm mới
         $product = Product::create($validatedData);
+
+        $productSize = new ProductSize();
+        $productSize->product_id = $product->product_id;
+        $productSize->size = $request->size;
+        $productSize->quantity = $request->quantity;
+        $productSize->save();
+
         try {
             $images = $request->file('images');
 
@@ -94,8 +100,6 @@ class ProductController extends Controller
             'name'        => 'sometimes|nullable|string|max:100',
             'description' => 'nullable|string',
             'price'       => 'sometimes|nullable|numeric',
-            'stock_quantity' => 'sometimes|nullable|integer',
-            'size'        => 'nullable|string|max:10',
             'color'       => 'nullable|string|max:30',
             'category_id' => 'sometimes|nullable|integer|exists:categories,category_id',
             'brand'       => 'nullable|string|max:50',
@@ -103,6 +107,18 @@ class ProductController extends Controller
 
         // Cập nhật sản phẩm
         $product->update($validatedData);
+
+        if ($request->has("quantity")){
+            $productSize = ProductSize::where('product_id', $product->product_id)
+                            ->where('size', $request->size)
+                            ->first();
+            if ($productSize) {
+                return response()->json("Size not found");
+            }
+            else {
+                $productSize->quantity = $request->quantity;
+            }
+        }
 
         // Cap nhat anh san pham
         if ($request->hasFile("images")) {
@@ -140,8 +156,12 @@ class ProductController extends Controller
         }
 
         $productImage = ProductImage::where("product_id", $id)->get();
+        $productSize = ProductSize::where("product_id", $id)->get();
 
         $product->delete();
+        foreach ($productSize as $size) {
+            $size->delete();
+        }
 
         foreach ($productImage as $image) {
             ProductImageController::delete($image->public_id);
