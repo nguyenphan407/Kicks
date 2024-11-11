@@ -1,0 +1,43 @@
+[
+    {
+        "product_id": 9,
+        "name": "New Balance 574",
+        "brand": "New Balance",
+        "description": "Classic sneakers with comfortable fit and durable materials.",
+        "price": "165.00",
+        "category_name": "Runners",
+        "color": "Light Orange",
+        "gender": "Men",
+        "variants": [
+            { "size": 38, "stock_quantity": 10 },
+            { "size": 39, "stock_quantity": 0 },
+            { "size": 40, "stock_quantity": 15 },
+            { "size": 41, "stock_quantity": 5 },
+            { "size": 42, "stock_quantity": 0 },
+            { "size": 43, "stock_quantity": 7 },
+            { "size": 44, "stock_quantity": 5 },
+            { "size": 45, "stock_quantity": 12 },
+            { "size": 46, "stock_quantity": 0 },
+            { "size": 47, "stock_quantity": 5 }
+        ],
+        "images": [
+            "https://res.cloudinary.com/dlc1n2y1f/image/upload/v1731156624/home/appbdwyo3t1fom4rvrak.webp",
+            "https://res.cloudinary.com/dlc1n2y1f/image/upload/v1731156626/home/is6mnu1iiwlor3ceuobs.webp",
+            "https://res.cloudinary.com/dlc1n2y1f/image/upload/v1731156629/home/cqlwngwusmtpakm7krw2.jpg",
+            "https://res.cloudinary.com/dlc1n2y1f/image/upload/v1731156631/home/fbqie7dy70d7t1tizvds.webp"
+        ]
+    },
+
+    {
+        "product_id": 9,
+        "name": "New Balance 574",
+        "price": "165.00",
+        "category_name": "Runners",
+        "images": "https://res.cloudinary.com/dlc1n2y1f/image/upload/v1731156631/home/fbqie7dy70d7t1tizvds.webp"
+    }, 
+
+    {
+        "category_id": 1,
+        "category_name": "Runners"
+    }
+]

@@ -20,7 +20,8 @@ const NewDrops = () => {
                     Don't miss out new drops
                 </h2>
                 <NavLink to="/listing" className="items-center">
-                    <button className="bg-primary_blue text-white xl:py-[15.5px] xl:px-8 px-4 py-[11.5px] rounded-lg font-medium text-[14px] transform transition duration-400 hover:bg-[#294acc] hover:scale-[1.02]">
+                    <button className="bg-primary_blue text-white xl:py-[15.5px] xl:px-8 px-4 py-[11.5px] rounded-lg font-medium text-[14px] 
+                    transform transition duration-400 hover:bg-[#294acc] hover:scale-[1.02]">
                         SHOP NEW DROPS
                     </button>
                 </NavLink>
