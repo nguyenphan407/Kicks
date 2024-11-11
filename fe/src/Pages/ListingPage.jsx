@@ -366,7 +366,7 @@ const ListingPage = () => {
                             </div>
 
                             {/* Size */}
-                            <div className="mb-4 xl:b-6 mx-4 xl:mx-0">
+                            {/* <div className="mb-4 xl:b-6 mx-4 xl:mx-0">
                                 <div
                                     className="flex justify-between items-center"
                                     onClick={toggleDropdownSize}
@@ -406,7 +406,7 @@ const ListingPage = () => {
                                         ))}
                                     </div>
                                 )}
-                            </div>
+                            </div> */}
 
                             {/* Color Filter */}
                             <div className="mb-4 xl:mb-6 mx-4 xl:mx-0">
