@@ -6,8 +6,13 @@ import { images } from "../assets/assets";
 import MayLike from "../Components/Product/MayLike";
 
 const ProductDetailPage = () => {
+    // Luôn lên đầu trang
+    const [currentPage, setCurrentPage] = useState(1);
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    });
     const { productId } = useParams();
-    const { products } = useContext(ShopConText);
+    const { products, addToCart } = useContext(ShopConText);
     const [productData, setProductData] = useState(null);
     // Ánh xạ màu
     const colors = {
@@ -243,6 +248,7 @@ const ProductDetailPage = () => {
                             <button
                                 className="font-rubik text-[14px] font-medium rounded-lg flex-1 bg-secondary_black py-[13.5px] text-white
                             transform transition duration-400 hover:bg-primary_blue hover:scale-[1.005]"
+                            onClick={() => addToCart(productData.product_id, selectedSize)}
                             >
                                 ADD TO CART
                             </button>

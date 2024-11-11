@@ -5,7 +5,8 @@ export default {
         extend: {
             fontFamily: {
                 sans: ["Open Sans", "sans-serif"], // Sử dụng Open Sans cho font sans
-                rubik: ["Rubik", "sans-serif"], // Sử dụng Rubik cho font rubik
+                rubik: ["Rubik", "sans-serif"],
+                inter: ["Inter", "sans-serif"] // Sử dụng Rubik cho font rubik
             },
             container: {
                 center: true, // Căn giữa container

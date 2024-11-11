@@ -6,6 +6,7 @@ import MenuIcon from "./icons/menu_icon.svg";
 import SearchIcon from "./icons/search_icon.svg";
 import UserIcon from "./icons/user_icon.svg";
 import LogoIconWhite from "./icons/Logo-white.svg";
+import CartIcon from "./icons/cart_icon.svg"
 
 // Import images
 import MainHeroImage from "./images/mainHero.jpg";
@@ -37,6 +38,7 @@ export const icons = {
   SearchIcon,
   UserIcon,
   LogoIconWhite,
+  CartIcon,
 };
 
 // Export all images in a single object
