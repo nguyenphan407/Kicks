@@ -26,8 +26,8 @@ Kicks is a sleek and modern **e-commerce website** designed for showcasing and s
 First, clone the repo to your local machine:
 
 ```bash
-git clone https://github.com/Vo-Dinh-Quan/Kicks-Shoes.git
-cd Kicks-Shoes
+https://github.com/nguyenphan407/Kicks.git
+cd Kicks
 ```
 
 ### 2. Setting Up the Front-end
@@ -51,7 +51,10 @@ yarn dev
 ```
 
 - The frontend will be accessible at `http://localhost:5173`.
-- The admin will be accessible at `http://localhost:5173`.
+- The admin will be accessible at `http://localhost:5174`.
+
+Note: The admin folder setup is similar to the fe (front-end) folder.
+
 
 ### 3. Setting Up the Back-end
 
