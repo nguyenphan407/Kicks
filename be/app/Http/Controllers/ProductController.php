@@ -42,7 +42,7 @@ class ProductController extends Controller
         });
 
         // Trả về chi tiết sản phẩm
-        return $product ? response()->json($product) : response()->json(['error' => 'Product not found'], 404);
+        return $product ? response()->json($this->formatProduct($product->toArray())) : response()->json(['error' => 'Product not found'], 404);
     }
 
     // 3. Tạo mới một sản phẩm
@@ -74,7 +74,7 @@ class ProductController extends Controller
         }
 
         // Trả về sản phẩm mới tạo
-        return response()->json($product, 201);
+        return response()->json($$this->formatProduct($product->toArray()), 201);
     }
 
     // 4. Cập nhật sản phẩm
@@ -239,4 +239,13 @@ class ProductController extends Controller
             $image->delete();
         }
     }
+    public function formatProduct($product)
+{
+    // Chuyển đổi mảng images thành mảng chỉ chứa URLs
+    $product['images'] = array_map(function ($image) {
+        return $image['image'];
+    }, $product['images']);
+
+    return $product;
+}
 }
