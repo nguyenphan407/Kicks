@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useState } from "react";
 import productApi from "../apis/productApi";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export const ShopConText = createContext();
 
@@ -10,11 +11,14 @@ const ShopContextProvider = ({ children }) => {
     const currency = "$";
     const delivery_fee = "6.99";
     const [cartItems, setCartItems] = useState({});
+    const navigate = useNavigate();
 
     // Thêm sản phẩm vào giỏ hàng
     const addToCart = async (itemId, size) => {
         if(!size) {
-            toast.error('Please select a size');
+            toast.error('Please select a size', {
+                autoClose: 1500 // Thông báo sẽ tự đóng sau 3 giây
+            });
             return;
         }
 
@@ -30,7 +34,9 @@ const ShopContextProvider = ({ children }) => {
             cartData[itemId][size] = 1;
         }
         setCartItems(cartData);
-        toast.success('Added to cart successfully!')
+        toast.success('Added to cart successfully!', {
+            autoClose: 1500 // Thông báo sẽ tự đóng sau 3 giây
+          });
     }
 
     useEffect(() => {
@@ -75,6 +81,33 @@ const ShopContextProvider = ({ children }) => {
         fetchProducts();
     }, []);
 
+    // Cập nhật số lượng sản phẩm
+    const updateQuantity = async (itemId, size, quantity) => {
+        let cartData = structuredClone(cartItems);
+        cartData[itemId][size] = quantity;
+        setCartItems(cartData);
+    }
+
+
+    const getCartAmount = () => {
+        let totalAmount = 0;
+        for (const items in cartItems) { // duyệt qua từng sản phẩm trong cartItem để lấy info về giá thông qua product
+            const itemInfo = products.find((product) => product.product_id === parseInt(items));
+            if (!itemInfo) continue;
+    
+            for (const item in cartItems[items]) { // duyệt qua từng kích thước bên trong từng sản phẩm
+                const quantity = cartItems[items][item]; 
+                if (quantity > 0) { // nếu số lượng của size của sản phẩm cụ thể nào đó > 0
+                    totalAmount += (itemInfo.price || 0) * quantity;
+                }
+            }
+        }
+        return totalAmount;
+    };
+    
+    
+    
+
     const value = {
         products,
         currency,
@@ -82,6 +115,9 @@ const ShopContextProvider = ({ children }) => {
         addToCart,
         cartItems,
         getCartCount,
+        updateQuantity,
+        getCartAmount,
+        navigate,
     };
 
     return (
