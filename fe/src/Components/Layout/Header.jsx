@@ -102,6 +102,19 @@ const Header = () => {
                     className="w-7 hidden xl:block cursor-pointer"
                     alt="Search Icon"
                 />
+                
+                <Link to="/cart" className="relative">
+                    <img
+                        className="sm:scale-[0.9] scale-[0.8] xl:scale-100 w-6 cursor-pointer items-center"
+                        src={icons.CartIcon} // Icon người dùng từ assets.js
+                        alt="User Icon"
+                    />
+                    {getCartCount() > 0 && (
+                        <p className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-[#232321] text-white aspect-square rounded-full text-[8px]">
+                            {getCartCount()}
+                        </p>
+                    )}
+                </Link>
                 <div className="relative">
                     {/* Icon user */}
                     <img
@@ -161,19 +174,6 @@ const Header = () => {
                         </p>
                     </div>
                 </div>
-
-                <Link to="/cart" className="relative">
-                    <img
-                        className="sm:scale-[0.9] scale-[0.8] xl:scale-100 w-6 cursor-pointer items-center"
-                        src={icons.CartIcon} // Icon người dùng từ assets.js
-                        alt="User Icon"
-                    />
-                    {getCartCount() > 0 && (
-                        <p className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-[#232321] text-white aspect-square rounded-full text-[8px]">
-                            {getCartCount()}
-                        </p>
-                    )}
-                </Link>
             </div>
 
             {/* Sidebar menu */}

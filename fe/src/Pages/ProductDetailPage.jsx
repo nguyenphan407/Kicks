@@ -247,7 +247,7 @@ const ProductDetailPage = () => {
                         <div className="flex gap-2 justify-between items-center">
                             <button
                                 className="font-rubik text-[14px] font-medium rounded-lg flex-1 bg-secondary_black py-[13.5px] text-white
-                            transform transition duration-400 hover:bg-primary_blue hover:scale-[1.005]"
+                            transform transition duration-400 hover:bg-primary_blue uppercase hover:scale-[1.003] hover:text-white active:scale-[99%]"
                             onClick={() => addToCart(productData.product_id, selectedSize)}
                             >
                                 ADD TO CART
