@@ -7,6 +7,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderItemController;
+use App\Http\Controllers\ProductSizeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -54,9 +55,9 @@ Route::group([
     Route::get('filter', [ProductController::class, 'filter']); // URL: /product/filter
     Route::get('recommend', [ProductController::class, 'recommendedProducts']); // URL: /product/recommend
     Route::post('store', [ProductController::class, 'store']); // URL: /product/store
+    Route::post('size/store', [ProductSizeController::class, 'store']); // URL: /product/size/store
     Route::patch('update/{id}', [ProductController::class, 'update']); // URL: /product/update/{id}
     Route::delete('delete/{id}', [ProductController::class, 'destroy']); // URL: /product/delete/{id}
-    
 });
 
 // Cart route
