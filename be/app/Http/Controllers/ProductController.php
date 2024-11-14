@@ -74,7 +74,7 @@ class ProductController extends Controller
         }
 
         // Trả về sản phẩm mới tạo
-        return response()->json($$this->formatProduct($product->toArray()), 201);
+        return response()->json($product);
     }
 
     // 4. Cập nhật sản phẩm

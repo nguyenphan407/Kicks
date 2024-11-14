@@ -3,15 +3,16 @@ import { images } from "../assets/assets";
 import { ShopConText } from "../context/ShopContext";
 import { FiChevronUp, FiChevronDown } from "react-icons/fi";
 import ProductCard from "../Components/Product/ProductCard";
-
+import Pagination from "../Components/Pagination";
 
 const ListingPage = () => {
     // State hiển thị filer
     const [showFilter, setShowFilter] = useState(false);
+    const [filterProducts, setFilterProducts] = useState([]);
+    const { products, filters } = useContext(ShopConText);
 
     // Đặt lại filter
     const resetFilters = () => {
-        setSelectedSize(null);
         setSelectedColors([]);
         setPrice(0);
         setFilterProducts(products);
@@ -22,18 +23,6 @@ const ListingPage = () => {
     // Hiển thị hoặc ẩn bộ lọc
     const handleShowFilter = (showFilter) => {
         setShowFilter(!showFilter);
-    };
-
-    // State lưu các lựa chọn của người dùng
-    const [selectedSize, setSelectedSize] = useState(null); // Lựa chọn size
-    const outOfStockSizes = [39, 41, 44]; // Các size hết hàng
-    const sizes = [38, 39, 40, 41, 42, 43, 44, 45, 46, 47]; // Danh sách size khả dụng
-
-    // Lựa chọn size, kiểm tra size có sẵn
-    const handleSizeClick = (size) => {
-        if (!outOfStockSizes.includes(size)) {
-            setSelectedSize(size);
-        }
     };
 
     // Lựa chọn màu
@@ -127,25 +116,11 @@ const ListingPage = () => {
     const [isOpenPrice, setIsOpenPrice] = useState(true);
     const toggleDropdownPrice = () => setIsOpenPrice(!isOpenPrice);
 
-    // Phân trang
-    const { products } = useContext(ShopConText);
-    const [filterProducts, setFilterProducts] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const ITEM_PER_PAGE = 9; // Số sản phẩm hiển thị mỗi trang
-
-    // Tính tổng số trang và sản phẩm của trang hiện tại
-    const totalPages = Math.ceil(filterProducts.length / ITEM_PER_PAGE);
-    const startIndex = (currentPage - 1) * ITEM_PER_PAGE;
-    const endIndex = startIndex + ITEM_PER_PAGE;
-    const currentProducts = filterProducts.slice(startIndex, endIndex);
-
-    // Thay đổi trang
-    const handlePageChange = (page) => setCurrentPage(page);
-
     // Cuộn lên đầu trang khi trang thay đổi
     useEffect(() => {
         window.scrollTo(0, 0);
-    }, [currentPage]);
+    }, [filters.page]); // Chạy lại khi `page` thay đổi
+    
 
     // Áp dụng bộ lọc
     const applyFilter = () => {
@@ -195,10 +170,14 @@ const ListingPage = () => {
                 setFilterProducts(fpCopy.sort((a, b) => b.price - a.price));
                 break;
             case "a -> z":
-                setFilterProducts(fpCopy.sort((a, b) => a.name.localeCompare(b.name)));
+                setFilterProducts(
+                    fpCopy.sort((a, b) => a.name.localeCompare(b.name))
+                );
                 break;
             case "z -> a":
-                setFilterProducts(fpCopy.sort((a, b) => b.name.localeCompare(a.name)));
+                setFilterProducts(
+                    fpCopy.sort((a, b) => b.name.localeCompare(a.name))
+                );
                 break;
             default:
                 applyFilter();
@@ -364,50 +343,6 @@ const ListingPage = () => {
                                     )}
                                 </div>
                             </div>
-
-                            {/* Size */}
-                            {/* <div className="mb-4 xl:b-6 mx-4 xl:mx-0">
-                                <div
-                                    className="flex justify-between items-center"
-                                    onClick={toggleDropdownSize}
-                                >
-                                    <h3 className="text-secondary_black xl:text-[16px] font-semibold font-rubik xl:uppercase">
-                                        Size
-                                    </h3>
-                                    <FiChevronUp
-                                        className={`xl:w-6 xl:h-6 transform transition-transform duration-300 ${
-                                            isOpenSize ? "rotate-180" : ""
-                                        }`}
-                                    />
-                                </div>
-                                {isOpenSize && (
-                                    <div className="flex flex-wrap gap-4 mt-4">
-                                        {sizes.map((size) => (
-                                            <button
-                                                key={size}
-                                                onClick={() =>
-                                                    handleSizeClick(size)
-                                                }
-                                                disabled={outOfStockSizes.includes(
-                                                    size
-                                                )}
-                                                className={`w-[50px] h-[50px] py-2 rounded-lg font-semibold ${
-                                                    selectedSize === size // nếu nút hiện tại là nút được chọn thì css nền đen
-                                                        ? "bg-black text-white"
-                                                        : outOfStockSizes.includes(
-                                                                size
-                                                            ) // nếu không có hàng thì nền xám
-                                                          ? "bg-[#D2D1D3] text-[#8F8C91] cursor-not-allowed "
-                                                          : "bg-white hover:bg-gray-300"
-                                                }`}
-                                            >
-                                                {size}
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
-                            </div> */}
-
                             {/* Color Filter */}
                             <div className="mb-4 xl:mb-6 mx-4 xl:mx-0">
                                 <div
@@ -604,7 +539,7 @@ const ListingPage = () => {
                 <div className="flex flex-col flex-1">
                     {/* Product List Section */}
                     <div className=" grid grid-cols-2 lg:grid-cols-3 gap-4">
-                        {currentProducts.map((item, index) => (
+                        {filterProducts.map((item, index) => (
                             <ProductCard
                                 key={index}
                                 product={item}
@@ -614,81 +549,8 @@ const ListingPage = () => {
                     </div>
 
                     {/* Pagination */}
-                    <div className="flex items-center justify-center py-[20px] lg:py-[30px] xl:rounded-lg gap-4">
-                        <div
-                            className="flex items-center justify-between px-4 py-2 border border-black bg-transparent rounded-lg gap-1 cursor-pointer
-                        hover:bg-[#D1D1D1] transition duration-300
-                        "
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 16 16"
-                                fill="none"
-                            >
-                                <path
-                                    d="M10.5 12.5L6 8L10.5 3.5"
-                                    stroke="#232321"
-                                    strokeWidth="1.5"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
-                            <p
-                                onClick={() =>
-                                    handlePageChange(currentPage - 1)
-                                }
-                                disabled={currentPage === 1}
-                                className="font-rubik hidden lg:block"
-                            >
-                                PREVIOUS
-                            </p>
-                        </div>
-
-                        {Array.from({ length: totalPages }, (_, i) => (
-                            <button
-                                key={i + 1}
-                                onClick={() => handlePageChange(i + 1)}
-                                className={`font-rubik px-6 py-2 border rounded-lg border-black hover:bg-[#D1D1D1] transition duration-300 ${
-                                    currentPage === i + 1
-                                        ? "bg-black text-white"
-                                        : "bg-transparent text-black"
-                                }`}
-                            >
-                                {i + 1}
-                            </button>
-                        ))}
-                        <div
-                            className="flex items-center justify-between px-4 py-2 border border-black bg-transparent rounded-lg gap-1 cursor-pointer
-                        hover:bg-[#D1D1D1] transition duration-300"
-                        >
-                            <p
-                                onClick={() =>
-                                    handlePageChange(currentPage - 1)
-                                }
-                                disabled={currentPage === 1}
-                                className="font-rubik hidden lg:block"
-                            >
-                                NEXT
-                            </p>
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 16 16"
-                                fill="none"
-                            >
-                                <path
-                                    d="M6 3.5L10.5 8L6 12.5"
-                                    stroke="#232321"
-                                    strokeWidth="1.5"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
-                        </div>
-                    </div>
+                    <Pagination 
+                    ></Pagination>
                 </div>
             </div>
         </div>
