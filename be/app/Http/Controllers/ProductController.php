@@ -74,7 +74,7 @@ class ProductController extends Controller
         }
 
         // Trả về sản phẩm mới tạo
-        return response()->json($$this->formatProduct($product->toArray()), 201);
+        return response()->json($product, 201);
     }
 
     // 4. Cập nhật sản phẩm
@@ -194,7 +194,6 @@ class ProductController extends Controller
 
         // Trả về kết quả dưới dạng JSON
         return response()->json($products);
-
     }
 
     // Recommendation
@@ -202,18 +201,17 @@ class ProductController extends Controller
     {
         $userId = Auth::user()->user_id;
 
-        // Lấy top 5 sản phẩm người dùng đã xem nhiều nhất
-        $viewedProducts = Redis::zrevrange("user:{$userId}:viewed_products", 0, 4);
+        // Lấy danh sách ID sản phẩm đã xem nhiều nhất của người dùng
+        $viewedProducts = Redis::zrevrange("user:{$userId}:viewed_products", 0, -1);
 
-        // Tìm các sản phẩm thuộc cùng danh mục với những sản phẩm đã xem
-        $recommendedProducts = Product::whereIn('product_id', $viewedProducts)
-                                    ->orWhereHas('category', function ($query) use ($viewedProducts) {
-                                        $query->whereIn('product_id', function ($q) use ($viewedProducts) {
-                                            $q->select('category_id')
-                                                ->from('products')
-                                                ->whereIn('product_id', $viewedProducts);
-                                        });
-                                    })
+        // Lấy danh mục của các sản phẩm đã xem
+        $viewedCategories = Product::whereIn('product_id', $viewedProducts)
+                                ->pluck('category_id')
+                                ->unique();
+
+        // Tìm các sản phẩm thuộc cùng danh mục nhưng không có trong danh sách đã xem
+        $recommendedProducts = Product::whereIn('category_id', $viewedCategories)
+                                    ->whereNotIn('product_id', $viewedProducts)
                                     ->take(5)
                                     ->get();
 
