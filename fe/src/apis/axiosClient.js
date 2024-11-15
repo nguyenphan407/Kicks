@@ -5,30 +5,27 @@ const axiosClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-
 });
 
-// Interceptors
-// Add a request interceptor
-axios.interceptors.request.use(function (config) {
-    // Do something before request is sent
+// Interceptors cho axiosClient (không phải axios gốc)
+axiosClient.interceptors.request.use(
+  function (config) {
+    // Log params để chắc chắn không bị thay đổi
+    console.log("Request params:", config.params);
     return config;
-  }, function (error) {
-    // Do something with request error
+  },
+  function (error) {
     return Promise.reject(error);
-  });
+  }
+);
 
-// Add a response interceptor
-axios.interceptors.response.use(function (response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
+axiosClient.interceptors.response.use(
+  function (response) {
     return response;
-  }, function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
+  },
+  function (error) {
     return Promise.reject(error);
-  });
+  }
+);
 
 export default axiosClient;
-
-

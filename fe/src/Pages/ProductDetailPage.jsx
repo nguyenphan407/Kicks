@@ -84,9 +84,18 @@ const ProductDetailPage = () => {
     const [isOpenSize, setIsOpenSize] = useState(true);
     const toggleDropdownSize = () => setIsOpenSize(!isOpenSize);
     // State lưu các lựa chọn của người dùng
+
+    
     const [selectedSize, setSelectedSize] = useState(null); // Lựa chọn size
-    const outOfStockSizes = [39, 41, 44]; // Các size hết hàng
-    const sizes = [38, 39, 40, 41, 42, 43, 44, 45, 46, 47]; // Danh sách size khả dụng
+    const sizes = [38, 39, 40, 41, 42, 43, 44, 45, 46, 47];
+
+    const getUnavailableSizes = (product) => {
+        if (!product || !product.sizes) return [];
+        const availableSizes = product.sizes.map((sizeObj) => sizeObj.size);
+        return sizes.filter((size) => !availableSizes.includes(size));
+    };
+
+    const outOfStockSizes = productData ? getUnavailableSizes(productData) : [];
 
     // Lựa chọn size, kiểm tra size có sẵn
     const handleSizeClick = (size) => {

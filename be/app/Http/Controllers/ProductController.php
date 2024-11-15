@@ -15,12 +15,15 @@ use Illuminate\Support\Facades\Cache;
 
 class ProductController extends Controller
 {
-    //
+    // Quân đã fix bugs ở đây
     // 1. Lấy danh sách sản phẩm
-    public function index()
+    public function index(Request $request)
     {
-        // Sử dụng cache cho danh sách sản phẩm để tối ưu
-        $products = Cache::remember('products_list', 60, function () {
+        // Lấy page từ request, mặc định là 1 nếu không có
+        $page = $request->query('page', 1);
+        // Lưu cache theo từng trang, sử dụng page trong key cache
+        $cacheKey = "products_list_page_{$page}";
+        $products = Cache::remember($cacheKey, 60, function () {
             return Product::with(['images', 'sizes'])->paginate(10);
         });
         // Trả về JSON danh sách sản phẩm
@@ -74,7 +77,7 @@ class ProductController extends Controller
         }
 
         // Trả về sản phẩm mới tạo
-        return response()->json($product, 201);
+        return response()->json($product);
     }
 
     // 4. Cập nhật sản phẩm

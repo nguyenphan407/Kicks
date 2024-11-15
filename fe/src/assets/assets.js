@@ -7,6 +7,9 @@ import SearchIcon from "./icons/search_icon.svg";
 import UserIcon from "./icons/user_icon.svg";
 import LogoIconWhite from "./icons/Logo-white.svg";
 import CartIcon from "./icons/cart_icon.svg"
+import MomoIcon from "./icons/momo-icon.png";
+import VisaIcon from "./icons/visa-icon.png"
+import CashIcon from "./icons/cash-icon.png"
 
 // Import images
 import MainHeroImage from "./images/mainHero.jpg";
@@ -31,6 +34,8 @@ import SizeChartMen from "./images/sizechart-men.jpg"
 import SizeChartWomen from "./images/sizechart-women.jpg"
 
 
+
+
 // Export all icons in a single object
 export const icons = {
   LogoIcon,
@@ -39,6 +44,9 @@ export const icons = {
   UserIcon,
   LogoIconWhite,
   CartIcon,
+  MomoIcon,
+  VisaIcon,
+  CashIcon
 };
 
 // Export all images in a single object

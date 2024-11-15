@@ -2,12 +2,19 @@
 import React, { useContext, useState, useEffect } from "react";
 import { ShopConText } from "../context/ShopContext";
 import { Link, NavLink } from "react-router-dom";
+import { icons} from "../assets/assets"
 
 const CheckOutPage = () => {
     const [selectedOption, setSelectedOption] = useState("Standard Delivery");
 
     const handleOptionSelect = (option) => {
         setSelectedOption(option);
+    };
+    
+    const [selectedOptionPayment, setSelectedOptionPayment] = useState("Payment via Momo e-wallet");
+
+    const handleOptionSelectPayment = (option) => {
+        setSelectedOptionPayment(option);
     };
     const {
         products,
@@ -198,6 +205,88 @@ const CheckOutPage = () => {
                         </section>
                     </section>
 
+
+                    <section className="flex flex-col">
+                        {/* Cái thẻ h3 này note tương tự như trên */}
+                        {/* vì không dùng gap nên dùng margin bottom */}
+                        <h3 className="font-rubik text-2xl lg:text-[32px] font-semibold text-secondary_black mb-4 lg:mb-8">
+                        Payment Method
+                        </h3>
+                        {/* Không đặt height chỗ này nha, bỏ h-52, đặt width chỗ này, khi width của thẻ cha đặt cố định, thẻ con chỉ cần cho width full và flex-1 là nó sẽ chiếm hết không gian hiện có */}
+                        {/* Đặt width full trên mobile để nó chiếm full và đặt width cố định trên desktop */}
+                        <section className="flex-col justify-start items-start gap-6 inline-flex w-full lg:w-[782px]">
+                            <div
+                                // chỗ này sai border-radius theo thiết kế rồi nha, 16 chứ không phải 12, 12 trên mobile thôi
+                                className={`w-full p-4 rounded-xl lg:rounded-2xl flex justify-between items-start cursor-pointer ${
+                                    selectedOptionPayment === "Momo e-wallet"
+                                        ? "bg-[#FAFAFA]"
+                                        : "border border-[#232321]"
+                                }`}
+                                onClick={() =>
+                                    handleOptionSelectPayment("Momo e-wallet")
+                                }
+                            >
+                                {/* tạo thêm 1 thẻ div bọc lại và đặt flex và gap ở đây để giá và title có khoảng cách với nhau theo thiết kế tránh sát nhau đặt sát nhau*/}
+                                <div className="flex justify-between gap-2">
+                                    {/* Đặt width cục này để nó căn lề ra 2 bên chuẩn */}
+                                    <div className="lg:w-[684px]">
+                                        <h3 className=" font-rubik text-[#232321] text-xl lg:text-2xl font-semibold">
+                                        Momo e-wallet
+                                        </h3>
+                                        <p className="opacity-80 text-[#232321] text-sm lg:text-base font-semibold">
+                                        Secure payment via Momo. Enter address for delivery time.
+                                        </p>
+                                    </div>
+                                    {/* Thiếu font-rubik ở thẻ span, dùng các biến toàn cục là đơn vị tiền và tiền vận chuyển */}
+                                    {/* text trên mobile là 16, không phải 18 */}
+                                    <img src={icons.MomoIcon} alt="" className="max-w-[58px]"/>
+                                </div>
+                            </div>
+                            <div
+                                className={`w-full p-4 rounded-xl flex justify-between items-start cursor-pointer ${
+                                    selectedOptionPayment === "Cart Bank"
+                                        ? "bg-[#FAFAFA]"
+                                        : "border border-[#232321]"
+                                }`}
+                                onClick={() =>
+                                    handleOptionSelectPayment("Cart Bank")
+                                }
+                            >
+                                <div>
+                                    <h3 className="font-rubik text-[#232321] text-xl lg:text-2xl font-semibold">
+                                    Cart Bank
+                                    </h3>
+                                    <p className="opacity-80 text-[#232321] text-sm lg:text-base font-semibold">
+                                    Pay by bank card. Quick in-store pickup.
+                                    </p>
+                                </div>
+                                {/* text trên mobile là 16, không phải 18 */}
+                                <img src={icons.VisaIcon} alt="" className="max-w-[58px]"/>
+                            </div>
+                            <div
+                                className={`w-full p-4 rounded-xl flex justify-between items-start cursor-pointer ${
+                                    selectedOptionPayment === "Cash on Delivery"
+                                        ? "bg-[#FAFAFA]"
+                                        : "border border-[#232321]"
+                                }`}
+                                onClick={() =>
+                                    handleOptionSelectPayment("Cash on Delivery")
+                                }
+                            >
+                                <div>
+                                    <h3 className="font-rubik text-[#232321] text-xl lg:text-2xl font-semibold">
+                                    Cash on Delivery
+                                    </h3>
+                                    <p className="opacity-80 text-[#232321] text-sm lg:text-base font-semibold">
+                                    Pay cash upon pickup. Ideal for in-store orders.
+                                    </p>
+                                </div>
+                                {/* text trên mobile là 16, không phải 18 */}
+                                <img src={icons.CashIcon} alt="" className="max-w-[58px]" />
+                            </div>
+                        </section>
+                    </section>
+
                     {/* Checkbox Section */}
                     {/* Tương tự, không đặt padding ở đây. Tương tự, thẻ cha đã có gap, thì bỏ margin top, bỏ luôn space-y-2*/}
                     {/* đặt flex và xét flex thành col ở đây để đặt gap, vì các phần tử cách đều nhau trên mobile là 16px trên desktop là 24px */}
@@ -272,7 +361,7 @@ const CheckOutPage = () => {
             {/* Để ý ở đây trên mobile flex cái order detail nó nằm ở trên nên ta đảo ngược thứ tự cột lại trên mobile */}
             <aside className="flex flex-col-reverse lg:flex-col gap-6 lg:gap-[47px] ml-2">
                 {/* Order Summary*/}
-                <div className="bg-white rounded-3xl p-4 lg:p-6 lg:w-[418px]">
+                <div className="bg-white rounded-3xl p-4 lg:p-6 w-full lg:w-[418px]">
                     <h2 className="font-rubik text-[20px] lg:text-[32px] font-semibold text-[#232321] mb-2">
                         Order Summary
                     </h2>
@@ -320,10 +409,11 @@ const CheckOutPage = () => {
 
                 {/* Order Details*/}
                 {/* Bỏ shadow đi, bỏ max-width đi */}
-                <div className="bg-white p-6 rounded-2xl w-full">
-                    <h2 className="font-rubik text-2xl font-semibold mb-6">
+                <div className="bg-white p-6 rounded-2xl w-full lg:w-[418px]">
+                    <h2 className="font-rubik text-2xl font-semibold mb-6 leading-5">
                         Order Details
                     </h2>
+                    <div className="flex flex-col gap-6">
                     {cartData.map((item, index) => {
                         const productData = products.find(
                             (product) =>
@@ -332,35 +422,35 @@ const CheckOutPage = () => {
                         );
                         console.log("Product Data:", productData); // Log để kiểm tra từng sản phẩm
                         return (
-                            <div key={index} className="flex gap-6">
+                            <div key={index} className="flex gap-6 h-full">
                                 <img
-                                    className="rounded-xl lg:rounded-3xl object-cover w-[157px] h-[150px] lg:w-[207px] lg:h-[207px] border border-[#e6e6e6]"
+                                    className="rounded-xl lg:rounded-3xl object-cover max-w-[157px] lg:max-h-[157px] lg:max-w-[138px] border border-[#e6e6e6]"
                                     src={productData.images[0]}
                                     alt="Product Image"
                                 />
                                 <div className="flex flex-col justify-between flex-1">
-                                    <div className="flex flex-col lg:flex-row justify-between items-start">
+                                    <div className="flex flex-col justify-between items-start">
                                         <div className="max-w-[350px]">
-                                            <h3 className="font-rubik font-semibold text-[16px] lg:text-[24px] uppercase text-[#232321] ]">
+                                            <h3 className="font-rubik font-semibold text-[16px] lg:text-[20px] uppercase text-[#232321]">
                                                 {productData.name}
                                             </h3>
-                                            <p className="opacity-80 text-[#4e4e4c] text-[14px] lg:text-[20px] font-semibold mb-2 lg:mb-5">
+                                            <p className="opacity-80 text-[#4e4e4c] text-[14px] lg:text-[16px] font-semibold mb-2 lg:mb-2">
                                                 {productData.description}
                                             </p>
-                                            <div className="flex justify-between ">
+                                            <div className="flex  justify-between lg:justify-start gap-2 lg:gap-10">
                                                 <div className="flex gap-2 justify-center items-center">
-                                                    <p className="opacity-80 text-[#4e4e4c] text-[14px] lg:text-[20px] font-semibold ">
+                                                    <p className="opacity-80 text-[#4e4e4c] text-[14px] lg:text-[16px] font-semibold ">
                                                         Size {item.size}
                                                     </p>
                                                 </div>
                                                 <div className="flex gap-2 justify-center items-center">
-                                                    <p className="opacity-80 text-[#4e4e4c] text-[14px] lg:text-[20px] font-semibold">
+                                                    <p className="opacity-80 text-[#4e4e4c] text-[14px] lg:text-[16px] font-semibold">
                                                         Quantity {item.quantity}
                                                     </p>
                                                 </div>
                                             </div>
                                         </div>
-                                        <p className="font-rubik text-xl my-2 lg:my-0 lg:text-[24px] font-semibold text-primary_blue">
+                                        <p className="font-rubik text-[16px] my-2 lg:my-0 lg:text-[20px] font-semibold text-primary_blue">
                                             {currency}
                                             {productData.price}
                                         </p>
@@ -369,6 +459,7 @@ const CheckOutPage = () => {
                             </div>
                         );
                     })}
+                    </div>
                 </div>
             </aside>
         </div>
