@@ -1,11 +1,13 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-}
+export default {
+    content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+    theme: {
+        extend: {
+            fontFamily: {
+                sans: ["Open Sans", "sans-serif"], // Sử dụng Open Sans cho font sans
+                rubik: ["Rubik", "sans-serif"],
+            },
+        },
+    },
+    plugins: ["prettier-plugin-tailwindcss"],
+};
