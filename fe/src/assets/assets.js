@@ -32,6 +32,14 @@ import AvatarUser3 from "./images/avatar-user3.jpg";
 import Thumbnail from "./images/Thumbnail.jpg"
 import SizeChartMen from "./images/sizechart-men.jpg"
 import SizeChartWomen from "./images/sizechart-women.jpg"
+import MainHero1 from "./images/mainHero1.jpg"
+import MainHero2 from "./images/mainHero2.jpg"
+import MainHero3 from "./images/mainHero3.jpg"
+import MainHero4 from "./images/mainHero4.jpg"
+import MainHero5 from "./images/mainHero5.jpg"
+import MainHero6 from "./images/mainHero6.jpg"
+import MainHero7 from "./images/mainHero7.jpg"
+
 
 
 
@@ -51,7 +59,15 @@ export const icons = {
 
 // Export all images in a single object
 export const images = {
-  MainHeroImage,
+  MainHeroImages: [
+    MainHeroImage,
+    MainHero1,
+    MainHero2,
+    MainHero3,
+    MainHero5,
+    MainHero6,
+    MainHero7,
+],
   SecondHeroImage1,
   SecondHeroImage2,
   p1_Img1,
