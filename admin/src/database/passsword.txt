@@ -1,0 +1,4 @@
+--(hash của "22521193")
+-- $ php artisan tinker
+-- > echo bcrypt('22521193')
+-- > echo bcrypt('admin')

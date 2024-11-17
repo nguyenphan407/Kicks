@@ -6,6 +6,7 @@ export default {
             fontFamily: {
                 sans: ["Open Sans", "sans-serif"], // Sử dụng Open Sans cho font sans
                 rubik: ["Rubik", "sans-serif"],
+                inter: ["Inter", "sans-serif"]
             },
         },
     },

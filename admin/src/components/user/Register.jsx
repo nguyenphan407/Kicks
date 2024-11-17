@@ -1,8 +1,8 @@
 /* eslint-disable react/no-unescaped-entities */
 import React from "react";
 import { FaGoogle, FaFacebook, FaApple } from "react-icons/fa";
-import { images } from "../assets/assets";
-import { icons } from "../assets/assets";
+import { images } from "../../assets/assets";
+import { icons } from "../../assets/assets";
 
 const Register = () => {
   return (

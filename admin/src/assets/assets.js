@@ -13,6 +13,12 @@ import SearchIcon from "./icons/search_icon.svg";
 import ChevronForwardIcon from "./icons/chevron_forward.svg";
 import UploadImgIcon from "./icons/upload-img_icon.svg"
 import GoogleIcon from "./icons/google_icon.svg"
+import LogoutIcon from "./icons/logout_icon.svg"
+import DashBoardIcon from "./icons/dashboard_icon.svg"
+import DashBoardActiveIcon from "./icons/dashboard-active_icon.svg"
+import OrderListActiveIcon from "./icons/order-list-active_icon.svg";
+import AllProductActiveIcon from "./icons/all-product-active_icon.svg";
+import LogoBlackIcon from "./icons/logo-black_icon.svg"
 
 // Import images
 import ThumbnailImg from "./images/thumbnail_img.jpg";
@@ -35,7 +41,13 @@ export const icons = {
   OrderListIcon,
   SearchIcon,
   UploadImgIcon,
-  GoogleIcon
+  GoogleIcon,
+  LogoutIcon,
+  DashBoardIcon,
+  DashBoardActiveIcon,
+  OrderListActiveIcon,
+  AllProductActiveIcon,
+  LogoBlackIcon
 };
 
 // Export all images in a single object
