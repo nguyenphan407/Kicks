@@ -41,4 +41,9 @@ return [
         'api_secret' => env('CLOUDINARY_API_SECRET'),
     ],
 
+    'payos' => [
+        'client_id' => env('PAY_OS_CLIENT_ID'),
+        'api_key' => env('PAY_OS_API_KEY'),
+        'checksum_key' => env('PAY_OS_CHECKSUM_KEY'),
+    ],
 ];

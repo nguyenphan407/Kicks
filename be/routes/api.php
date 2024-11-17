@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CartController;
@@ -100,4 +101,15 @@ Route::group([
     Route::post('/', [CategoryController::class, 'store']);
     Route::put('/{id}', [CategoryController::class, 'update']);
     Route::delete('/', [CategoryController::class, 'destroy']);
+});
+
+//Payment Routes
+Route::group([
+
+    'middleware' => 'api',
+    'namespace' => 'App\Http\Controllers',
+    'prefix'=> 'payment'
+
+], function ($router) {
+    Route::post('/create-payment-link', [PaymentController::class, 'createPaymentLink']);
 });
