@@ -19,6 +19,8 @@ import DashBoardActiveIcon from "./icons/dashboard-active_icon.svg"
 import OrderListActiveIcon from "./icons/order-list-active_icon.svg";
 import AllProductActiveIcon from "./icons/all-product-active_icon.svg";
 import LogoBlackIcon from "./icons/logo-black_icon.svg"
+import CalendarIcon from "./icons/calendar_icon.svg"
+import DotsThreeIcon from "./icons/dots-three_icon.svg"
 
 // Import images
 import ThumbnailImg from "./images/thumbnail_img.jpg";
@@ -47,7 +49,9 @@ export const icons = {
   DashBoardActiveIcon,
   OrderListActiveIcon,
   AllProductActiveIcon,
-  LogoBlackIcon
+  LogoBlackIcon,
+  CalendarIcon,
+  DotsThreeIcon
 };
 
 // Export all images in a single object

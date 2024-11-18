@@ -29,7 +29,7 @@ const Register = () => {
             <h1 className="text-[#232321] text-[36px] font-semibold font-rubik">
               Register
             </h1>
-            <h2 className="text-[#232321] text-[20px] font-semibold font-opensans">
+            <h2 className="text-[#232321] text-[20px] font-semibold">
               Sign up with
             </h2>
           </div>

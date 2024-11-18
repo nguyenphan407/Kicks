@@ -26,7 +26,7 @@ const Header = () => {
     };
 
     return (
-        <div className="z-1 top-0 w-full h-[96px] px-[60px] py-[30px] bg-white flex justify-end items-center gap-10 fixed t-0">
+        <div className="z-10 top-0 w-full h-[96px] px-[60px] py-[30px] bg-white flex justify-end items-center gap-10 t-0">
             <button>
                 <img src={icons.SearchIcon} alt="search icon" />
             </button>
@@ -53,7 +53,7 @@ const Header = () => {
                     />
                 </button>
                 <div
-                    className={`flex flex-col items-between justify-between gap-4 absolute right-[-2px] mt-10 w-[233px] h-[152px] bg-white rounded-lg border-2 border-[#E7E7E3] py-4 
+                    className={`flex z-50 flex-col items-between justify-between gap-4 absolute right-[-2px] mt-10 w-[233px] h-[152px] bg-white rounded-lg border-2 border-[#E7E7E3] py-4 
                         transform transition-all duration-300 ease-in-out ${
                             menuOpenUser
                                 ? "opacity-100 scale-100"
