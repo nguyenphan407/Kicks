@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductSize;
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
 use Cloudinary\Configuration\Configuration;
 use Illuminate\Support\Facades\Cache;
+use Spatie\Searchable\ModelSearchAspect;
+use Spatie\Searchable\Search;
 
 class ProductController extends Controller
 {
@@ -140,6 +143,7 @@ class ProductController extends Controller
         return response()->json(['message' => 'Product deleted successfully']);
     }
 
+    //Lọc sản phẩm
     public function filter(Request $request)
     {
         // Bắt đầu với truy vấn cơ bản
@@ -197,6 +201,22 @@ class ProductController extends Controller
 
         // Trả về kết quả dưới dạng JSON
         return response()->json($products);
+    }
+
+    // Tìm kiếm sản phẩm
+    public function search(Request $request) {
+        $searchterm = $request->input('query');
+
+        $searchResults = (new Search())
+            ->registerModel(Product::class, ['name', 'description']) //apply search on field name and description
+            //Config partial match or exactly match
+            // ->registerModel(Category::class, function (ModelSearchAspect $modelSearchAspect) {
+            //     $modelSearchAspect
+            //         ->addExactSearchableAttribute('name'); // only return results that exactly match
+            // })
+            ->perform($searchterm);
+
+        return response()->json($searchResults);
     }
 
     // Recommendation

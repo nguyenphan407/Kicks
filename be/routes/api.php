@@ -53,9 +53,10 @@ Route::group([
 
 ], function ($router) {
     Route::get('/', [ProductController::class, 'index']); // URL: /product
-    Route::get('show/{id}', [ProductController::class, 'show']); // URL: /product/show/{id}
+    Route::get('show/{id}', [ProductController::class, 'show'])->name('product.show');; // URL: /product/show/{id}
     Route::get('filter', [ProductController::class, 'filter']); // URL: /product/filter
     Route::get('recommend', [ProductController::class, 'recommendedProducts']); // URL: /product/recommend
+    Route::get('search', [ProductController::class, 'search']); // URL: /product/search
     Route::post('store', [ProductController::class, 'store']); // URL: /product/store
     Route::post('size/store', [ProductSizeController::class, 'store']); // URL: /product/size/store
     Route::patch('update/{id}', [ProductController::class, 'update']); // URL: /product/update/{id}

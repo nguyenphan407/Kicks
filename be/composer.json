@@ -12,6 +12,7 @@
         "laravel/tinker": "^2.9",
         "payos/payos": "^1.0",
         "predis/predis": "^2.2",
+        "spatie/laravel-searchable": "^1.12",
         "tymon/jwt-auth": "^2.1"
     },
     "require-dev": {
