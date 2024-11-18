@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\ProductSizeController;
@@ -113,3 +114,6 @@ Route::group([
 ], function ($router) {
     Route::post('/create-payment-link', [PaymentController::class, 'createPaymentLink']);
 });
+
+//Email route
+Route::get('/send-mail', [MailController::class, 'sendEmail']);
