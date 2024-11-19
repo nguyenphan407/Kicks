@@ -52,6 +52,7 @@ const Login = () => {
             try {
                 await authApi.getMe(); // Gọi API kiểm tra token
                 navigate("/dashboard"); // Điều hướng nếu hợp lệ
+                
             } catch {
                 // Nếu token không hợp lệ, giữ nguyên ở trang login
                 localStorage.removeItem("access_token");
@@ -60,6 +61,7 @@ const Login = () => {
 
         if (token) {
             verifyToken();
+            showLoader(); 
         }
     }, [navigate]);
 

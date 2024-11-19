@@ -17,23 +17,27 @@ import Login from "./components/user/Login";
 import Header from "./components/layout/Header";
 import Sidebar from "./components/layout/Sidebar";
 import DashBoard from "./pages/Dashboard";
-import OrdersList from "./pages/OrdersList";
+import OrdersListPage from "./pages/OrdersListPage";
 import OrdersDetail from "./pages/OrdersDetail";
 import ProductDetail from "./pages/ProductDetail";
-import AllProduct from "./pages/AllProducts";
+import AllProductPage from "./pages/AllProductsPage";
 import AddNewProduct from "./pages/AddNewProduct";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./components/Features/ProtectedRoute";
 import authApi from "./apis/authApi";
+import { useLoader } from "./context/LoaderContext";
+import Footer from "./components/layout/Footer";
+import Register from "./components/user/Register";
 
 const App = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(null); // null để phân biệt đang kiểm tra
     const navigate = useNavigate();
+    const { showLoader, hideLoader } = useLoader(); // Sử dụng Loader Context
 
     // Kiểm tra trạng thái đăng nhập
     useEffect(() => {
         const checkAuth = async () => {
             const token = localStorage.getItem("access_token");
-            console.log("Token from localStorage:", token);
+            // console.log("Token from localStorage:", token);
 
             if (!token) {
                 setIsAuthenticated(false);
@@ -42,23 +46,24 @@ const App = () => {
 
             try {
                 const response = await authApi.getMe(); // Kiểm tra token
-                console.log("API /auth/me response:", response.data);
+                showLoader();
+                // console.log("API /auth/me response:", response.data);
                 setIsAuthenticated(true);
             } catch (error) {
-                console.error("Error in /auth/me:", error.response?.data || error.message);
+                hideLoader();
+                console.error(
+                    "Error in /auth/me:",
+                    error.response?.data || error.message
+                );
                 localStorage.removeItem("access_token");
                 setIsAuthenticated(false);
                 navigate("/login");
             }
+            hideLoader();
         };
 
         checkAuth();
     }, [navigate]);
-
-    // Hiển thị trạng thái loading khi đang kiểm tra
-    if (isAuthenticated === null) {
-        return <div className="flex items-center justify-center font-rubik text-5xl">Loading...</div>;
-    }
 
     return (
         <div>
@@ -68,7 +73,7 @@ const App = () => {
                     <Header />
                     <Sidebar />
                     {/* Phần nội dung chính, tạo layout ảo bằng margin vì header và sidebar fixed */}
-                    <div className="ml-[260px] mt-[96px] p-6 min-h-screen">
+                    <div className="ml-[260px] py-6 pl-6 pr-12 min-h-screen bg-[#e7e7e3]">
                         <Routes>
                             {/* Các route được bảo vệ */}
                             <Route
@@ -83,7 +88,7 @@ const App = () => {
                                 path="/orderlist"
                                 element={
                                     <ProtectedRoute>
-                                        <OrdersList />
+                                        <OrdersListPage />
                                     </ProtectedRoute>
                                 }
                             />
@@ -91,7 +96,7 @@ const App = () => {
                                 path="/allproduct"
                                 element={
                                     <ProtectedRoute>
-                                        <AllProduct />
+                                        <AllProductPage />
                                     </ProtectedRoute>
                                 }
                             />
@@ -120,8 +125,12 @@ const App = () => {
                                 }
                             />
                             {/* Route mặc định */}
-                            <Route path="/" element={<Navigate to="/dashboard" />} />
+                            <Route
+                                path="/"
+                                element={<Navigate to="/dashboard" />}
+                            />
                         </Routes>
+                        <Footer />
                     </div>
                 </>
             ) : (
@@ -129,6 +138,7 @@ const App = () => {
                 <Routes>
                     <Route path="/login" element={<Login />} />
                     <Route path="*" element={<Navigate to="/login" />} />
+                    <Route path="/register" element={<Register />} />
                 </Routes>
             )}
         </div>
