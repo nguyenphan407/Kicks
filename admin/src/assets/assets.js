@@ -21,6 +21,11 @@ import AllProductActiveIcon from "./icons/all-product-active_icon.svg";
 import LogoBlackIcon from "./icons/logo-black_icon.svg"
 import CalendarIcon from "./icons/calendar_icon.svg"
 import DotsThreeIcon from "./icons/dots-three_icon.svg"
+import AddIcon from "./icons/add_icon.svg"
+import ArrowUpYellow from "./icons/arrow_up_yellow.svg" 
+import RemainingIcon from "./icons/remaining_icon.svg"
+import DotsThreeBgIcon from "./icons/dots-three-bg_icon.svg" 
+import RoundCheckIcon from "./icons/round-check_icon.svg"
 
 // Import images
 import ThumbnailImg from "./images/thumbnail_img.jpg";
@@ -51,7 +56,12 @@ export const icons = {
   AllProductActiveIcon,
   LogoBlackIcon,
   CalendarIcon,
-  DotsThreeIcon
+  DotsThreeIcon,
+  AddIcon,
+  ArrowUpYellow,
+  RemainingIcon,
+  DotsThreeBgIcon,
+  RoundCheckIcon
 };
 
 // Export all images in a single object

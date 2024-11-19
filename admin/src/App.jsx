@@ -25,7 +25,8 @@ import AddNewProduct from "./pages/AddNewProduct";
 import ProtectedRoute from "./components/Features/ProtectedRoute";
 import authApi from "./apis/authApi";
 import { useLoader } from "./context/LoaderContext";
-import Footer from "./components/layout/Footer"
+import Footer from "./components/layout/Footer";
+import Register from "./components/user/Register";
 
 const App = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(null); // null để phân biệt đang kiểm tra
@@ -131,14 +132,13 @@ const App = () => {
                         </Routes>
                         <Footer />
                     </div>
-                    
-
                 </>
             ) : (
                 // Nếu chưa đăng nhập, render trang login
                 <Routes>
                     <Route path="/login" element={<Login />} />
                     <Route path="*" element={<Navigate to="/login" />} />
+                    <Route path="/register" element={<Register />} />
                 </Routes>
             )}
         </div>

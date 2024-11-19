@@ -19,7 +19,7 @@ const DateRangePicker = ({ onDateChange }) => {
     };
 
     return (
-        <div className="flex items-center gap-2 relative z-0">
+        <div className="flex items-center gap-2 relative z-10">
             <img src={icons.CalendarIcon} alt="calendar icon" />
             <DatePicker
                 selected={startDate}
