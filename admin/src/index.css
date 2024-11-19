@@ -19,6 +19,15 @@
   z-index: 1 !important; /* Nếu portal được dùng */
 }
 
+.limit-row {
+  display: -webkit-box;
+  -webkit-line-clamp: 1; /* Giới hạn 1 dòng */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Hiển thị dấu ... */
+  white-space: normal; /* Không để chữ bị gạch ngang */
+}
+
 
 button {
     /* border: none;

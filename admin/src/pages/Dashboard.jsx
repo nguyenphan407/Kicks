@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Breadcrumbs from "../components/Features/Breadcrumbs";
 import DateRangePicker from "../components/Features/DateRangePicker";
 import DashboardCard from "../components/Cart/DashboardCard";
 import { MyLineChart } from "../components/ui/MyLineChart";
 import { images, icons } from "@/assets/assets";
 import OrdersList from "@/components/Cart/OrdersList";
-
 
 const Dashboard = () => {
     const breadcrumbs = [{ label: "Home", link: "/" }, { label: "Dashboard" }];
@@ -139,6 +138,11 @@ const Dashboard = () => {
         },
     ];
 
+    // Cuộn lên đầu trang khi trang thay đổi
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    });
+
     return (
         <div className="flex flex-col gap-6 mb-8">
             {/* Title */}
@@ -169,10 +173,7 @@ const Dashboard = () => {
                 <div className="col-span-2 ">
                     <MyLineChart />
                 </div>
-                <div
-                    className="px-4 py-6 bg-white rounded-[16px] flex flex-col gap-4
-                transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-md "
-                >
+                <div className="px-4 py-6 bg-white rounded-[16px] flex flex-col gap-4">
                     <div className="flex justify-between items-center pb-5 border-b border-black">
                         <h3 className="font-rubik font-semibold text-xl">
                             Best Sellers
