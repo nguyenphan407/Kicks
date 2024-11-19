@@ -29,7 +29,13 @@ class ProductController extends Controller
         $products = Cache::remember($cacheKey, 60, function () {
             return Product::with(['images', 'sizes'])->paginate(12);
         });
-        // Trả về JSON danh sách sản phẩm
+
+        // $results = [];
+
+        // foreach ($products as $item){
+        //     $results[] = $this->formatProduct($item->toArray());
+        // }
+
         return response()->json($products);
     }
 
@@ -261,12 +267,31 @@ class ProductController extends Controller
         }
     }
     public function formatProduct($product)
-{
-    // Chuyển đổi mảng images thành mảng chỉ chứa URLs
-    $product['images'] = array_map(function ($image) {
-        return $image['image'];
-    }, $product['images']);
+    {
+        // Các trường cần xử lý và hàm callback tương ứng
+        $fieldsToFormat = [
+            'images' => function ($images) {
+                return array_map(function ($image) {
+                    return $image['image'];
+                }, $images);
+            },
+            'sizes' => function ($sizes) {
+                return array_map(function ($size) {
+                    return [
+                        'size' => $size['size'],
+                        'stock' => $size['quantity'],
+                    ];
+                }, $sizes);
+            },
+        ];
 
-    return $product;
-}
+        // Duyệt qua các trường cần xử lý và áp dụng callback nếu trường tồn tại
+        foreach ($fieldsToFormat as $field => $callback) {
+            if (isset($product[$field]) && is_array($product[$field])) {
+                $product[$field] = $callback($product[$field]);
+            }
+        }
+
+        return $product;
+    }
 }

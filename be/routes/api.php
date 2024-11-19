@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
@@ -16,7 +17,6 @@ use Illuminate\Support\Facades\Route;
 // Auth route
 Route::group([
 
-    'middleware' => 'api',
     'namespace' => 'App\Http\Controllers',
     'prefix' => 'auth'
 
@@ -30,24 +30,22 @@ Route::group([
     Route::get('/', function () {
         return "Hoang Nguyen cute";
     });
-});
+})->middleware('jwt');
 
 // User route
 Route::group([
 
-    'middleware' => 'api',
     'namespace' => 'App\Http\Controllers',
     'prefix'=> 'user'
 
 ], function ($router) {
     Route::get('{id}', [UserController::class,'show']);
     Route::put('update', [UserController::class,'update']);
-});
+})->middleware('jwt');
 
 // Product route
 Route::group([
 
-    'middleware' => 'api',
     'namespace' => 'App\Http\Controllers',
     'prefix'=> 'product'
 
@@ -61,12 +59,11 @@ Route::group([
     Route::post('size/store', [ProductSizeController::class, 'store']); // URL: /product/size/store
     Route::patch('update/{id}', [ProductController::class, 'update']); // URL: /product/update/{id}
     Route::delete('delete/{id}', [ProductController::class, 'destroy']); // URL: /product/delete/{id}
-});
+})->middleware('jwt');
 
 // Cart route
 Route::group([
 
-    'middleware' => 'api',
     'namespace' => 'App\Http\Controllers',
     'prefix'=> 'cart'
 
@@ -76,12 +73,11 @@ Route::group([
     Route::put('/{id}', [CartController::class, 'update']);
     Route::delete('/{id}', [CartController::class, 'remove']);
     Route::delete('/', [CartController::class, 'clear']);
-});
+})->middleware('jwt');
 
 // Order & OrderItem route
 Route::group([
 
-    'middleware' => 'api',
     'namespace' => 'App\Http\Controllers',
     'prefix'=> 'orders'
 
@@ -89,11 +85,10 @@ Route::group([
     Route::get('/', [OrderController::class, 'index']);
     Route::post('/', [OrderController::class, 'store']);
     Route::get('/items/{order_id}', [OrderItemController::class, 'index']);
-});
+})->middleware('jwt');
 
 Route::group([
 
-    'middleware' => 'api',
     'namespace' => 'App\Http\Controllers',
     'prefix'=> 'category'
 
@@ -103,18 +98,29 @@ Route::group([
     Route::post('/', [CategoryController::class, 'store']);
     Route::put('/{id}', [CategoryController::class, 'update']);
     Route::delete('/', [CategoryController::class, 'destroy']);
-});
+})->middleware('jwt');
 
 //Payment Routes
 Route::group([
 
-    'middleware' => 'api',
     'namespace' => 'App\Http\Controllers',
     'prefix'=> 'payment'
 
 ], function ($router) {
     Route::post('/create-payment-link', [PaymentController::class, 'createPaymentLink']);
-});
+})->middleware('jwt');
 
-//Email route
+// Email Routes
 Route::get('/send-mail', [MailController::class, 'sendEmail']);
+
+// Admin Routes
+Route::group([
+
+    'namespace' => 'App\Http\Controllers',
+    'prefix'=> 'admin'
+
+], function ($router) {
+    Route::get('/', [AdminController::class, 'index']);
+    Route::get('/category', [AdminController::class, 'getQuantityOfCategory']);
+    Route::get('/order/{id}', [AdminController::class, 'getOrderInfo']);
+})->middleware('admin');
