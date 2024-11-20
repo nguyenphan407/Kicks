@@ -124,3 +124,4 @@ Route::group([
     Route::get('/category', [AdminController::class, 'getQuantityOfCategory']);
     Route::get('/order/{id}', [AdminController::class, 'getOrderInfo']);
 })->middleware('admin');
+

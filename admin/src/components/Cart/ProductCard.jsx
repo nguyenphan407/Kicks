@@ -2,13 +2,13 @@ import React from "react";
 import { icons } from "@/assets/assets";
 
 const ProductCard = ({
-    product_name,
-    image,
-    category_name,
+    name,
+    stock_quantity,
     price,
     description,
-    remaining_products,
-    total_sale,
+    category_name,
+    sale,
+    images,
 }) => {
     return (
         <div
@@ -18,19 +18,19 @@ const ProductCard = ({
             {/* Phần thông tin sản phẩm */}
             <div className="flex justify-between items-start">
                 <img
-                    src={image}
-                    alt={product_name}
+                    src={images[0]}
+                    alt={name}
                     className="rounded-[8px] w-[84px] h-[84px] object-cover"
                 />
                 <div className="flex flex-col flex-1 ml-4">
-                    <h3 className="text-[16px] font-semibold text-[#232321]">
-                        {product_name}
+                    <h3 className="text-[16px] font-semibold text-[#232321] limit-row">
+                        {name}
                     </h3>
                     <p className=" text-[14px] font-semibold text-[#646464] mb-4">
                         {category_name}
                     </p>
                     <span className="font-rubik text-[14px] font-semibold text-[#232321]">
-                        ${typeof price === "number" ? price.toFixed(2) : "0.00"}
+                        ${price}
                     </span>
                 </div>
                 <button className=" px-2 py-3 rounded-[4px] bg-[#F3F3F3] hover:bg-gray-400 transition-all">
@@ -54,7 +54,7 @@ const ProductCard = ({
                     <span>Sales</span>
                     <span className="flex justify-between gap-2 text-[#646464]">
                         <img src={icons.ArrowUpYellow} alt="" />
-                        {total_sale}
+                        {sale}
                     </span>
                 </div>
                 <div className="flex justify-between items-center mt-2">
@@ -63,7 +63,7 @@ const ProductCard = ({
                     </span>
                     <div className="flex items-center gap-2 text-[14px] font-semibold text-[#646464]">
                         <img src={icons.RemainingIcon} alt="" />
-                        <span>{remaining_products}</span>
+                        <span>{stock_quantity}</span>
                     </div>
                 </div>
             </div>

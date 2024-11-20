@@ -13,6 +13,8 @@ console.warn = (...args) => {
 
 import React, { useEffect, useState } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Login from "./components/user/Login";
 import Header from "./components/layout/Header";
 import Sidebar from "./components/layout/Sidebar";
@@ -67,6 +69,7 @@ const App = () => {
 
     return (
         <div>
+            <ToastContainer />
             {isAuthenticated ? (
                 <>
                     {/* Header và Sidebar */}

@@ -40,6 +40,8 @@ const Login = () => {
             } else {
                 setError("Đã có lỗi xảy ra. Vui lòng thử lại."); // Lỗi khác
             }
+        } finally {
+            hideLoader();
         }
     };
 

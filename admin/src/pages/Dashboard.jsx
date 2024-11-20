@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Breadcrumbs from "../components/Features/Breadcrumbs";
 import DateRangePicker from "../components/Features/DateRangePicker";
 import DashboardCard from "../components/Cart/DashboardCard";
 import { MyLineChart } from "../components/ui/MyLineChart";
 import { images, icons } from "@/assets/assets";
 import OrdersList from "@/components/Cart/OrdersList";
+import { ShopConText } from "@/context/ShopContext";
 
 const Dashboard = () => {
     const breadcrumbs = [{ label: "Home", link: "/" }, { label: "Dashboard" }];
@@ -12,6 +13,8 @@ const Dashboard = () => {
         startDate: null,
         endDate: null,
     });
+
+    const { handleCategoryChange } = useContext(ShopConText);
 
     const handleDateChange = (range) => {
         setDateRange(range);
