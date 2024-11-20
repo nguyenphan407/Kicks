@@ -16,7 +16,11 @@ return new class extends Migration
             $table->foreignId('order_id')->references('order_id')->on('orders')->onDelete('cascade');
             $table->enum('payment_method', ['credit_card', 'cod', 'bank_transfer']);
             $table->decimal('amount', 10, 2);
-            $table->enum('payment_status', ['successful', 'failed', 'pending'])->default('pending');
+            $table->string('bank_id');
+            $table->string('account_name');
+            $table->string('account_number');
+            $table->string('description');
+            $table->string('reference');
             $table->timestamps();
         });
     }

@@ -108,6 +108,7 @@ Route::group([
 
 ], function ($router) {
     Route::post('/create-payment-link', [PaymentController::class, 'createPaymentLink']);
+    Route::get('get-info/{orderCode}', [PaymentController::class, 'getPaymentInfo']);
 })->middleware('jwt');
 
 // Email Routes
@@ -123,4 +124,5 @@ Route::group([
     Route::get('/', [AdminController::class, 'index']);
     Route::get('/category', [AdminController::class, 'getQuantityOfCategory']);
     Route::get('/order/{id}', [AdminController::class, 'getOrderInfo']);
+    Route::get('/statics', [AdminController::class, 'statics']);
 })->middleware('admin');

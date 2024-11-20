@@ -34,6 +34,13 @@ class PaymentController extends Controller
         return redirect($response['checkoutUrl']);
     }
 
+    public function getPaymentInfo($orderCode){
+
+        $response = $this->payOS->getPaymentLinkInformation($orderCode);
+
+        return response()->json($response);
+    }
+
     public function handlePayOSWebhook(Request $request)
     {
         $body = json_decode($request->getContent(), true);

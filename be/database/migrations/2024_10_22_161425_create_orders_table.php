@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('amount', 10, 2);
             $table->string('shipping_address', 255);
             $table->enum('payment_status', ['pending', 'paid', 'failed'])->default('pending');
+            $table->string('shipping');
             $table->timestamps();
         });
     }

@@ -82,6 +82,7 @@ class AdminController extends Controller
         // Lấy dữ liệu đơn hàng và các thông tin liên quan
         $rawData = Order::where('orders.order_id', $id)
             ->join('users', 'users.user_id', '=', 'orders.user_id')
+            ->leftJoin('payments', 'payments.order_id', '=', 'orders.order_id')
             ->join('order_items', 'order_items.order_id', '=', 'orders.order_id')
             ->join('products', 'order_items.product_id', '=', 'products.product_id')
             ->select(
@@ -91,6 +92,7 @@ class AdminController extends Controller
                 'orders.amount',
                 'orders.shipping_address',
                 'orders.payment_status',
+                'orders.shipping',
                 'orders.created_at',
                 'orders.updated_at',
                 'users.first_name',
@@ -109,7 +111,13 @@ class AdminController extends Controller
                 'products.description',
                 'products.stock_quantity',
                 'products.color',
-                'products.category_id'
+                'products.category_id',
+                'payments.payment_method',
+                'payments.bank_id',
+                'payments.account_name',
+                'payments.account_number',
+                'payments.description',
+                'payments.reference'
             )
             ->get();
 
@@ -125,6 +133,7 @@ class AdminController extends Controller
                     'order_status' => $item->order_status,
                     'amount' => $item->amount,
                     'shipping_address' => $item->shipping_address,
+                    'orders.shipping' => $item->shipping,
                     'payment_status' => $item->payment_status,
                     'created_at' => $item->created_at,
                     'updated_at' => $item->updated_at,
@@ -136,6 +145,14 @@ class AdminController extends Controller
                         'avatar' => $item->avatar,
                         'role' => $item->role,
                     ],
+                    'payment' => [
+                        'payment_method' => $item->payment_method,
+                        'bank_id' => $item->bank_id,
+                        'account_name' => $item->account_name,
+                        'account_number' => $item->account_number,
+                        'description' => $item->description,
+                        'reference' => $item->reference
+                    ], 
                     'order_items' => []
                 ];
             }
@@ -163,32 +180,13 @@ class AdminController extends Controller
         return response()->json($finalResult);
     }
 
-    public function formatProduct($product)
-    {
-        // Các trường cần xử lý và hàm callback tương ứng
-        $fieldsToFormat = [
-            'images' => function ($images) {
-                return array_map(function ($image) {
-                    return $image['image'];
-                }, $images);
-            },
-            'sizes' => function ($sizes) {
-                return array_map(function ($size) {
-                    return [
-                        'size' => $size['size'],
-                        'stock' => $size['quantity'],
-                    ];
-                }, $sizes);
-            },
-        ];
+    // statics graph
+    public function statics(Request $request){
+        $result = Order::select(DB::raw($request->metric.'(created_at) as ' . $request->metric), DB::raw('sum(amount) as revenue'))
+                            ->groupBy(DB::raw($request->metric.'(created_at)'))
+                            ->get();
 
-        // Duyệt qua các trường cần xử lý và áp dụng callback nếu trường tồn tại
-        foreach ($fieldsToFormat as $field => $callback) {
-            if (isset($product[$field]) && is_array($product[$field])) {
-                $product[$field] = $callback($product[$field]);
-            }
-        }
-
-        return $product;
+        return response()->json($result);
     }
+
 }
