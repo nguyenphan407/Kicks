@@ -1,30 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { FiChevronUp } from "react-icons/fi";
 import { icons } from "../../assets/assets";
 import { NavLink } from "react-router-dom";
+import { ShopConText } from "@/context/ShopContext";
 
 const Sidebar = () => {
-    const [isOpenCategories, setIsOpenCategories] = useState(true);
-    const [selectedCategory, setSelectedCategory] = useState(null); // Theo dõi ô được chọn
-
-    // Dữ liệu Categories
-    const categories = [
-        "Sneakers",
-        "Runners",
-        "Golf",
-        "Hiking",
-        "Football",
-        "Baseball",
-    ];
-
-    // Toggle hiển thị dropdown
-    const toggleDropdownCategories = () =>
-        setIsOpenCategories(!isOpenCategories);
-
-    // Chọn ô category
-    const handleCategoryClick = (index) => {
-        setSelectedCategory(index); // Lưu index của category được chọn
-    };
+    const { currentCategory, isOpenCategories, toggleDropdownCategories, categories, handleCategoryChange } = useContext(ShopConText);
 
     return (
         <div className="w-[260px] h-screen bg-white fixed top-0 left-0 z-10 border border-[#cfcfcf] py-8 px-6">
@@ -138,21 +119,21 @@ const Sidebar = () => {
                             <div
                                 key={index}
                                 className={`flex items-center justify-between cursor-pointer`}
-                                onClick={() => handleCategoryClick(index)} // Click cả dòng
+                                onClick={() => handleCategoryChange(category.category_name)} // Click cả dòng
                             >
                                 <span className={`font-semibold text-[16px]`}>
-                                    {category}
+                                    {category.category_name}
                                 </span>
                                 {/* Ô vuông */}
                                 <div
                                     className={`w-[41px] h-[35px] flex items-center justify-center rounded-[4px]  transition-all p-2 ${
-                                        selectedCategory === index
+                                        currentCategory === category.category_name
                                             ? "bg-[#4A69E2] text-white"
                                             : "bg-[#E7E7E3] text-black hover:bg-gray-400"
                                     }`}
                                 >
                                     <span className="font-semibold text-[14px]">
-                                        -
+                                        {category.quantity}
                                     </span>
                                 </div>
                             </div>

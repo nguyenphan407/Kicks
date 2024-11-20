@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Breadcrumbs from "../components/Features/Breadcrumbs";
 import { images, icons } from "../assets/assets";
 import ProductCard from "@/components/Cart/ProductCard";
+import Pagination from "@/components/Pagination";
+import { ShopConText } from "@/context/ShopContext";
 
 const AllProductsPage = () => {
     const breadcrumbs = [
@@ -18,73 +20,14 @@ const AllProductsPage = () => {
         console.log("Selected Date Range:", range);
     };
 
-    const productsData = [
-        {
-            product_id: 1,
-            product_name: "Adidas Ultra boost",
-            image: images.Thumbnails[0],
-            category_name: "basketball",
-            price: 126.0,
-            description: "Long distance running requires a lot from athletes.",
-            remaining_products: 131,
-            total_sale: 42,
-        },
-        {
-            product_id: 2,
-            product_name: "Adidas Ultra boost",
-            image: images.Thumbnails[0],
-            category_name: "basketball",
-            price: 126.0,
-            description: "Long distance running requires a lot from athletes.",
-            remaining_products: 131,
-            total_sale: 42,
-        },
-        {
-            product_id: 3,
-            product_name: "Adidas Ultra boost",
-            image: images.Thumbnails[0],
-            category_name: "basketball",
-            price: 126.0,
-            description: "Long distance running requires a lot from athletes.",
-            remaining_products: 131,
-            total_sale: 42,
-        },
-        {
-            product_id: 4,
-            product_name: "Adidas Ultra boost",
-            image: images.Thumbnails[0],
-            category_name: "basketball",
-            price: 126.0,
-            description: "Long distance running requires a lot from athletes.",
-            remaining_products: 131,
-            total_sale: 42,
-        },
-        {
-            product_id: 5,
-            product_name: "Adidas Ultra boost",
-            image: images.Thumbnails[0],
-            category_name: "basketball",
-            price: 126.0,
-            description: "Long distance running requires a lot from athletes.",
-            remaining_products: 131,
-            total_sale: 42,
-        },
-        {
-            product_id: 6,
-            product_name: "Adidas Ultra boost",
-            image: images.Thumbnails[0],
-            category_name: "basketball",
-            price: 126.0,
-            description: "Long distance running requires a lot from athletes.",
-            remaining_products: 131,
-            total_sale: 42,
-        },
-    ];
-
+    const { products, filters, setIsOpenCategories } = useContext(ShopConText);
+    
     // Cuộn lên đầu trang khi trang thay đổi
     useEffect(() => {
+        setIsOpenCategories(true);
         window.scrollTo(0, 0);
-    });
+    }, [filters.page]); // Chạy lại khi `page` thay đổi
+
 
     return (
         <div>
@@ -108,14 +51,16 @@ const AllProductsPage = () => {
                     </button>
                 </div>
             </div>
-            <section className="grid grid-cols-3 gap-[14px]">
-                {productsData.map((product) => {
+            <section className="flex flex-col">
+                <div className="grid grid-cols-3 gap-[14px]">
+                {products.map((product) => {
                     return (
                         <ProductCard key={product.product_id} {...product} />
                     );
                 })}
+                </div>
                 {/* Pagination */}
-                {/* <Pagination></Pagination> */}
+                <Pagination></Pagination>
             </section>
         </div>
     );

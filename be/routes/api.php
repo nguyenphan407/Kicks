@@ -126,3 +126,4 @@ Route::group([
     Route::get('/order/{id}', [AdminController::class, 'getOrderInfo']);
     Route::get('/statics', [AdminController::class, 'statics']);
 })->middleware('admin');
+

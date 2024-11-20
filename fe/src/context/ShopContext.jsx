@@ -86,7 +86,7 @@ const ShopContextProvider = ({ children }) => {
                 const imageUrls = product.images.map((imageObj) => imageObj.image);
                 const sizes = product.sizes.map((sizeObj) => ({
                     size: sizeObj.size,
-                    quantity: sizeObj.quantity,
+                    quantity: sizeObj.quantity, 
                 }));
                 return {
                     ...product,
