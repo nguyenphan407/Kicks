@@ -2,7 +2,7 @@ import React from "react";
 import { FaGoogle, FaFacebook, FaApple } from "react-icons/fa";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import authApi from "../apis/authApi";
 const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -86,29 +86,22 @@ const Register = () => {
       try {
         setIsLoading(true);
 
-        const response = await axios.post(
-          "http://127.0.0.1:8000/api/auth/register",
-          {
-            first_name: formData.first_name,
-            last_name: formData.last_name,
-            email: formData.email,
-            password: formData.password,
-            gender: formData.gender,
-            terms_accepted: formData.terms_accepted,
-            keep_logged_in: formData.keep_logged_in,
-          }
-        );
+        const response = await authApi.register({
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+          email: formData.email,
+          password: formData.password,
+          gender: formData.gender,
+          terms_accepted: formData.terms_accepted,
+          keep_logged_in: formData.keep_logged_in,
+        });
 
         // Store token in localStorage or context/state management
         localStorage.setItem("token", response.data.token);
-
-        // Optional: Redirect to profile or dashboard
-        navigate("/dashboard");
+        navigate("/email-confirmation");
       } catch (error) {
         setErrors({
-          submit:
-            error.response?.data?.message ||
-            "Registration failed. Please try again.",
+          submit: error.response.data,
         });
       } finally {
         setIsLoading(false);
