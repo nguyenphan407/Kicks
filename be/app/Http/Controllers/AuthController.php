@@ -27,21 +27,23 @@ class AuthController extends Controller
     {
         $validatedData = $request->validate([
             'first_name' => 'required|string|max:255',
-            'last_name'=> 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'gender' => 'required|in:Male,Female,Other', // Add gender validation
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:8', // Adjusted password validation
         ]);
 
         $user = User::create([
             'first_name' => $validatedData['first_name'],
-            'last_name'=> $validatedData['last_name'],
+            'last_name' => $validatedData['last_name'],
+            'gender' => $validatedData['gender'], // Add gender to user creation
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
         ]);
 
         $token = JWTAuth::fromUser($user);
 
-        return response()->json(compact('user', 'token'));
+        return response()->json(compact('user', 'token'), 201);
     }
 
     /**
