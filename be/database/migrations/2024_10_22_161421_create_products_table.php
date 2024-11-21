@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('brand', 50);
             $table->string('gender', 50);
             $table->text('description');
+            $table->decimal('regular_price', 10, 2);
             $table->decimal('price', 10, 2);
             $table->integer('stock_quantity')->default(0);
             $table->string('color', 30);

@@ -62,13 +62,14 @@ class ProductController extends Controller
     {
         // Validate dữ liệu gửi lên
         $validatedData = $request->validate([
-            'name'        => 'required|string|max:100',
-            'description' => 'nullable|string',
-            'gender'      => 'nullable|string',
-            'price'       => 'required|numeric',
-            'color'       => 'nullable|string|max:30',
-            'category_id' => 'required|integer|exists:categories,category_id',
-            'brand'       => 'nullable|string|max:50',
+            'name'          => 'required|string|max:100',
+            'description'   => 'nullable|string',
+            'gender'        => 'nullable|string',
+            'regular_price' => 'required|numeric',
+            'price'         => 'required|numeric',
+            'color'         => 'nullable|string|max:30',
+            'category_id'   => 'required|integer|exists:categories,category_id',
+            'brand'         => 'nullable|string|max:50',
         ]);
         // Tạo sản phẩm mới
         $product = Product::create($validatedData);
@@ -102,12 +103,13 @@ class ProductController extends Controller
 
         // Validate dữ liệu
         $validatedData = $request->validate([
-            'name'        => 'sometimes|nullable|string|max:100',
-            'description' => 'nullable|string',
-            'price'       => 'sometimes|nullable|numeric',
-            'color'       => 'nullable|string|max:30',
-            'category_id' => 'sometimes|nullable|integer|exists:categories,category_id',
-            'brand'       => 'nullable|string|max:50',
+            'name'          => 'sometimes|nullable|string|max:100',
+            'description'   => 'nullable|string',
+            'regular_price' => 'required|numeric',
+            'price'         => 'sometimes|nullable|numeric',
+            'color'         => 'nullable|string|max:30',
+            'category_id'   => 'sometimes|nullable|integer|exists:categories,category_id',
+            'brand'         => 'nullable|string|max:50',
         ]);
 
         // Cập nhật sản phẩm

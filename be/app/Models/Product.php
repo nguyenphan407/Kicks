@@ -18,6 +18,7 @@ class Product extends Model implements Searchable
         "brand",
         "gender",
         "description",
+        "regular_price",
         "price",
         "stock_quantity",
         "size",

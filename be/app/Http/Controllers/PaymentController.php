@@ -31,7 +31,7 @@ class PaymentController extends Controller
         ];
 
         $response = $this->payOS->createPaymentLink($data);
-        return redirect($response['checkoutUrl']);
+        return $response['checkoutUrl'];
     }
 
     public function getPaymentInfo($orderCode){

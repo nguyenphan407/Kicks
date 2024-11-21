@@ -55,10 +55,6 @@ Route::group([
     Route::get('filter', [ProductController::class, 'filter']); // URL: /product/filter
     Route::get('recommend', [ProductController::class, 'recommendedProducts']); // URL: /product/recommend
     Route::get('search', [ProductController::class, 'search']); // URL: /product/search
-    Route::post('store', [ProductController::class, 'store']); // URL: /product/store
-    Route::post('size/store', [ProductSizeController::class, 'store']); // URL: /product/size/store
-    Route::patch('update/{id}', [ProductController::class, 'update']); // URL: /product/update/{id}
-    Route::delete('delete/{id}', [ProductController::class, 'destroy']); // URL: /product/delete/{id}
 })->middleware('jwt');
 
 // Cart route
@@ -125,4 +121,8 @@ Route::group([
     Route::get('/category', [AdminController::class, 'getQuantityOfCategory']);
     Route::get('/order/{id}', [AdminController::class, 'getOrderInfo']);
     Route::get('/statics', [AdminController::class, 'statics']);
+    Route::post('store', [ProductController::class, 'store']); 
+    Route::post('size/store', [ProductSizeController::class, 'store']); 
+    Route::patch('update/{id}', [ProductController::class, 'update']); 
+    Route::delete('delete/{id}', [ProductController::class, 'destroy']); 
 })->middleware('admin');
