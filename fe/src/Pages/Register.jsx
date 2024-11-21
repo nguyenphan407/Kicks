@@ -101,9 +101,7 @@ const Register = () => {
         navigate("/email-confirmation");
       } catch (error) {
         setErrors({
-          submit:
-            error.response?.data?.message ||
-            "Registration failed. Please try again.",
+          submit: error.response.data,
         });
       } finally {
         setIsLoading(false);
