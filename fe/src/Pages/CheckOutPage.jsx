@@ -3,6 +3,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { ShopConText } from "../context/ShopContext";
 import { Link, NavLink } from "react-router-dom";
 import { icons} from "../assets/assets"
+import Modal from "../Components/Modal";
 
 const CheckOutPage = () => {
     const [selectedOption, setSelectedOption] = useState("Standard Delivery");
@@ -26,6 +27,47 @@ const CheckOutPage = () => {
         navigate,
     } = useContext(ShopConText);
     const [cartData, setCartData] = useState([]);
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleOpenModal = () => setIsModalOpen(true);
+    const handleCloseModal = () => setIsModalOpen(false);
+
+    const handleConfirm = async () => {
+        setIsModalOpen(false);
+        //alert("Proceeding to Payment...");
+        // Thực hiện các bước tiếp theo, như điều hướng sang trang thanh toán.
+        try {
+            const productData = {
+                productName: "Khóa Học Advanced",
+                description: "Thanh toán đơn hàng",
+                returnUrl: "https://effortless-english-red.vercel.app/success",
+                cancelUrl: "https://effortless-english-red.vercel.app/cancel",
+                price: 2000,
+            };
+
+            const response = await fetch(
+              "http://localhost:8000/api/payment/create-payment-link",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(productData),
+              }
+            );
+      
+            const textResponse = await response.text();
+      
+            if (textResponse) {
+              window.location.href = textResponse; // Chuyển hướng tới đường dẫn
+            } else {
+              console.error("Link không tồn tại trong dữ liệu trả về");
+            }
+          } catch (error) {
+            console.error("Có lỗi xảy ra:", error);
+          }
+    };
 
     useEffect(() => {
         const tempData = [];
@@ -333,7 +375,9 @@ const CheckOutPage = () => {
                     {/* Xem kĩ cách làm cái button này */}
                     <button className="w-full lg:w-[362px] bg-secondary_black flex justify-between lg:justify-center rounded-lg text-white px-4 py-[15.5px]
                     
-                    transform transition duration-400 hover:bg-primary_blue uppercase hover:scale-[1.003] hover:text-white active:scale-[99%]">
+                    transform transition duration-400 hover:bg-primary_blue uppercase hover:scale-[1.003] hover:text-white active:scale-[99%]"
+                            onClick={handleOpenModal}
+                    >
                         <p className="font-rubik text-[14px] font-medium">REVIEW AND PAY</p>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -462,6 +506,19 @@ const CheckOutPage = () => {
                     </div>
                 </div>
             </aside>
+
+            <Modal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                onConfirm={handleConfirm}
+                userData={{
+                    firstName: "Nguyen",
+                    lastName: "Phan",
+                    email: "phn040704@gmail.com",
+                    phoneNumber: "0961187213",
+                    deliveryAddress: "20b Ling Trung"
+                }}
+            />
         </div>
     );
 };
