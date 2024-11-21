@@ -98,9 +98,7 @@ const Register = () => {
 
         // Store token in localStorage or context/state management
         localStorage.setItem("token", response.data.token);
-
-        // Optional: Redirect to profile or dashboard
-        navigate("/");
+        navigate("/email-confirmation");
       } catch (error) {
         setErrors({
           submit:

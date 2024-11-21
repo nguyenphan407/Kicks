@@ -9,6 +9,10 @@ const authApi = {
     const url = "auth/login/";
     return axiosClient.post(url, data);
   },
+  sendConfirmationEmail() {
+    const url = "send-mail/";
+    return axios.post(url);
+  },
 };
 
 export default authApi;
