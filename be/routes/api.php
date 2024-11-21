@@ -21,12 +21,12 @@ Route::group([
     'prefix' => 'auth'
 
 ], function ($router) {
-    
-    Route::post('register', [AuthController::class,'register']);
-    Route::post('login', [AuthController::class,'login']);
-    Route::post('logout', [AuthController::class,'logout']);
-    Route::post('refresh', [AuthController::class,'refresh']);
-    Route::post('me', [AuthController::class,'me']);
+
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
+    Route::post('me', [AuthController::class, 'me']);
     Route::get('/', function () {
         return "Hoang Nguyen cute";
     });
@@ -36,18 +36,18 @@ Route::group([
 Route::group([
 
     'namespace' => 'App\Http\Controllers',
-    'prefix'=> 'user'
+    'prefix' => 'user'
 
 ], function ($router) {
-    Route::get('{id}', [UserController::class,'show']);
-    Route::put('update', [UserController::class,'update']);
+    Route::get('{id}', [UserController::class, 'show']);
+    Route::put('update', [UserController::class, 'update']);
 })->middleware('jwt');
 
 // Product route
 Route::group([
 
     'namespace' => 'App\Http\Controllers',
-    'prefix'=> 'product'
+    'prefix' => 'product'
 
 ], function ($router) {
     Route::get('/', [ProductController::class, 'index']); // URL: /product
@@ -65,7 +65,7 @@ Route::group([
 Route::group([
 
     'namespace' => 'App\Http\Controllers',
-    'prefix'=> 'cart'
+    'prefix' => 'cart'
 
 ], function ($router) {
     Route::get('/', [CartController::class, 'index']);
@@ -79,7 +79,7 @@ Route::group([
 Route::group([
 
     'namespace' => 'App\Http\Controllers',
-    'prefix'=> 'orders'
+    'prefix' => 'orders'
 
 ], function ($router) {
     Route::get('/', [OrderController::class, 'index']);
@@ -90,7 +90,7 @@ Route::group([
 Route::group([
 
     'namespace' => 'App\Http\Controllers',
-    'prefix'=> 'category'
+    'prefix' => 'category'
 
 ], function ($router) {
     Route::get('/', [CategoryController::class, 'index']);
@@ -104,7 +104,7 @@ Route::group([
 Route::group([
 
     'namespace' => 'App\Http\Controllers',
-    'prefix'=> 'payment'
+    'prefix' => 'payment'
 
 ], function ($router) {
     Route::post('/create-payment-link', [PaymentController::class, 'createPaymentLink']);
@@ -118,7 +118,7 @@ Route::get('/send-mail', [MailController::class, 'sendEmail']);
 Route::group([
 
     'namespace' => 'App\Http\Controllers',
-    'prefix'=> 'admin'
+    'prefix' => 'admin'
 
 ], function ($router) {
     Route::get('/', [AdminController::class, 'index']);
@@ -126,4 +126,3 @@ Route::group([
     Route::get('/order/{id}', [AdminController::class, 'getOrderInfo']);
     Route::get('/statics', [AdminController::class, 'statics']);
 })->middleware('admin');
-
