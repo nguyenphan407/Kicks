@@ -51,7 +51,7 @@ Route::group([
 
 ], function ($router) {
     Route::get('/', [ProductController::class, 'index']); // URL: /product
-    Route::get('show/{id}', [ProductController::class, 'show'])->name('product.show');; // URL: /product/show/{id}
+    Route::get('show/{id}', [ProductController::class, 'show'])->name('product.show'); // URL: /product/show/{id}
     Route::get('filter', [ProductController::class, 'filter']); // URL: /product/filter
     Route::get('recommend', [ProductController::class, 'recommendedProducts']); // URL: /product/recommend
     Route::get('search', [ProductController::class, 'search']); // URL: /product/search
@@ -121,6 +121,7 @@ Route::group([
     Route::get('/category', [AdminController::class, 'getQuantityOfCategory']);
     Route::get('/order/{id}', [AdminController::class, 'getOrderInfo']);
     Route::get('/statics', [AdminController::class, 'statics']);
+    Route::get('show/{id}', [ProductController::class, 'show'])->name('product.show');
     Route::post('store', [ProductController::class, 'store']); 
     Route::post('size/store', [ProductSizeController::class, 'store']); 
     Route::patch('update/{id}', [ProductController::class, 'update']); 

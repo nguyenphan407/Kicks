@@ -1,11 +1,11 @@
 import React from "react";
-import { MapPin, User, Phone, Mail, Check, X } from 'lucide-react';
+import { Truck ,MapPin, User, Phone, Mail, Check, X } from 'lucide-react';
 
 const Modal = ({ isOpen, onClose, onConfirm, userData }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-blue-900/60 to-gray-800/60 backdrop-blur-sm flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-gradient-to-br from-blue-900/60 to-gray-800/60 backdrop-blur-sm flex justify-center items-center font-rubik z-50">
       <div className="bg-white w-[400px] rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
         <div className="bg-blue-50 p-6 border-b border-blue-100">
           <h2 className="text-2xl font-bold text-blue-800 flex items-center gap-3">
@@ -31,7 +31,7 @@ const Modal = ({ isOpen, onClose, onConfirm, userData }) => {
             <p className="text-gray-600">{userData.phoneNumber}</p>
           </div>
           <div className="flex items-center space-x-4">
-            <MapPin className="text-red-500" size={24} />
+            <Truck className="text-red-500" size={24} />
             <p className="text-gray-600">{userData.deliveryAddress}</p>
           </div>
         </div>
