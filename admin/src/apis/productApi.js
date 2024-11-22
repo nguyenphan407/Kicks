@@ -9,22 +9,22 @@ const productApi = {
     
 
     get(id) {
-        const url = `admin/${id}`;
+        const url = `admin/show/${id}`;
         return axiosClient.get(url);
     },
 
     add(data) {
-        const url = "admin/";
+        const url = "admin/store";
         return axiosClient.post(url, data);
     },
 
-    update(data) {
-        const url = `admin/${data.id}`;
-        return axiosClient.patch(url, data);
+    update(id, data) {
+        const url = `admin/update/${id}/?_method=PUT`;
+        return axiosClient.post(url, data);
     },
 
-    remove(id) {
-        const url = `admin/${id}`;
+    delete(id) {
+        const url = `admin/delete/${id}`;
         return axiosClient.delete(url);
     },
 };

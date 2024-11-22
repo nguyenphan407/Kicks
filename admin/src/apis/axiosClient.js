@@ -15,6 +15,13 @@ axiosClient.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // Kiểm tra nếu data là FormData
+    if (config.data instanceof FormData) {
+      // Xóa Content-Type để browser tự động thêm boundary
+      delete config.headers['Content-Type'];
+    }
+
     return config;
   },
   function (error) {

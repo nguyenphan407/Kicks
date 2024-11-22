@@ -1,9 +1,12 @@
 import React from "react";
 import { icons } from "@/assets/assets";
+import { Link } from "react-router-dom";
 
 const ProductCard = ({
+    product_id,
     name,
     stock_quantity,
+    regular_price,
     price,
     description,
     category_name,
@@ -31,11 +34,14 @@ const ProductCard = ({
                     </p>
                     <span className="font-rubik text-[14px] font-semibold text-[#232321]">
                         ${price}
+                        {/* Chờ Nguyên trả về http://localhost:8000/api/admin thêm cái regular_price */}
                     </span>
                 </div>
-                <button className=" px-2 py-3 rounded-[4px] bg-[#F3F3F3] hover:bg-gray-400 transition-all">
-                    <img src={icons.DotsThreeBgIcon} alt="" />
-                </button>
+                <Link to={`/productdetail/${product_id}`}>
+                    <button className=" px-2 py-3 rounded-[4px] bg-[#F3F3F3] hover:bg-gray-400 transition-all">
+                        <img src={icons.DotsThreeBgIcon} alt="" />
+                    </button>
+                </Link>
             </div>
 
             {/* Phần Summary */}

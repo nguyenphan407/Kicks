@@ -26,6 +26,9 @@ import ArrowUpYellow from "./icons/arrow_up_yellow.svg"
 import RemainingIcon from "./icons/remaining_icon.svg"
 import DotsThreeBgIcon from "./icons/dots-three-bg_icon.svg" 
 import RoundCheckIcon from "./icons/round-check_icon.svg"
+import PrintIcon from "./icons/print_icon.svg"
+import CheckSuccess from "./icons/check-success.svg"
+import DeleteIcon from "./icons/delete_icon.svg"
 
 // Import images
 import ThumbnailImg from "./images/thumbnail_img.jpg";
@@ -34,6 +37,7 @@ import ThumbnailImg2 from "./images/thumbnail_img2.jpg";
 import ThumbnailImg3 from "./images/thumbnail_img3.jpg";
 import ThumbnailImg4 from "./images/thumbnail_img4.jpg";
 import ThumbnailImg5 from "./images/thumbnail_img5.jpg";
+import { Delete } from "lucide-react";
 
 // Export all icons in a single object
 export const icons = {
@@ -61,7 +65,10 @@ export const icons = {
   ArrowUpYellow,
   RemainingIcon,
   DotsThreeBgIcon,
-  RoundCheckIcon
+  RoundCheckIcon,
+  PrintIcon,
+  CheckSuccess,
+  DeleteIcon
 };
 
 // Export all images in a single object

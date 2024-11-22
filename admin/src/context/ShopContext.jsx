@@ -18,7 +18,7 @@ const ShopContextProvider = ({ children }) => {
         itemsPerPage: 9,
     });
     const [categories, setCategories] = useState([]);
-    const [currentCategory, setCurrentCategory] = useState("Basketball");
+    const [currentCategory, setCurrentCategory] = useState({ category_id: 1, category_name: null });
     const [isOpenCategories, setIsOpenCategories] = useState(false); // khai báo thằng này ở đây để chỉ hiện khi nào mở trang
 
     // Toggle hiển thị dropdown
@@ -30,6 +30,7 @@ const ShopContextProvider = ({ children }) => {
         category: "",
     });
 
+    // fetch Categories api
     const fetchCategories = useCallback(async () => {
         try {
             const response = await categoryApi.getAll();
@@ -38,6 +39,7 @@ const ShopContextProvider = ({ children }) => {
             console.error("Failed to fetch categories:", error);
         }
     }, [filters]);
+    
 
     const fetchProducts = useCallback(async () => {
         try {
@@ -52,24 +54,27 @@ const ShopContextProvider = ({ children }) => {
                 };
             });
             setProducts(productsData);
+            console.log(products)
             setPagination({
                 currentPage: response.data.current_page,
                 totalPages: response.data.last_page,
                 totalItems: response.data.total,
                 itemsPerPage: response.data.per_page,
             });
+
         } catch (error) {
             console.error("Failed to fetch products:", error);
         }
     }, [filters]);
 
     const handleCategoryChange = useCallback((newCategory) => {
-        setCurrentCategory(newCategory);
+        setCurrentCategory(newCategory); // { category_id, category_name }
         setFilters((prev) => ({
             ...prev,
-            category: newCategory,
+            category: newCategory.category_name, // Sử dụng category_name trong filters
         }));
-    });
+    }, []);
+
 
     const handlePageChange = useCallback((newPage) => {
         setFilters((prev) => ({

@@ -90,10 +90,10 @@ const OrdersListPage = () => {
         },
     ];
 
-        // Cuộn lên đầu trang khi trang thay đổi
-        useEffect(() => {
-            window.scrollTo(0, 0);
-        }); 
+    // Cuộn lên đầu trang khi trang thay đổi
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    });
 
     return (
         <div>

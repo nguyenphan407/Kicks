@@ -119,7 +119,7 @@ const Sidebar = () => {
                             <div
                                 key={index}
                                 className={`flex items-center justify-between cursor-pointer`}
-                                onClick={() => handleCategoryChange(category.category_name)} // Click cả dòng
+                                onClick={() => handleCategoryChange(category)} 
                             >
                                 <span className={`font-semibold text-[16px]`}>
                                     {category.category_name}
@@ -127,7 +127,7 @@ const Sidebar = () => {
                                 {/* Ô vuông */}
                                 <div
                                     className={`w-[41px] h-[35px] flex items-center justify-center rounded-[4px]  transition-all p-2 ${
-                                        currentCategory === category.category_name
+                                        currentCategory.category_id === category.category_id
                                             ? "bg-[#4A69E2] text-white"
                                             : "bg-[#E7E7E3] text-black hover:bg-gray-400"
                                     }`}

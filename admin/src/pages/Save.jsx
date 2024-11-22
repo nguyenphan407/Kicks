@@ -1,15 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Breadcrumbs from "../components/Features/Breadcrumbs";
 import { images, icons } from "@/assets/assets";
 import productApi from "@/apis/productApi";
-import { ShopConText } from "@/context/ShopContext";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { useLoader } from "@/context/LoaderContext";
 
 // Schema validation với Yup
 const schema = yup.object().shape({
@@ -18,6 +13,10 @@ const schema = yup.object().shape({
         .string()
         .max(500, "Description cannot exceed 500 characters")
         .required("Description is required"),
+    category_id: yup
+        .number()
+        .typeError("Category ID must be a number")
+        .required("Category ID is required"),
     brand: yup.string().required("Brand is required"),
     size: yup.string().notOneOf(["Select Size"], "Please select a size"),
     color: yup
@@ -34,7 +33,10 @@ const schema = yup.object().shape({
         .number()
         .typeError("Sale price must be a number")
         .positive("Price must be positive")
-        .min(yup.ref("regular_price"), "Sell price must not be lower than regular price")
+        .min(
+            yup.ref("regular_price"),
+            "Sell price must not be lower than regular price"
+        )
         .required("Sale price is required"),
     quantity: yup
         .number()
@@ -57,7 +59,7 @@ const AddNewProduct = () => {
         { label: "Add New Product" },
     ];
 
-    //setup React Hook Form 
+    // React Hook Form setup
     const {
         register,
         handleSubmit,
@@ -69,13 +71,11 @@ const AddNewProduct = () => {
         mode: "onChange",
     });
 
-    const { currentCategory } = useContext(ShopConText);
-    const navigate = useNavigate(); // dùng để quay về lại trang product list
-
     const [isOpen, setIsOpen] = useState(false);
     const [selected, setSelected] = useState("Select Size");
     const [uploadedImages, setUploadedImages] = useState([]);
     const [serverErrors, setServerErrors] = useState({});
+
     const options = [
         "38",
         "39",
@@ -89,52 +89,53 @@ const AddNewProduct = () => {
         "47",
     ];
 
-    const { showLoader, hideLoader } = useLoader();
-
-    // Form submission
+    //form submission
     const onSubmit = async (data) => {
-      try {
-        showLoader(); 
-        const formData = new FormData();
-        formData.append("name", data.name);
-        formData.append("description", data.description);
-        formData.append("category_id", currentCategory.category_id);
-        formData.append("brand", data.brand);
-        formData.append("size", data.size);
-        formData.append("quantity", data.quantity);
-        formData.append("color", data.color);
-        formData.append("regular_price", data.regular_price);
-        formData.append("price", data.price);
-        formData.append("gender", data.gender);
-    
-        console.log(data);
-    
-        data.images.forEach((image) => {
-          if (image.file instanceof File) {
-            formData.append("images[]", image.file);
-          } else {
-            console.error("An image is not a valid File");
-          }
-        });
-    
-        const response = await productApi.add(formData);
-        console.log("Product added successfully:", response);
-        toast.success("Product added successfully!");
-        navigate("/allproduct"); // Reset form or redirect as needed
-    
-        hideLoader(); 
-      } catch (error) {
-        hideLoader(); 
-    
-        if (error.response) {
-          console.error("Server responded with:", error.response.data);
-          setServerErrors(error.response.data.errors || {});
-          toast.error(error.response.data.message || "Failed to add product!");
-        } else {
-          console.error("Error adding product:", error.message);
-          toast.error("Something went wrong while adding the product!");
+        try {
+            const formData = new FormData();
+            formData.append("name", data.name);
+            formData.append("description", data.description);
+            formData.append("category_id", data.category_id);
+            formData.append("brand", data.brand);
+            formData.append("size", data.size);
+            formData.append("quantity", data.quantity);
+            formData.append("color", data.color);
+            formData.append("regular_price", data.regular_price);
+            formData.append("price", data.price);
+            formData.append("gender", data.gender);
+
+            console.log(data);
+            console.log("FormData content:");
+            formData.forEach((value, key) => {
+                console.log(key, value);
+            });
+
+            // Append images trước
+            data.images.forEach((image) => {
+                if (image.file instanceof File) {
+                    formData.append("images[]", image.file);
+                } else {
+                    console.error("An image is not a valid File");
+                }
+            });
+
+            // log ra để check :))
+            console.log("FormData content:");
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ", " + pair[1]);
+            }
+
+            const response = await productApi.add(formData);
+            console.log("Product added successfully:", response);
+            // Reset form or redirect as needed
+        } catch (error) {
+            if (error.response) {
+                console.error("Server responded with:", error.response.data);
+                setServerErrors(error.response.data.errors || {});
+            } else {
+                console.error("Error adding product:", error.message);
+            }
         }
-      }
     };
 
     const handleImageUpload = (e) => {
@@ -227,6 +228,28 @@ const AddNewProduct = () => {
                                 {serverErrors.description && (
                                     <p className="absolute top-[250px] text-red-500 text-sm">
                                         {serverErrors.description[0]}
+                                    </p>
+                                )}
+                            </div>
+                            {/* Category ID */}
+                            <div className="relative">
+                                <h3 className="text-[20px] mb-4 font-semibold font-rubik text-[#232321]">
+                                    Category ID
+                                </h3>
+                                <input
+                                    {...register("category_id")}
+                                    placeholder="Category ID"
+                                    type="number"
+                                    className="w-full px-[16px] py-[10px] border border-gray-800 rounded-lg font-inter text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                                />
+                                {errors.category_id && (
+                                    <p className="absolute top-[100px] text-red-500 text-sm">
+                                        {errors.category_id.message}
+                                    </p>
+                                )}
+                                {serverErrors.category_id && (
+                                    <p className="absolute top-[120px] text-red-500 text-sm">
+                                        {serverErrors.category_id[0]}
                                     </p>
                                 )}
                             </div>
@@ -424,7 +447,7 @@ const AddNewProduct = () => {
                                     <input
                                         {...register("gender")}
                                         type="text"
-                                        placeholder="Gender"
+                                        placeholder="Color (e.g., #FFFFFF)"
                                         className="w-full p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                     />
                                     {errors.gender && (
@@ -434,7 +457,7 @@ const AddNewProduct = () => {
                                     )}
                                     {serverErrors.gender && (
                                         <p className="absolute top-[120px] text-red-500 text-sm">
-                                            {serverErrors.gender[0]}
+                                            {serverErrors.color[0]}
                                         </p>
                                     )}
                                 </div>
@@ -515,7 +538,7 @@ const AddNewProduct = () => {
                 <div className="w-96 flex flex-row gap-4 ml-auto">
                     <button
                         type="submit"
-                        className="w-full h-12 bg-[#232321] flex justify-center items-center rounded-lg text-white px-4 transform transition duration-400 hover:bg-primary_blue uppercase hover:scale-[1.003] hover:text-white active:scale-[96%]"
+                        className="w-full h-12 bg-[#232321] flex justify-center items-center rounded-lg text-white px-4 transform transition duration-400 hover:bg-primary_blue uppercase hover:scale-[1.003] hover:text-white active:scale-[99%]"
                     >
                         <p className="text-sm font-rubik text-[14px] tracking-tight">
                             Add

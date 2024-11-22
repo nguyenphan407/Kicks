@@ -53,7 +53,7 @@ const Login = () => {
         const verifyToken = async () => {
             try {
                 await authApi.getMe(); // Gọi API kiểm tra token
-                navigate("/dashboard"); // Điều hướng nếu hợp lệ
+                navigate("/"); // Điều hướng nếu hợp lệ
                 
             } catch {
                 // Nếu token không hợp lệ, giữ nguyên ở trang login

@@ -4,6 +4,7 @@ import { images, icons } from "../assets/assets";
 import ProductCard from "@/components/Cart/ProductCard";
 import Pagination from "@/components/Pagination";
 import { ShopConText } from "@/context/ShopContext";
+import { NavLink } from "react-router-dom";
 
 const AllProductsPage = () => {
     const breadcrumbs = [
@@ -21,13 +22,12 @@ const AllProductsPage = () => {
     };
 
     const { products, filters, setIsOpenCategories } = useContext(ShopConText);
-    
+
     // Cuộn lên đầu trang khi trang thay đổi
     useEffect(() => {
         setIsOpenCategories(true);
         window.scrollTo(0, 0);
     }, [filters.page]); // Chạy lại khi `page` thay đổi
-
 
     return (
         <div>
@@ -40,7 +40,8 @@ const AllProductsPage = () => {
                     <Breadcrumbs items={breadcrumbs} />
                 </div>
                 <div className="z-0">
-                    <button
+                    <NavLink
+                        to="/addnewproduct"
                         className="bg-[#232321] flex items-center justify-between gap-2 px-[26px] py-[15.5px] rounded-[8px]
                     transform transition duration-400 hover:bg-primary_blue uppercase hover:scale-[1.005] active:opacity-90 hover:text-white active:scale-[97%]"
                     >
@@ -48,16 +49,19 @@ const AllProductsPage = () => {
                         <p className="font-rubik text-[14px] font-medium text-white">
                             ADD NEW PRODUCT
                         </p>
-                    </button>
+                    </NavLink>
                 </div>
             </div>
             <section className="flex flex-col">
                 <div className="grid grid-cols-3 gap-[14px]">
-                {products.map((product) => {
-                    return (
-                        <ProductCard key={product.product_id} {...product} />
-                    );
-                })}
+                    {products.map((product) => {
+                        return (
+                            <ProductCard
+                                key={product.product_id}
+                                {...product}
+                            />
+                        );
+                    })}
                 </div>
                 {/* Pagination */}
                 <Pagination></Pagination>

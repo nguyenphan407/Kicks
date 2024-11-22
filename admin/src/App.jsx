@@ -120,7 +120,7 @@ const App = () => {
                                 }
                             />
                             <Route
-                                path="/productdetail"
+                                path="/productdetail/:productId"
                                 element={
                                     <ProtectedRoute>
                                         <ProductDetail />
