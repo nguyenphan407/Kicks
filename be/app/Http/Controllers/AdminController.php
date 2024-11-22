@@ -69,9 +69,9 @@ class AdminController extends Controller
 
     // Get quantity for each category
     public function getQuantityOfCategory() {
-        $result = Category::select('categories.category_name', DB::raw('count(products.product_id) as quantity'))
+        $result = Category::select('categories.category_id', 'categories.category_name', DB::raw('count(products.product_id) as quantity'))
                             ->leftJoin('products', 'products.category_id', '=', 'categories.category_id')
-                            ->groupBy('categories.category_name')
+                            ->groupBy('categories.category_id', 'categories.category_name')
                             ->get();
 
         return response()->json($result);

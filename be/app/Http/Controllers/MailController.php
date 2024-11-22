@@ -10,9 +10,9 @@ class MailController extends Controller
     public function sendEmail()
     {
         $mailData = [
-            'title' => 'Test Email từ Laravel',
+            'title' => 'Thông báo xác thực tài khoản từ Kicks',
             'name' => 'Hoàng Nguyên',
-            'verification_url' => 'fb.com'
+            'verification_url' => 'http://localhost:5173/'
         ];
         
         try {

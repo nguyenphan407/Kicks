@@ -108,7 +108,7 @@ Route::group([
 })->middleware('jwt');
 
 // Email Routes
-Route::get('/send-mail', [MailController::class, 'sendEmail']);
+Route::post('/send-mail', [MailController::class, 'sendEmail']);
 
 // Admin Routes
 Route::group([
