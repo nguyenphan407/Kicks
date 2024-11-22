@@ -94,7 +94,7 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         // Tìm sản phẩm theo ID
-        $product = Product::findOrFail($id);
+        $product = Product::find($id);
 
         // Nếu không tìm thấy sản phẩm
         if (!$product) {
@@ -105,7 +105,8 @@ class ProductController extends Controller
         $validatedData = $request->validate([
             'name'          => 'sometimes|nullable|string|max:100',
             'description'   => 'nullable|string',
-            'regular_price' => 'required|numeric',
+            'gender'        => 'nullable|string',
+            'regular_price' => 'nullable|numeric',
             'price'         => 'sometimes|nullable|numeric',
             'color'         => 'nullable|string|max:30',
             'category_id'   => 'sometimes|nullable|integer|exists:categories,category_id',
@@ -123,9 +124,7 @@ class ProductController extends Controller
         }
 
         if ($request->hasFile('images')) {
-            dispatch(function () use ($request, $id) {
-                $this->handleProductImages($request->file('images'), $id, true);
-            });
+            $this->handleProductImages($request->file('images'), $id, true);
         }
 
         Cache::forget("product_{$id}");
@@ -253,6 +252,10 @@ class ProductController extends Controller
     {
         if ($clearOldImages) {
             $this->deleteProductImages($productId);
+        }
+
+        if (!is_array($images)){
+            $images = [$images];
         }
 
         foreach ($images as $image) {

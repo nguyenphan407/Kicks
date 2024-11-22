@@ -22,6 +22,7 @@ class AdminController extends Controller
                     'products.name', 
                     'products.stock_quantity', 
                     'products.price', 
+                    'products.regular_price', 
                     'products.description', 
                     'categories.category_name', 
                     DB::raw('SUM(COALESCE(order_items.quantity, 0)) as sale')
@@ -31,6 +32,7 @@ class AdminController extends Controller
                     'products.name', 
                     'products.stock_quantity', 
                     'products.price', 
+                    'products.regular_price',
                     'products.description', 
                     'categories.category_name'
                 )
@@ -46,7 +48,8 @@ class AdminController extends Controller
                     'products.product_id', 
                     'products.name', 
                     'products.stock_quantity', 
-                    'products.price', 
+                    'products.price',
+                    'products.regular_price', 
                     'products.description', 
                     'categories.category_name', 
                     DB::raw('SUM(COALESCE(order_items.quantity, 0)) as sale')
@@ -56,6 +59,7 @@ class AdminController extends Controller
                     'products.name', 
                     'products.stock_quantity', 
                     'products.price', 
+                    'products.regular_price',
                     'products.description', 
                     'categories.category_name'
                 )

@@ -121,9 +121,9 @@ Route::group([
     Route::get('/category', [AdminController::class, 'getQuantityOfCategory']);
     Route::get('/order/{id}', [AdminController::class, 'getOrderInfo']);
     Route::get('/statics', [AdminController::class, 'statics']);
-    Route::get('show/{id}', [ProductController::class, 'show'])->name('product.show');
+    Route::get('show/{id}', [ProductController::class, 'show']);
     Route::post('store', [ProductController::class, 'store']); 
     Route::post('size/store', [ProductSizeController::class, 'store']); 
-    Route::patch('update/{id}', [ProductController::class, 'update']); 
+    Route::put('update/{id}', [ProductController::class, 'update']); 
     Route::delete('delete/{id}', [ProductController::class, 'destroy']); 
 })->middleware('admin');
