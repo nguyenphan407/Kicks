@@ -41,8 +41,8 @@ const CheckOutPage = () => {
             const productData = {
                 productName: "Khóa Học Advanced",
                 description: "Thanh toán đơn hàng",
-                returnUrl: "https://effortless-english-red.vercel.app/success",
-                cancelUrl: "https://effortless-english-red.vercel.app/cancel",
+                returnUrl: "http://localhost:5173/order/success",
+                cancelUrl: "http://localhost:5173/order/cancel",
                 price: 2000,
             };
 
