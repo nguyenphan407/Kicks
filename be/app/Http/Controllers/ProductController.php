@@ -248,12 +248,8 @@ class ProductController extends Controller
         return response()->json($recommendedProducts);
     }
 
-    private function handleProductImages($images, $productId, $clearOldImages = false)
+    private function handleProductImages($images, $productId)
     {
-        if ($clearOldImages) {
-            $this->deleteProductImages($productId);
-        }
-
         if (!is_array($images)){
             $images = [$images];
         }

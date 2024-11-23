@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use function Laravel\Prompts\select;
@@ -187,10 +188,57 @@ class AdminController extends Controller
     // statics graph
     public function statics(Request $request){
         $result = Order::select(DB::raw($request->metric.'(created_at) as ' . $request->metric), DB::raw('sum(amount) as revenue'))
-                            ->groupBy(DB::raw($request->metric.'(created_at)'))
-                            ->get();
+            ->groupBy(DB::raw($request->metric.'(created_at)'))
+            ->get();
 
         return response()->json($result);
+    }
+
+    public function report(Request $request){
+        $nowTotal = Order::select(DB::raw('sum(amount) as total_revenue'))
+            ->whereDate('created_at', '<', new DateTime($request->toDate))
+            ->WhereDate('created_at', '>', new DateTime($request->fromDate))
+            ->first();
+
+        $nowShipping = Order::select(DB::raw('sum(amount) as ship_revenue'))
+            ->whereDate('created_at', '<', new DateTime($request->toDate))
+            ->WhereDate('created_at', '>', new DateTime($request->fromDate))
+            ->where('order_status', '=', 'shipped')
+            ->first();
+
+        $nowActive = Order::select(DB::raw('sum(amount) as active_revenue'))
+            ->whereDate('created_at', '<', new DateTime($request->toDate))
+            ->WhereDate('created_at', '>', new DateTime($request->fromDate))
+            ->where('order_status', '=', 'delivered')
+            ->first();
+        
+        $pastTotal = Order::select(DB::raw('sum(amount) as total_revenue'))
+            ->whereDate('created_at', '<', (new DateTime($request->toDate))->modify('-1 year'))
+            ->WhereDate('created_at', '>', (new DateTime($request->fromDate))->modify('-1 year'))
+            ->first();
+
+        $pastShipping = Order::select(DB::raw('sum(amount) as ship_revenue'))
+            ->whereDate('created_at', '<', (new DateTime($request->toDate))->modify('-1 year'))
+            ->WhereDate('created_at', '>', (new DateTime($request->fromDate))->modify('-1 year'))
+            ->where('order_status', '=', 'shipped')
+            ->first();
+        
+        $pastActive = Order::select(DB::raw('sum(amount) as active_revenue'))
+            ->whereDate('created_at', '<', (new DateTime($request->toDate))->modify('-1 year'))
+            ->WhereDate('created_at', '>', (new DateTime($request->fromDate))->modify('-1 year'))
+            ->where('order_status', '=', 'delivered')
+            ->first();
+
+
+        return response()->json([
+                            'now' => [$nowTotal->total_revenue, $nowActive->active_revenue, $nowShipping->ship_revenue],
+                            'past' => [$pastTotal->total_revenue, $pastActive->active_revenue, $pastShipping->ship_revenue],
+                            'percent' => [
+                                ($nowTotal->total_revenue/($pastTotal->total_revenue || 1) - 1),
+                                ($nowActive->active_revenue/($pastActive->active_revenue || 1) - 1),
+                                ($nowShipping->ship_revenue/($pastShipping->ship_revenue || 1) - 1),
+                            ]
+                        ]);
     }
 
 }

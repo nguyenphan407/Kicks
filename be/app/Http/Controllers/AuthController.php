@@ -30,17 +30,17 @@ class AuthController extends Controller
             $validatedData = $request->validate([
                 'first_name' => 'required|string|max:255',
                 'last_name' => 'required|string|max:255',
-                'gender' => 'required|in:Male,Female,Other',
+                //'gender' => 'required|in:Male,Female,Other',
                 'email' => 'required|string|email|max:255|unique:users',
                 'password' => 'required|string|min:8',
-                'terms_accepted' => 'boolean', // Optional validation
-                'keep_logged_in' => 'boolean' // Optional validation
+                // 'terms_accepted' => 'boolean', // Optional validation
+                // 'keep_logged_in' => 'boolean' // Optional validation
             ]);
 
             $user = User::create([
                 'first_name' => $validatedData['first_name'],
                 'last_name' => $validatedData['last_name'],
-                'gender' => $validatedData['gender'],
+                //'gender' => $validatedData['gender'],
                 'email' => $validatedData['email'],
                 'password' => Hash::make($validatedData['password']),
             ]);
