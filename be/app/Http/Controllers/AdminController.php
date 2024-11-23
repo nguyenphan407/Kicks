@@ -231,14 +231,14 @@ class AdminController extends Controller
 
 
         return response()->json([
-                            'now' => [$nowTotal->total_revenue, $nowActive->active_revenue, $nowShipping->ship_revenue],
-                            'past' => [$pastTotal->total_revenue, $pastActive->active_revenue, $pastShipping->ship_revenue],
-                            'percent' => [
-                                ($nowTotal->total_revenue/($pastTotal->total_revenue || 1) - 1),
-                                ($nowActive->active_revenue/($pastActive->active_revenue || 1) - 1),
-                                ($nowShipping->ship_revenue/($pastShipping->ship_revenue || 1) - 1),
-                            ]
-                        ]);
+            'now' => [$nowTotal->total_revenue, $nowActive->active_revenue, $nowShipping->ship_revenue],
+            'past' => [$pastTotal->total_revenue, $pastActive->active_revenue, $pastShipping->ship_revenue],
+            'percent' => [
+                ($nowTotal->total_revenue/($pastTotal->total_revenue || 1) - 1),
+                ($nowActive->active_revenue/($pastActive->active_revenue || 1) - 1),
+                ($nowShipping->ship_revenue/($pastShipping->ship_revenue || 1) - 1),
+            ]
+        ]);
     }
 
 }
