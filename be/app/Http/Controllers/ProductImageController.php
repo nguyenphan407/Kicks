@@ -25,9 +25,7 @@ class ProductImageController extends Controller
         $productImage->save();
     }
 
-    public static function delete($url){
-        $publicId = ProductImage::find($url)->public_id;
-
+    public static function delete($publicId){
         Configuration::instance('cloudinary://' . config('services.cloudinary.api_key') . ':' . config('services.cloudinary.api_secret') . '@' . config('services.cloudinary.cloud_name') . '?secure=true');
 
         $uploadApi = new UploadApi();
