@@ -124,7 +124,7 @@ class ProductController extends Controller
         }
 
         if ($request->hasFile('images')) {
-            $this->handleProductImages($request->file('images'), $id, true);
+            $this->handleProductImages($request->file('images'), $id);
         }
 
         Cache::forget("product_{$id}");

@@ -16,11 +16,11 @@ return new class extends Migration
             $table->foreignId('order_id')->references('order_id')->on('orders')->onDelete('cascade');
             $table->enum('payment_method', ['credit_card', 'cod', 'bank_transfer']);
             $table->decimal('amount', 10, 2);
-            $table->string('bank_id');
-            $table->string('account_name');
-            $table->string('account_number');
-            $table->string('description');
-            $table->string('reference');
+            $table->string('bank_id')->nullable();
+            $table->string('account_name')->nullable();
+            $table->string('account_number')->nullable();
+            $table->string('description')->nullable();
+            $table->string('reference')->nullable();
             $table->timestamps();
         });
     }

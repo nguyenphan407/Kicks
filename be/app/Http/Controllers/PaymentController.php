@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use PayOS\PayOS;
 
@@ -13,22 +14,19 @@ class PaymentController extends Controller
     }
     public function createPaymentLink(Request $request) {
         $data = [
-            // "orderCode" => intval(substr(strval(microtime(true) * 10000), -6)),
-            // "amount" => $request->amount,
-            // "description" => $request->description,
-            // "items" => [
-            //     0 => [
-            //         'name' => 'Mì tôm Hảo Hảo ly',
-            //         'price' => 2000,
-            //         'quantity' => 1
-            //     ]
-            // ],
             "orderCode" => intval(substr(strval(microtime(true) * 10000), -6)),
             "amount" => 2000,
-            "description" => "Thanh toán đơn hàng",
+            "description" => "VQRIO123",
+            "buyerName" => "Nguyen Van A",
+            "buyerEmail" => "phn040704@gmail.com",
+            "buyerPhone" => "0961187213",
+            "buyerAddress" => "số nhà, đường, phường, tỉnh hoặc thành phố",
+            "items" => $request->items,
             "returnUrl" => $request->returnUrl . "?success=true",
             "cancelUrl" => $request->cancelUrl . "?canceled=true"
         ];
+
+        OrderController::store($data);
 
         $response = $this->payOS->createPaymentLink($data);
         return $response['checkoutUrl'];
@@ -37,6 +35,24 @@ class PaymentController extends Controller
     public function getPaymentInfo($orderCode){
 
         $response = $this->payOS->getPaymentLinkInformation($orderCode);
+
+        if ($response['status'] == 'PAID'){
+            $payment = Payment::create([
+                'order_id' => $response['orderCode'],
+                'payment_method' => 'bank_transfer',
+                'amount' => $response['amountPaid'],
+            ]);  
+
+            foreach ($response['transactions'] as $transaction){
+                $payment->bank_id = $transaction['counterAccountBankId'];
+                $payment->account_name = $transaction['counterAccountName'];
+                $payment->account_number = $transaction['counterAccountNumber'];
+                $payment->description = $transaction['description'];
+                $payment->reference = $transaction['reference'];
+            } 
+
+            $payment->save();
+        } 
 
         return response()->json($response);
     }
