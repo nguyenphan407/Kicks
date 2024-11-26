@@ -17,6 +17,26 @@ const CheckOutPage = () => {
     const handleOptionSelectPayment = (option) => {
         setSelectedOptionPayment(option);
     };
+
+    const [userData, setUserData] = useState({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phoneNumber: "",
+        deliveryAddress: ""
+    })
+
+    const handleChange = (e) => {
+        // Lấy thuộc tính 'name' và 'value' từ input đang thay đổi
+        const { name, value } = e.target;
+
+        // Cập nhật giá trị tương ứng trong state
+        setUserData((prevData) => ({
+        ...prevData, // Giữ lại các giá trị trước đó
+        [name]: value, // Chỉ thay đổi giá trị của trường tương ứng
+        }));
+    }   
+
     const {
         products,
         currency,
@@ -35,16 +55,30 @@ const CheckOutPage = () => {
 
     const handleConfirm = async () => {
         setIsModalOpen(false);
-        //alert("Proceeding to Payment...");
-        // Thực hiện các bước tiếp theo, như điều hướng sang trang thanh toán.
+
+        localStorage.setItem('user-info', JSON.stringify(userData));
+        // Thực hiện điều hướng sang trang thanh toán.
         try {
             const productData = {
-                productName: "Khóa Học Advanced",
                 description: "Thanh toán đơn hàng",
+                items: [
+                    {
+                        "name": "Air Max 90",
+                        "quantity": 1,
+                        "price": 150.00
+                    }
+                    // {
+                    //     "name": "Air Max 9000",
+                    //     "quantity": 2,
+                    //     "price": 150.00
+                    // }
+                ],
                 returnUrl: "http://localhost:5173/order/success",
                 cancelUrl: "http://localhost:5173/order/cancel",
                 price: 2000,
             };
+
+            localStorage.setItem('products', JSON.stringify(productData.items));
 
             const response = await fetch(
               "http://localhost:8000/api/payment/create-payment-link",
@@ -119,11 +153,14 @@ const CheckOutPage = () => {
                         </p>
                         <input
                             type="email"
+                            name="email"
+                            value={userData.email}
                             placeholder="Email"
                             // chiều rộng không đúng theo thiết kế là 342px khi active nó có viền xanh và bỏ outline đi
                             // để ý cái padding theo chiều dọc là py, trong thiết kế nó để là 10 nhưng thực tế khi đo phải tính luôn từ đầu cho đến viền chữ
                             // dùng cái chế độ ruler để đo
                             className="w-full lg:w-[342px] h-12 px-4 py-[14.5px] border border-gray-800 rounded-lg text-sm text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                            onChange={handleChange}
                         />
                     </div>
 
@@ -146,10 +183,16 @@ const CheckOutPage = () => {
                                 <input
                                     type="text"
                                     placeholder="First Name*"
+                                    name="firstName"
+                                    value={userData.firstName}
+                                    onChange={handleChange}
                                     className="w-full flex-1 lg:w-[342px] h-12 px-4 py-[14.5px] border border-gray-800 rounded-lg text-sm text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                 />
                                 <input
                                     type="text"
+                                    name="lastName"
+                                    value={userData.lastName}
+                                    onChange={handleChange}
                                     placeholder="Last Name*"
                                     className="w-full lg:w-[342px] h-12 px-4 py-[14.5px] border border-gray-800 rounded-lg text-sm text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                 />
@@ -158,6 +201,9 @@ const CheckOutPage = () => {
                             <div>
                                 <input
                                     type="text"
+                                    name="deliveryAddress"
+                                    value={userData.deliveryAddress}
+                                    onChange={handleChange}
                                     placeholder="Find Delivery Address*"
                                     className="w-full flex flex-1 lg:w-[342px] h-12 px-4 py-[14.5px] border border-gray-800 rounded-lg text-sm text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                 />
@@ -169,6 +215,9 @@ const CheckOutPage = () => {
                             <div className="relative">
                                 <input
                                     type="tel"
+                                    name="phoneNumber"
+                                    value={userData.phoneNumber}
+                                    onChange={handleChange}
                                     placeholder="Phone Number*"
                                     className="w-full flex flex-1 lg:w-[342px] h-12 px-4 py-[14.5px] border border-gray-800 rounded-lg text-sm text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                 />
@@ -511,13 +560,7 @@ const CheckOutPage = () => {
                 isOpen={isModalOpen}
                 onClose={handleCloseModal}
                 onConfirm={handleConfirm}
-                userData={{
-                    firstName: "Nguyen",
-                    lastName: "Phan",
-                    email: "phn040704@gmail.com",
-                    phoneNumber: "0961187213",
-                    deliveryAddress: "20b Ling Trung"
-                }}
+                userData={userData}
             />
         </div>
     );
