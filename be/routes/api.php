@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderItemController;
@@ -124,7 +125,8 @@ Route::group([
     Route::get('/statics', [AdminController::class, 'statics']);
     Route::get('/report', [AdminController::class, 'report']);
     Route::get('show/{id}', [ProductController::class, 'show']);
-    Route::post('store', [ProductController::class, 'store']); 
+    Route::post('store', [ProductController::class, 'store']);
+    Route::post('create_invoice', [InvoiceController::class, 'create']);  
     Route::post('size/store', [ProductSizeController::class, 'store']); 
     Route::put('update/{id}', [ProductController::class, 'update']); 
     Route::delete('delete/{id}', [ProductController::class, 'destroy']);

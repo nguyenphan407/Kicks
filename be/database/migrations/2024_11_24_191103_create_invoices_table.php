@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id('invoice_id');
-            $table->string('number');
             $table->foreignId('order_id')->references('order_id')->on('orders')->onDelete('cascade');
             $table->date('due_date');
             $table->string('subject');

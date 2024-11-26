@@ -14,37 +14,7 @@
             padding: 20px;
             background-color: #f8f9fa;
         }
-        .invoice-container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .invoice-header {
-            margin-bottom: 30px;
-        }
-        .invoice-number {
-            color: #333;
-            font-size: 1.2em;
-            margin-bottom: 20px;
-        }
-        .flex-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        .info-group {
-            margin-bottom: 20px;
-        }
-        .info-group h2 {
-            color: #666;
-            font-size: 0.9em;
-            margin-bottom: 5px;
-        }
-        .info-group p {
-            margin: 0;
-            font-size: 1em;
-        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -62,70 +32,72 @@
             padding: 12px;
             border-bottom: 1px solid #dee2e6;
         }
-        .product-image {
-            width: 40px;
-            height: 40px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-        .amount-table {
-            width: 300px;
-            margin-left: auto;
-        }
-        .amount-table td {
-            padding: 8px 12px;
-        }
-        .amount-table tr:last-child {
-            font-weight: bold;
-        }
-        .attachment-section {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #dee2e6;
-        }
-        .attachment-box {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            width: fit-content;
-        }
-        .attachment-icon {
-            margin-right: 10px;
-        }
-        .download-link {
-            color: #007bff;
-            text-decoration: none;
-            margin-left: 20px;
-        }
+
     </style>
 </head>
 <body>
-    <div class="invoice-container">
-        <div class="invoice-header">
-            <div class="invoice-number">INV{{ $invoice->number }}</div>
+    <div class="invoice-container" style="
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        ">
+        <div class="invoice-header" style="
+            margin-bottom: 30px;
+        ">
+            <div class="invoice-number" style="
+                color: #333;
+                font-size: 1.2em;
+                margin-bottom: 10px;
+            ">INV{{ $invoice['invoice_id'] }}</div>
             
-            <div class="flex-container">
-                <div class="info-group">
-                    <h2>Due date</h2>
-                    <p>{{ $invoice->due_date->format('d F Y') }}</p>
+            <div class="flex-container" style="
+                display: inLine;
+            ">
+                <div class="info-group" style="
+                    margin: 0;
+                    padding: 0;
+                    flex-shrink: 0; /* Không cho phép thu nhỏ */
+                ">
+                    <h2 style="color: #666; font-size: 0.9em; margin-bottom: 5px;">Due date</h2>
+                    <p style="margin: 0; font-size: 1em;">{{(new DateTime($invoice['due_date']))->format('d F Y')}}</p>
                 </div>
-                <div class="info-group">
-                    <h2>Subject</h2>
-                    <p>{{ $invoice->subject }}</p>
+                <div class="info-group" align ="right">
+                    <h2 style="color: #666; font-size: 0.9em; margin-bottom: 5px;">Subject</h2>
+                    <p style="margin: 0; font-size: 1em;">{{ $invoice['subject'] }}</p>
                 </div>
             </div>
+
             
-            <div class="flex-container">
-                <div class="info-group">
-                    <h2>Billed to</h2>
-                    <p>{{ $invoice->client_name }}</p>
-                    <p>{{ $invoice->client_email }}</p>
+            <div class="flex-container" style="
+                display: inLine;
+                margin-bottom: 10px;
+            ">
+                <div class="info-group" style="margin-bottom: 20px;">
+                    <h2 style="
+                        color: #666;
+                        font-size: 0.9em;
+                        margin-bottom: 5px;    
+                    ">Billed to</h2>
+                    <p style="
+                        margin: 0;
+                        font-size: 1em;
+                    ">{{ $invoice['customer_name'] }}</p>
+                    <p style="
+                        margin: 0;
+                        font-size: 1em;
+                    ">{{ $invoice['customer_email'] }}</p>
                 </div>
-                <div class="info-group">
-                    <h2>Currency</h2>
-                    <p>{{ $invoice->currency }}</p>
+                <div class="info-group" align ="right">
+                    <h2 style="
+                        color: #666;
+                        font-size: 0.9em;
+                        margin-bottom: 5px;    
+                    " >Currency</h2>
+                    <p style="
+                        margin: 0;
+                        font-size: 1em;
+                    ">{{ $invoice['currency'] }}</p>
                 </div>
             </div>
         </div>
@@ -140,44 +112,62 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($invoice->items as $item)
+                @foreach($invoice['items'] as $item)
                 <tr>
                     <td>
                         <div style="display: flex; align-items: center;">
                             @if($item->image)
-                            <img src="{{ $item->image }}" alt="{{ $item->description }}" class="product-image">
+                            <img src="{{ $item->image }}" alt="{{ $item->name }}" class="product-image"
+                                style="
+                                    width: 40px;
+                                    height: 40px;
+                                    object-fit: cover;
+                                    border-radius: 4px;
+                                "
+                            >
                             @endif
-                            <span style="margin-left: 10px">{{ $item->description }}</span>
+                            <span style="margin-left: 10px">{{ $item->name }}</span>
                         </div>
                     </td>
                     <td>{{ $item->quantity }}</td>
-                    <td>{{ number_format($item->unit_price) }} {{ $invoice->currency }}</td>
-                    <td>{{ number_format($item->amount) }} {{ $invoice->currency }}</td>
+                    <td>${{ ($item->price) }}</td>
+                    <td>${{ number_format($item->price) * $item->quantity}}</td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
 
-        <table class="amount-table">
+        <table class="amount-table" style="
+            width: 300px;
+            margin-left: auto;
+        ">
             <tr>
-                <td>Subtotal</td>
-                <td align="right">{{ number_format($invoice->subtotal) }} {{ $invoice->currency }}</td>
+                <td style="
+                    padding: 8px 12px;    
+                ">Subtotal</td>
+                <td style="
+                    padding: 8px 12px;    
+                " align="right">${{ number_format($invoice['subtotal']) }}</td>
             </tr>
             <tr>
-                <td>Discount {{ $invoice->discount_percentage }}%</td>
-                <td align="right">{{ number_format($invoice->discount_amount) }} {{ $invoice->currency }}</td>
-            </tr>
-            <tr>
-                <td>Total</td>
-                <td align="right">{{ number_format($invoice->total) }} {{ $invoice->currency }}</td>
-            </tr>
-            <tr>
-                <td>Amount due</td>
-                <td align="right">{{ number_format($invoice->amount_due) }} {{ $invoice->currency }}</td>
+                <td style="
+                    padding: 8px 12px;    
+                ">Discount 0%</td>
+                <td style="
+                   padding: 8px 12px;    
+                " align="right">$0</td>
+            </tr>      
+            <tr style="font-weight: bold;">
+                <td style="
+                    padding: 8px 12px;    
+                ">Total</td>
+                <td style="
+                    padding: 8px 12px;    
+                " align="right">${{ number_format($invoice['total']) }}</td>
             </tr>
         </table>
 
-        @if($invoice->attachment)
+        {{-- @if($invoice['attachment'])
         <div class="attachment-section">
             <h2>Attachment</h2>
             <div class="attachment-box">
@@ -189,7 +179,7 @@
                 <a href="{{ $invoice->attachment_url }}" class="download-link">Download ↓</a>
             </div>
         </div>
-        @endif
+        @endif --}}
     </div>
 </body>
 </html>

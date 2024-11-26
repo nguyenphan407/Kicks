@@ -264,7 +264,6 @@ class ProductController extends Controller
         $images = ProductImage::where("product_id", $productId)->get();
         foreach ($images as $image) {
             ProductImageController::delete($image->public_id);
-            $image->delete();
         }
     }
     public function formatProduct($product)

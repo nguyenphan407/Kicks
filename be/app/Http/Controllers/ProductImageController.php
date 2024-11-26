@@ -26,11 +26,18 @@ class ProductImageController extends Controller
     }
 
     public static function delete($publicId){
+        if(substr($publicId, 0, 5) !== "home/"){
+            $publicId = "home/".$publicId;
+        }
+
         Configuration::instance('cloudinary://' . config('services.cloudinary.api_key') . ':' . config('services.cloudinary.api_secret') . '@' . config('services.cloudinary.cloud_name') . '?secure=true');
 
         $uploadApi = new UploadApi();
 
         $uploadApi->destroy($publicId);
+
+        $image = ProductImage::where('public_id', $publicId);
+        $image->delete();
     }
 
     public function update(){
