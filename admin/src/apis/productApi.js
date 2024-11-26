@@ -6,7 +6,6 @@ const productApi = {
         const url = 'admin/';
         return axiosClient.get(url, { params }); // Truyền params dưới dạng object
     },
-    
 
     get(id) {
         const url = `admin/show/${id}`;
@@ -27,6 +26,12 @@ const productApi = {
         const url = `admin/delete/${id}`;
         return axiosClient.delete(url);
     },
+
+    deleteImage(publicId) {
+        const url = `admin/image/delete/${publicId}`; // Thay đổi URL theo endpoint backend của bạn
+        return axiosClient.delete(url);
+    },
+    
 };
 
 export default productApi;

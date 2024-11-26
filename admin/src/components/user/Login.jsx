@@ -6,7 +6,7 @@ import { images } from "../../assets/assets";
 import { icons } from "../../assets/assets";
 import authApi from "../../apis/authApi";
 import { useNavigate } from "react-router-dom";
-import { useLoader } from "../../context/LoaderContext"
+import { useLoader } from "../../context/LoaderContext";
 
 const Login = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -15,6 +15,7 @@ const Login = () => {
     const navigate = useNavigate();
     const [error, setError] = useState("");
     const { showLoader, hideLoader } = useLoader(); // Sử dụng Loader Context
+    const [keepLoggedIn, setKeepLoggedIn] = useState(false);
 
     // Xử lý login
     const handleLogin = async (e) => {
@@ -28,44 +29,41 @@ const Login = () => {
             localStorage.setItem("access_token", response.data.access_token);
             console.log(response.data.access_token);
 
-
-            hideLoader();
             // Điều hướng tới dashboard
             navigate("/dashboard");
         } catch (err) {
-            hideLoader();
             // Hiển thị thông báo lỗi nếu đăng nhập sai
             if (err.response && err.response.status === 401) {
-                setError("Sai email hoặc mật khẩu rồi má :))"); // Lỗi từ server
+                setError("Sai email hoặc mật khẩu. Vui lòng thử lại."); // Lỗi từ server
             } else {
                 setError("Đã có lỗi xảy ra. Vui lòng thử lại."); // Lỗi khác
             }
         } finally {
-            hideLoader();
+            hideLoader(); // Ẩn Loader
         }
     };
 
     // Nếu đã đăng nhập, điều hướng tới dashboard
     useEffect(() => {
         const token = localStorage.getItem("access_token");
-
-        // Nếu có token, kiểm tra với API trước khi điều hướng
+    
         const verifyToken = async () => {
             try {
                 await authApi.getMe(); // Gọi API kiểm tra token
-                navigate("/"); // Điều hướng nếu hợp lệ
-                
+                navigate("/dashboard"); // Điều hướng tới dashboard nếu hợp lệ
             } catch {
-                // Nếu token không hợp lệ, giữ nguyên ở trang login
                 localStorage.removeItem("access_token");
+            } finally {
+                hideLoader(); // Ẩn Loader sau khi kiểm tra
             }
         };
-
+    
         if (token) {
             verifyToken();
-            showLoader(); 
+            showLoader();
         }
-    }, [navigate]);
+    }, [navigate, hideLoader]);
+    
 
     // Hiệu ứng chuyển cảnh
     useEffect(() => {
@@ -140,6 +138,8 @@ const Login = () => {
                         type="checkbox"
                         className="mr-2 w-4 h-4 outline-none border-2 border-gray-400 rounded-sm accent-[#1F1A24]"
                         id="keepLoggedIn"
+                        checked={keepLoggedIn}
+                        onChange={(e) => setKeepLoggedIn(e.target.checked)}
                     />
                     <label
                         htmlFor="keepLoggedIn"
@@ -223,7 +223,11 @@ const Login = () => {
                     .
                 </p>
                 {/* Hiển thị lỗi nếu có */}
-                {error && <p className="font-rubik text-red-600 text-[16px]">{error}</p>}
+                {error && (
+                    <p className="font-rubik text-red-600 text-[16px]">
+                        {error}
+                    </p>
+                )}
             </form>
         </div>
     );

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -95,6 +96,21 @@ const ProductDetail = () => {
 
     const allSizes = Array.from({ length: 10 }, (_, i) => 38 + i); // Tạo mảng [38, 39, ..., 47]
     const [sizeOptions, setSizeOptions] = useState([]); // Lưu trữ danh sách kích cỡ và tồn kho
+    // Hàm chuyển đổi URL thành File
+    // Hàm chuyển đổi URL thành File
+    const urlToFile = async (url, filename, mimeType) => {
+        try {
+            const response = await fetch(url, { mode: "cors" }); // Đảm bảo CORS được xử lý nếu cần
+            if (!response.ok) {
+                throw new Error(`Failed to fetch image from URL: ${url}`);
+            }
+            const blob = await response.blob();
+            return new File([blob], filename, { type: mimeType });
+        } catch (error) {
+            console.error("Error converting URL to File:", error);
+            throw error;
+        }
+    };
 
     useEffect(() => {
         if (productId) {
@@ -151,53 +167,76 @@ const ProductDetail = () => {
     // Submit cập nhật sản phẩm
     const onSubmit = async (data) => {
         try {
-            showLoader();
+            showLoader(); // Hiển thị loader khi bắt đầu xử lý
+
+            // Tạo FormData mới
             const formData = new FormData();
             // Thêm các trường cơ bản
-            formData.append("name", data.name || ""); // Có thể null
-            formData.append("description", data.description || ""); // Có thể null
-            formData.append("category_id", data.category || ""); // Sửa thành category_id
-            formData.append("brand", data.brand || ""); // Có thể null
-            formData.append("color", data.color || ""); // Có thể null
-            formData.append("regular_price", data.regularPrice); // Bắt buộc
-            formData.append("price", data.salePrice || ""); // Có thể null
-            formData.append("gender", data.gender || ""); // Có thể null
+            formData.append("name", data.name || "");
+            formData.append("description", data.description || "");
+            formData.append("category_id", data.category || "");
+            formData.append("brand", data.brand || "");
+            formData.append("color", data.color || "");
+            formData.append("regular_price", data.regularPrice);
+            formData.append("price", data.salePrice || "");
+            formData.append("gender", data.gender || "");
 
             // Xử lý danh sách kích cỡ và tồn kho
-            console.log("data size:", data.sizes);
             data.sizes.forEach((sizeObj) => {
                 if (sizeObj.size && sizeObj.stock !== undefined) {
-                    formData.append("size", sizeObj.size); // Truyền size
-                    formData.append("quantity", sizeObj.stock); // Truyền quantity
+                    formData.append("size", sizeObj.size);
+                    formData.append("quantity", sizeObj.stock);
                 }
             });
 
-            // Xử lý ảnh
-            data.images.forEach((image, index) => {
-                if (image.file) {
-                    formData.append(`images[${index}]`, image.file); // Truyền file mới
-                } else if (image.url) {
-                    formData.append(`images[${index}]`, image.url); // Truyền ảnh cũ
-                }
+            // Chuyển đổi tất cả các ảnh thành File
+            const imageFiles = await Promise.all(
+                data.images.map(async (image, index) => {
+                    if (image.file) {
+                        // Ảnh mới đã là File
+                        return image.file;
+                    } else if (image.url) {
+                        // Ảnh cũ: chuyển đổi URL thành File
+                        const mimeType = image.url
+                            .split(".")
+                            .pop()
+                            .split("?")[0]; // Lấy định dạng file từ URL, bỏ phần query string nếu có
+                        const filename = `existing-image-${index}.${mimeType}`;
+                        return await urlToFile(
+                            image.url,
+                            filename,
+                            `image/${mimeType}`
+                        );
+                    }
+                    return null;
+                })
+            );
+
+            // Lọc bỏ các giá trị null (nếu có)
+            const validImageFiles = imageFiles.filter((file) => file !== null);
+            // Thêm các File ảnh vào FormData với tên trường 'images[]'
+            validImageFiles.forEach((file) => {
+                formData.append(`images[]`, file);
             });
+
+            // Debug: Kiểm tra FormData
             for (let pair of formData.entries()) {
                 console.log(`${pair[0]}: ${pair[1]}`);
             }
 
-            // Call API cập nhật sản phẩm
-            console.log("FormData:", formData);
+            // Gọi API cập nhật sản phẩm
             const response = await productApi.update(productId, formData);
             console.log("Product updated successfully:", response);
             toast.success("Product updated successfully!");
             navigate("/allproduct");
-            hideLoader();
         } catch (error) {
-            hideLoader();
             console.error("Error updating product:", error);
             if (error.response && error.response.data) {
-                console.error("Backend Error:", error.response.data); // Xem chi tiết lỗi từ backend
+                console.error("Backend Error:", error.response.data);
             }
             toast.error("Failed to update product!");
+        } finally {
+            hideLoader(); // Ẩn loader sau khi xử lý xong
         }
     };
 
@@ -230,54 +269,27 @@ const ProductDetail = () => {
     };
 
     const handleImageUpload = (e) => {
-        // upload ảnh
         const files = Array.from(e.target.files);
         if (files.length + uploadedImages.length > 4) {
-            // tối đa 4 ảnh
             alert("You can only upload up to 4 images.");
             return;
         }
-
+    
         const newImages = files.map((file) => ({
             file,
             preview: URL.createObjectURL(file),
+            url: null, // Ảnh mới không có URL
         }));
         const updatedImages = [...uploadedImages, ...newImages];
         setUploadedImages(updatedImages);
         setValue("images", updatedImages, { shouldValidate: true });
     };
 
-    const removeImage = async (index) => {
-        const imageToRemove = uploadedImages[index];
-    
-        // Kiểm tra nếu hình ảnh có URL và thuộc Cloudinary
-        if (imageToRemove.url && imageToRemove.url.includes("res.cloudinary.com")) {
-            try {
-                // Trích xuất public_id từ URL
-                const urlParts = imageToRemove.url.split('/upload/'); // Tách URL tại phần 'upload/'
-                const fullPath = urlParts[1]; // Lấy phần sau 'upload/'
-                const publicIdWithFormat = fullPath.substring(fullPath.indexOf('/') + 1).split('.')[0]; // Loại bỏ phần 'v...' và giữ public_id
-                
-                console.log("publicIdWithFormat:", publicIdWithFormat); // Kiểm tra public_id đã xử lý
-                
-                // Gọi API xóa hình ảnh trên Cloudinary thông qua backend
-                await productApi.deleteImage(publicIdWithFormat);
-    
-                // Hiển thị thông báo thành công
-                toast.success("Image deleted from Cloudinary successfully!");
-            } catch (error) {
-                console.error("Error deleting image from Cloudinary:", error);
-                toast.error("Failed to delete image from Cloudinary!");
-                return; // Dừng quá trình xóa nếu có lỗi
-            }
-        }
-    
-        // Cập nhật trạng thái uploadedImages
+    const removeImage = (index) => {
         const updatedImages = uploadedImages.filter((_, i) => i !== index);
         setUploadedImages(updatedImages);
         setValue("images", updatedImages, { shouldValidate: true });
     };
-    
 
     if (loading) {
         return (
@@ -484,12 +496,14 @@ const ProductDetail = () => {
                         </div>
                     </div>
                     {/* Image Upload Section */}
+                    {/* Image Upload Section */}
                     <div className="flex-1 flex flex-col gap-6">
                         {/* Image thumbnails */}
                         <section className="border-[8px] rounded-[8px]">
                             <img
                                 src={
                                     uploadedImages[0]?.preview ||
+                                    uploadedImages[0]?.url ||
                                     images.Thumbnails[0]
                                 }
                                 alt="Thumbnails image"
@@ -534,7 +548,7 @@ const ProductDetail = () => {
                                     className="flex p-4 justify-between items-center gap-4 bg-gray-100 rounded-[8px]"
                                 >
                                     <img
-                                        src={image.preview}
+                                        src={image.preview || image.url}
                                         alt={`Uploaded image ${index}`}
                                         className="min-w-[64px] w-[64px] h-[64px] object-cover rounded-md"
                                     />
@@ -552,7 +566,7 @@ const ProductDetail = () => {
                                     >
                                         <img
                                             src={icons.DeleteIcon}
-                                            alt=""
+                                            alt="Delete"
                                             className="w-6 h-6"
                                         />
                                     </button>

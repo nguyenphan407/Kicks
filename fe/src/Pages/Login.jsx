@@ -30,7 +30,7 @@ const Login = () => {
       sessionStorage.setItem("token", response.data.access_token);
 
       // Redirect to dashboard or home page after successful login
-      navigate("/dashboard");
+      navigate("/");
     } catch (err) {
       // Handle login errors
       setError(err.response?.data?.error || "Login failed. Please try again.");
