@@ -1,7 +1,7 @@
 import React from 'react';
 import { CheckCircle, Copy, ChevronLeft, Download, FileText, ExternalLink } from 'lucide-react';
 
-const OrderSuccess = () => {
+const  OrderSuccess = () => {
     const [copied, setCopied] = React.useState(false);
     const searchParams = new URLSearchParams(window.location.search);
 
@@ -15,27 +15,53 @@ const OrderSuccess = () => {
         cancel: searchParams.get('cancel') === 'true'
     };
 
-    let productImage;
-    let productFile;
+    const userData = localStorage.getItem('user-info');
 
-    //   if (productDetails.productName === "Khóa Học Start"){
-    //     productImage = "https://res.cloudinary.com/dlc1n2y1f/image/upload/v1731764884/effortless-english-oec-800x800_pl5p7z.jpg"
-    //     productFile = "https://res.cloudinary.com/dlc1n2y1f/image/upload/fl_attachment:v1731764884/effortless-english-oec-800x800_pl5p7z.jpg"
-    //   }
-    //   else if (productDetails.productName === "Khóa Học Advanced"){
-    //     productImage = "https://res.cloudinary.com/dlc1n2y1f/image/upload/v1731764885/effortless-english-rec-800x800_ixojqm.jpg"
-    //     productFile = "https://res.cloudinary.com/dlc1n2y1f/image/upload/fl_attachment:v1731764885/effortless-english-rec-800x800_ixojqm.jpg"
-    //   }
-    //   else {
-    //     productImage = "https://res.cloudinary.com/dlc1n2y1f/image/upload/v1731764885/effortless-english-pec-800x800_madluv.jpg"
-    //     productFile = "https://res.cloudinary.com/dlc1n2y1f/image/upload/fl_attachment:v1731764885/effortless-english-pec-800x800_madluv.jpg"
-    //   }
 
+    const loadData = async () => {
+        try {
+            const response = await fetch(
+                `http://localhost:8000/api/payment/get-info/${orderDetails.orderCode}`,
+                {
+                    method: "GET",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                }
+            )
+            
+            const data =  await response.json() ;
+
+            const invoice = await fetch(
+                'http://localhost:8000/api/admin/create_invoice',
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        orderCode: data.orderCode,
+                        name: userData.firstName + ' ' + userData.lastName,
+                        email: userData.email,
+                        amount: data.amount,
+                        createdAt: data.createdAt
+                    })
+                }
+            )
+            
+        } catch (error) {
+            console.error("Có lỗi xảy ra:", error);
+        }
+    }
+    
+    
     const copyToClipboard = (text) => {
         navigator.clipboard.writeText(text);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
+
+    loadData();
 
     return (
         <div className="container font-sans">
