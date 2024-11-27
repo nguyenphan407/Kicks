@@ -79,14 +79,22 @@ const ShopContextProvider = ({ children }) => {
         try {
             console.log("Fetching products with page:", filters.page);
             const response = await productApi.getAll(filters);
-            console.log("Full request URL:", `http://localhost:8000/api/product?page=${filters.page}`);
-            console.log("API Response Current Page:", response.data.current_page); // Log để kiểm tra response
+            console.log(
+                "Full request URL:",
+                `http://localhost:8000/api/product?page=${filters.page}`
+            );
+            console.log(
+                "API Response Current Page:",
+                response.data.current_page
+            ); // Log để kiểm tra response
 
             const productsData = response.data.data.map((product) => {
-                const imageUrls = product.images.map((imageObj) => imageObj.image);
+                const imageUrls = product.images.map(
+                    (imageObj) => imageObj.image
+                );
                 const sizes = product.sizes.map((sizeObj) => ({
                     size: sizeObj.size,
-                    quantity: sizeObj.quantity, 
+                    quantity: sizeObj.quantity,
                 }));
                 return {
                     ...product,
@@ -94,9 +102,9 @@ const ShopContextProvider = ({ children }) => {
                     sizes: sizes,
                 };
             });
-    
+
             setProducts(productsData);
-    
+
             // Cập nhật pagination
             setPagination({
                 currentPage: response.data.current_page,
@@ -107,23 +115,21 @@ const ShopContextProvider = ({ children }) => {
         } catch (error) {
             console.error("Failed to fetch products:", error);
         }
-    };    
+    };
+
     // Hàm chuyển trang cho Pagination
     const handlePageChange = (newPage) => {
-        console.log("new page:", newPage)
+        console.log("new page:", newPage);
         setFilters((prev) => ({
             ...prev,
             page: newPage,
         }));
     };
-    
+
     useEffect(() => {
         console.log("Filters changed:", filters);
         fetchProducts();
     }, [filters]);
-    
-
-
 
     // Cập nhật số lượng sản phẩm
     const updateQuantity = async (itemId, size, quantity) => {
@@ -153,6 +159,36 @@ const ShopContextProvider = ({ children }) => {
         return totalAmount;
     };
 
+    // Thêm các state và methods cho người dùng
+    const [user, setUser] = useState({});
+    const [token, setToken] = useState("");
+
+    // Đăng nhập
+    const login = (userData, userToken) => {
+        setUser(userData);
+        setToken(userToken);
+        localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("token", userToken);
+    };
+
+    // Đăng xuất
+    const logout = () => {
+        setUser(null);
+        setToken(null);
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+    };
+
+    useEffect(() => {
+        const savedUser = localStorage.getItem("user");
+        const savedToken = localStorage.getItem("token");
+
+        if (savedToken && savedUser) {
+            setToken(savedToken);
+            setUser(JSON.parse(savedUser)); // Chuyển chuỗi JSON thành object
+        }
+    }, []);
+
     const value = {
         products,
         currency,
@@ -167,7 +203,13 @@ const ShopContextProvider = ({ children }) => {
         fetchProducts,
         filters,
         setFilters,
-        handlePageChange
+        handlePageChange,
+        user,
+        token,
+        setUser,
+        setToken,
+        login,
+        logout,
     };
 
     return (

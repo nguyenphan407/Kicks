@@ -10,6 +10,7 @@ import CartIcon from "./icons/cart_icon.svg"
 import MomoIcon from "./icons/momo-icon.png";
 import VisaIcon from "./icons/visa-icon.png"
 import CashIcon from "./icons/cash-icon.png"
+import OrderIcon from "./icons/order_icon.svg"
 
 // Import images
 import MainHeroImage from "./images/mainHero.jpg";
@@ -54,7 +55,8 @@ export const icons = {
   CartIcon,
   MomoIcon,
   VisaIcon,
-  CashIcon
+  CashIcon,
+  OrderIcon
 };
 
 // Export all images in a single object
