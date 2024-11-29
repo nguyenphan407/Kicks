@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\ProductSize;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -30,10 +31,15 @@ class CartController extends Controller
         if (!$user) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+
+        $product_size = ProductSize::where('product_id', $request->product_id)
+            ->where('size', $request->size)
+            ->first();
+
         $cartItem = Cart::updateOrCreate(
             [
                 'user_id' => $user->user_id,
-                'product_size_id' => $request->product_size_id,
+                'product_size_id' => $product_size->product_size_id,
             ],
             [
                 'quantity' => DB::raw("quantity + " . $request->quantity)
