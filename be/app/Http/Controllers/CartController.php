@@ -33,7 +33,7 @@ class CartController extends Controller
         $cartItem = Cart::updateOrCreate(
             [
                 'user_id' => $user->user_id,
-                'product_id' => $request->product_id,
+                'product_size_id' => $request->product_size_id,
             ],
             [
                 'quantity' => DB::raw("quantity + " . $request->quantity)

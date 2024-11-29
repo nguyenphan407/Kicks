@@ -16,7 +16,8 @@ class AdminController extends Controller
     public function index(Request $request) {
         if ($request->has('category')) {
             $product = Product::leftJoin('categories', 'products.category_id', '=', 'categories.category_id')
-                ->leftJoin('order_items', 'products.product_id', '=', 'order_items.product_id')
+                ->join('product_size', 'product_size.product_id','=', 'products.product_id')
+                ->leftJoin('order_items', 'product_size.product_size_id', '=', 'order_items.product_size_id')
                 ->where('category_name', $request->category)
                 ->select(
                     'products.product_id', 
@@ -44,7 +45,8 @@ class AdminController extends Controller
         }
         else {
             $product = Product::leftJoin('categories', 'products.category_id', '=', 'categories.category_id')
-                ->leftJoin('order_items', 'products.product_id', '=', 'order_items.product_id')
+                ->join('product_size', 'product_size.product_id','=', 'products.product_id')
+                ->leftJoin('order_items', 'product_size.product_size_id', '=', 'order_items.product_size_id')
                 ->select(
                     'products.product_id', 
                     'products.name', 
