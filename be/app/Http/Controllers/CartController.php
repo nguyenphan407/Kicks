@@ -14,7 +14,12 @@ class CartController extends Controller
     {
         $user = Auth::user();
     
-        $cartItems = Cart::where('user_id', $user->user_id)->with('product')->get();
+        $cartItems = Cart::where('user_id', $user->user_id)->with('product_size')
+            ->join('product_size', 'product_size.product_size_id', '=', 'carts.product_size_id')
+            ->join('product_image', 'product_size.product_id', '=', 'product_image.product_id') 
+            ->select('carts.*', DB::raw('MIN(product_image.image) as image'))
+            ->groupBy('carts.cart_id')
+            ->get();
         return response()->json($cartItems);
     }
 

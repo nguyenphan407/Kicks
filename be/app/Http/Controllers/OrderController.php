@@ -22,7 +22,7 @@ class OrderController extends Controller
         try {
             $order = Order::create([
                 'order_id' => $data['orderCode'],
-                'user_id' => '1', //Auth::id(),
+                'user_id' => Auth::id(),
                 'order_status' => 'pending',
                 'amount' => $data['amount'],
                 'shipping_address' => $data['buyerAddress'],
@@ -31,11 +31,14 @@ class OrderController extends Controller
             ]);
 
             foreach ($data['items'] as $item) {
-                $product = Product::where('name',$item['name'])->first();
+                $product_size = Product::where('name',$item['name'])
+                    ->join('product_size', 'product_size.product_id', '=', 'products.product_id')
+                    ->select('product_size.product_size_id')
+                    ->first();
 
                 OrderItem::create([
                     'order_id' => $order->order_id,
-                    'product_id' => $product->product_id,
+                    'product_size_id' => $product_size->product_size_id,
                     'quantity' => $item['quantity'],
                     'price' => $item['price'],
                 ]);

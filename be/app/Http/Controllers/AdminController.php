@@ -89,7 +89,8 @@ class AdminController extends Controller
             ->join('users', 'users.user_id', '=', 'orders.user_id')
             ->leftJoin('payments', 'payments.order_id', '=', 'orders.order_id')
             ->join('order_items', 'order_items.order_id', '=', 'orders.order_id')
-            ->join('products', 'order_items.product_id', '=', 'products.product_id')
+            ->join('product_size', 'product_size.product_size_id', '=' , 'order_items.product_size_id')
+            ->join('products', 'products.product_id', '=', 'product_size.product_id')
             ->select(
                 'orders.order_id',
                 'orders.user_id',
@@ -107,21 +108,23 @@ class AdminController extends Controller
                 'users.avatar',
                 'users.role',
                 'order_items.order_item_id',
-                'order_items.product_id',
+                'order_items.product_size_id',
                 'order_items.quantity',
                 'order_items.price',
+                'products.product_id',
                 'products.name',
                 'products.brand',
                 'products.gender',
-                'products.description',
+                'products.description as product_desc',
                 'products.stock_quantity',
                 'products.color',
                 'products.category_id',
+                'product_size.size',
                 'payments.payment_method',
                 'payments.bank_id',
                 'payments.account_name',
                 'payments.account_number',
-                'payments.description',
+                'payments.description as payment_desc',
                 'payments.reference'
             )
             ->get();
@@ -155,7 +158,7 @@ class AdminController extends Controller
                         'bank_id' => $item->bank_id,
                         'account_name' => $item->account_name,
                         'account_number' => $item->account_number,
-                        'description' => $item->description,
+                        'description' => $item->payment_desc,
                         'reference' => $item->reference
                     ], 
                     'order_items' => []
@@ -166,12 +169,14 @@ class AdminController extends Controller
             $result[$orderId]['order_items'][] = [
                 'order_item_id' => $item->order_item_id,
                 'product_id' => $item->product_id,
+                'product_size_id' => $item->product_size_id,
+                'size' => $item->size,
                 'quantity' => $item->quantity,
                 'price' => $item->price,
                 'name' => $item->name,
                 'brand' => $item->brand,
                 'gender' => $item->gender,
-                'description' => $item->description,
+                'description' => $item->product_desc,
                 'stock_quantity' => $item->stock_quantity,
                 'color' => $item->color,
                 'category_id' => $item->category_id,

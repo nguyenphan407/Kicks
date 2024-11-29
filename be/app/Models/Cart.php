@@ -11,7 +11,7 @@ class Cart extends Model
     protected $primaryKey = "cart_id";
     protected $fillable = [
         'user_id',
-        'product_id',
+        'product_size_id',
         'quantity',
     ];
 
@@ -20,8 +20,8 @@ class Cart extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function product()
+    public function product_size()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(ProductSize::class);
     }
 }

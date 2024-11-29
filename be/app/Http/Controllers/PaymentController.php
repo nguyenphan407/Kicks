@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Payment;
+use Error;
 use Illuminate\Http\Request;
 use PayOS\PayOS;
 
@@ -22,11 +23,15 @@ class PaymentController extends Controller
             "buyerPhone" => "0961187213",
             "buyerAddress" => "số nhà, đường, phường, tỉnh hoặc thành phố",
             "items" => $request->items,
-            "returnUrl" => $request->returnUrl . "?success=true",
-            "cancelUrl" => $request->cancelUrl . "?canceled=true"
+            "returnUrl" => $request->returnUrl,
+            "cancelUrl" => $request->cancelUrl
         ];
 
-        OrderController::store($data);
+        try {
+            OrderController::store($data);
+        } catch (Error $e) {
+            return $e;
+        }
 
         $response = $this->payOS->createPaymentLink($data);
         return $response['checkoutUrl'];
