@@ -17,9 +17,18 @@ class CartController extends Controller
     
         $cartItems = Cart::where('user_id', $user->user_id)
         ->join('product_size', 'product_size.product_size_id', '=', 'carts.product_size_id')
-        ->join('product_image', 'product_size.product_id', '=', 'product_image.product_id') 
-        ->select('carts.cart_id', 'carts.user_id', 'carts.product_size_id', 'carts.quantity', DB::raw('MIN(product_image.image) as image'))
-        ->groupBy('carts.cart_id', 'carts.user_id', 'carts.product_size_id', 'carts.quantity')
+        ->join('product_image', 'product_size.product_id', '=', 'product_image.product_id')
+        ->join('products', 'products.product_id', '=', 'product_size.product_id')
+        ->select('carts.cart_id', 
+            'carts.user_id',
+            'products.name',
+            'products.description', 
+            'carts.product_size_id',
+            'product_size.size',
+            'products.price', 
+            'carts.quantity', 
+            DB::raw('MIN(product_image.image) as image'))
+        ->groupBy('carts.cart_id', 'carts.user_id', 'products.name', 'products.price', 'products.description','product_size.size', 'carts.product_size_id', 'carts.quantity')
         ->get();
         return response()->json($cartItems);
     }
