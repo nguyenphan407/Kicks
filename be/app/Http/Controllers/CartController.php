@@ -45,15 +45,21 @@ class CartController extends Controller
             ->where('size', $request->size)
             ->first();
 
-        $cartItem = Cart::updateOrCreate(
-            [
-                'user_id' => $user->user_id,
-                'product_size_id' => $product_size->product_size_id,
-            ],
-            [
-                'quantity' => DB::raw("quantity + " . $request->quantity)
-            ]
-        );
+       
+        if ($cartItem = Cart::where('user_id', $user->user_id)
+        ->where('product_size_id',  $product_size->product_size_id)->first()){
+            $cartItem->quantity = $cartItem->quantity + $request->quantity;
+            $cartItem->save();
+        }
+        else {
+            $cartItem = Cart::Create(
+                [
+                    'user_id' => $user->user_id,
+                    'product_size_id' => $product_size->product_size_id,
+                    'quantity' =>  $request->quantity
+                ]
+            );
+        }
 
         return response()->json(['message' => 'Product added to cart', 'cartItem' => $cartItem]);
     }
