@@ -29,7 +29,7 @@ axiosClient.interceptors.request.use(
         if (token) {
             config.headers['Authorization'] = `Bearer ${token}`; // Thêm token vào header
         }
-        console.log('Request Config:', config.headers);
+        // console.log('Request Config:', config.headers);
         return config;
     },
     (error) => {

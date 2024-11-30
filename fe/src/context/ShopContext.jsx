@@ -12,8 +12,13 @@ const ShopContextProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
     const currency = "$";
     const delivery_fee = "6.99";
-    const [cartItems, setCartItems] = useState({}); // Could be an array or structured as needed
+    const [cartItems, setCartItems] = useState({});
+    const [cartData, setCartData] = useState([]);
     const navigate = useNavigate();
+    const [cartChanged, setCartChanged] = useState(false); // thằng này để theo dõi trạng thái giỏ hàng để get cart update lại giỏ hàng mỗi khi giỏ hàng thay đổi
+    // Thêm các state và methods cho người dùng
+    const [user, setUser] = useState({});
+    const [token, setToken] = useState("");
     const [pagination, setPagination] = useState({
         currentPage: 1,
         totalPages: 1,
@@ -32,32 +37,14 @@ const ShopContextProvider = ({ children }) => {
             });
             return;
         }
-
-        let cartData = structuredClone(cartItems); // tạo ra 1 clone cartItems
-        if (cartData[itemId]) {
-            // nếu tồn tại item này rồi
-            if (cartData[itemId][size]) {
-                // nếu tồn tại kích thước đã có rồi
-                cartData[itemId][size] += 1;
-            } else {
-                // nếu size của item này chưa có
-                cartData[itemId][size] = 1;
-            }
-        } else {
-            // nếu chưa có item đó trong giỏ hàng
-            cartData[itemId] = {};
-            cartData[itemId][size] = 1;
-        }
-        setCartItems(cartData);
-        console.log("cart item:", cartItems)
-
         try {
-            const response = await cartApi.addToCart(itemId, 0, size); 
+            const response = await cartApi.addToCart(itemId, 1, size);
             if (response && response.data) {
                 // setCartItems(response.data);
                 toast.success("Added to cart successfully!", {
                     autoClose: 1500,
                 });
+                setCartChanged((prev) => !prev);
             } else {
                 toast.error("Failed to add to cart. Please try again.", {
                     autoClose: 1500,
@@ -72,24 +59,15 @@ const ShopContextProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        console.log(cartItems);
-    }, [cartItems]);
+        console.log(cartData);
+    }, [cartData]);
 
     // lấy số lượng hiển thị vào cart
     const getCartCount = () => {
-        let totalCount = 0;
-        for (const items in cartItems) {
-            for (const item in cartItems[items]) {
-                try {
-                    if (cartItems[items][item]) {
-                        totalCount += cartItems[items][item];
-                    }
-                } catch (error) {
-                    console.log(error);
-                }
-            }
-        }
-        return totalCount;
+        // Trả về tổng số lượng sản phẩm trong giỏ
+        return cartData.length > 0
+            ? cartData.reduce((total, item) => total + item.quantity, 0)
+            : 0;
     };
 
     // Gọi API để lấy danh sách sản phẩm khi component được mount
@@ -150,22 +128,14 @@ const ShopContextProvider = ({ children }) => {
     }, [filters]);
 
     // Cập nhật số lượng sản phẩm
-    const updateQuantity = async (itemId, size, quantity) => {
-        let cartData = structuredClone(cartItems);
-        cartData[itemId][size] = quantity;
-        setCartItems(cartData);
+    const updateQuantity = async (cart_id, size, quantity) => {
         try {
-            const response = await cartApi.updateCartItem(itemId, quantity, size); 
-            if (response && response.data) {
-                // setCartItems(response.data);
-                toast.success("Updated to cart successfully!", {
-                    autoClose: 1500,
-                });
-            } else {
-                toast.error("Failed to Updated to cart. Please try again.", {
-                    autoClose: 1500,
-                });
-            }
+            const response = await cartApi.updateCartItem(
+                cart_id,
+                quantity,
+                size
+            );
+            setCartChanged((prev) => !prev);
         } catch (error) {
             console.error("Error updating to cart:", error);
             toast.error("Error updating to cart.", {
@@ -174,30 +144,37 @@ const ShopContextProvider = ({ children }) => {
         }
     };
 
-    const getCartAmount = () => {
-        let totalAmount = 0;
-        for (const items in cartItems) {
-            // duyệt qua từng sản phẩm trong cartItem để lấy info về giá thông qua product
-            const itemInfo = products.find(
-                (product) => product.product_id === parseInt(items)
-            );
-            if (!itemInfo) continue;
-
-            for (const item in cartItems[items]) {
-                // duyệt qua từng kích thước bên trong từng sản phẩm
-                const quantity = cartItems[items][item];
-                if (quantity > 0) {
-                    // nếu số lượng của size của sản phẩm cụ thể nào đó > 0
-                    totalAmount += (itemInfo.price || 0) * quantity;
-                }
+    const removeCartItem = async (cart_id) => {
+        try {
+            const response = await cartApi.removeFromCart(cart_id);
+            if (response && response.data) {
+                toast.success("Product removed from cart successfully!", {
+                    autoClose: 1500,
+                });
+                setCartChanged((prev) => !prev);
+                setCartData(response.data);
+            } else {
+                toast.error("Failed to Removed from cart. Please try again.", {
+                    autoClose: 1500,
+                });
             }
+        } catch (error) {
+            console.error("Error removing to cart:", error);
+            toast.error("Error removing to cart.", {
+                autoClose: 1500,
+            });
         }
-        return totalAmount;
     };
 
-    // Thêm các state và methods cho người dùng
-    const [user, setUser] = useState({});
-    const [token, setToken] = useState("");
+    const getCartAmount = () => {
+        // Trả về tổng giá trị của giỏ hàng
+        return cartData.length
+            ? cartData.reduce(
+                  (total, item) => total + item.price * item.quantity,
+                  0
+              )
+            : 0;
+    };
 
     useEffect(() => {
         const savedUser = localStorage.getItem("user");
@@ -208,6 +185,20 @@ const ShopContextProvider = ({ children }) => {
             setUser(JSON.parse(savedUser)); // Chuyển chuỗi JSON thành object
         }
     }, []);
+    useEffect(() => {
+        if (token) {
+            const fetchCartItems = async () => {
+                try {
+                    const response = await cartApi.getCartItems();
+                    // console.log("response data:", response.data);
+                    setCartData(response.data); // Lưu dữ liệu vào state
+                } catch (error) {
+                    console.error("Error fetching cart items:", error);
+                }
+            };
+            fetchCartItems(); // Call API khi component mount
+        }
+    }, [token, cartChanged]);
 
     const value = {
         products,
@@ -228,6 +219,10 @@ const ShopContextProvider = ({ children }) => {
         token,
         setUser,
         setToken,
+        cartData,
+        setCartData,
+        removeCartItem,
+        cartChanged,
     };
 
     return (

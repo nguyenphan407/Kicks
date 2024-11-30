@@ -7,9 +7,15 @@ import "react-toastify/dist/ReactToastify.css";
 
 const Header = () => {
     const [visible, setVisible] = useState(false);
-    const { products, getCartCount, token, setToken, user, setUser, navigate } =
+    const { getCartCount, token, setToken, user, navigate, cartData, cartChanged } =
         useContext(ShopConText);
     const sidebarRef = useRef(null); // Tạo ref cho sidebar
+    const [cartCount, setCartCount] = useState(0);
+    useEffect(() => {
+        const count = getCartCount(); // Lấy số lượng giỏ hàng từ context
+        setCartCount(count); // Cập nhật state
+    }, [cartData, cartChanged]); // Khi `products` thay đổi, cập nhật số lượng giỏ hàng
+
 
     // useEffect để lắng nghe sự kiện click ngoài sidebar
     useEffect(() => {
@@ -125,9 +131,9 @@ const Header = () => {
                         src={icons.CartIcon} // Icon người dùng từ assets.js
                         alt="User Icon"
                     />
-                    {getCartCount() > 0 && (
+                    {cartCount > 0 && (
                         <p className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-[#232321] text-white aspect-square rounded-full text-[8px]">
-                            {getCartCount()}
+                            {cartCount}
                         </p>
                     )}
                 </Link>
