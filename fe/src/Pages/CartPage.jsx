@@ -8,59 +8,24 @@ import axiosClient from "../apis/axiosClient";
 
 const CartPage = () => {
     const {
-        products,
         currency,
-        cartItems,
         updateQuantity,
         getCartAmount,
         getCartCount,
         delivery_fee,
         navigate,
         token,
+        cartData,
+        setCartData,
+        removeCartItem,
+        cartChanged,
     } = useContext(ShopConText);
 
-    // lưu sản phẩm đã thêm ở context provider
-    const [cartData, setCartData] = useState([]);
-
     useEffect(() => {
-        if (token) {
-            const fetchCartItems = async () => {
-                try {
-                    // Đảm bảo thêm Authorization header trực tiếp trong request
-                    const response = await axiosClient.get("/cart", {
-                        headers: {
-                            Authorization:
-                                "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE3MzI5MzE1NzksImV4cCI6MTczMjkzNTE3OSwibmJmIjoxNzMyOTMxNTc5LCJqdGkiOiJQZ1RxMjRKM2UzU0diSHFJIiwic3ViIjoiMyIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.OzN5CwyY8YikamE2FoNbmSllTye9GdtlN30UXnZQyqI",
-                        },
-                    });
-    
-                    console.log("response data:", response.data);
-                    // setCartData(response.data); // Lưu dữ liệu vào state
-                } catch (error) {
-                    console.error("Error fetching cart items:", error);
-                }
-            };
-            fetchCartItems(); // Gọi API khi component mount
-        }
+        getCartAmount();
+        getCartCount();
+    }, [cartChanged]);
 
-
-    }, []); // Chạy một lần khi component mount
-
-    useEffect(() => {
-        const tempData = [];
-        for (const items in cartItems) {
-            for (const item in cartItems[items]) {
-                if (cartItems[items][item] > 0) {
-                    tempData.push({
-                        product_id: items,
-                        size: item,
-                        quantity: cartItems[items][item],
-                    });
-                }
-            }
-        }
-        setCartData(tempData);
-    }, [cartItems]);
 
     return (
         <div>
@@ -109,152 +74,135 @@ const CartPage = () => {
                         <div>
                             {/* Phần Product Order */}
                             <div className="flex flex-col gap-6">
-                                {cartData.map((item, index) => {
-                                    const productData = products.find(
-                                        (product) =>
-                                            String(product.product_id) ===
-                                            String(item.product_id)
-                                    );
-                                    console.log("Product Data:", productData); // Log để kiểm tra từng sản phẩm
-                                    return (
-                                        <div key={index} className="flex gap-6">
-                                            <img
-                                                className="rounded-xl lg:rounded-3xl object-cover w-[157px] h-[150px] lg:w-[207px] lg:h-[207px] border border-[#e6e6e6]"
-                                                src={productData.images[0]}
-                                                alt="Product Image"
-                                            />
-                                            <div className="flex flex-col justify-between flex-1">
-                                                <div className="flex flex-col lg:flex-row justify-between items-start">
-                                                    <div className="max-w-[350px]">
-                                                        <h3 className="font-rubik font-semibold text-[16px] lg:text-[24px] uppercase text-[#232321] ]">
-                                                            {productData.name}
-                                                        </h3>
-                                                        <p className="opacity-80 text-[#4e4e4c] text-[14px] lg:text-[20px] font-semibold mb-2 lg:mb-5">
-                                                            {
-                                                                productData.description
-                                                            }
-                                                        </p>
-                                                        <div className="flex justify-between ">
-                                                            <div className="flex gap-2 justify-center items-center">
-                                                                <p className="opacity-80 text-[#4e4e4c] text-[14px] lg:text-[20px] font-semibold ">
-                                                                    Size
-                                                                </p>
-                                                                <input
-                                                                    className=" max-w-[50px] bg-transparent opacity-80 text-[#4e4e4c] text-[14px] lg:text-[20px] font-semibold"
-                                                                    type="number"
-                                                                    min={38}
-                                                                    max={47}
-                                                                    defaultValue={
-                                                                        item.size
-                                                                    }
-                                                                />
-                                                            </div>
-                                                            <div className="flex gap-2 justify-center items-center">
-                                                                <p className="opacity-80 text-[#4e4e4c] text-[14px] lg:text-[20px] font-semibold">
-                                                                    Quantity
-                                                                </p>
-                                                                <input
-                                                                    className=" max-w-[50px] bg-transparent opacity-80 text-[#4e4e4c] text-[14px] lg:text-[20px] font-semibold"
-                                                                    type="number"
-                                                                    min={1}
-                                                                    max={99}
-                                                                    defaultValue={
-                                                                        item.quantity
-                                                                    }
-                                                                    // Nếu value khác rỗng hoặc khác 0 thì mới cập nhật quantity trong ShopConText
-                                                                    onChange={(
-                                                                        e
-                                                                    ) =>
-                                                                        e.target
-                                                                            .value ===
-                                                                            "" ||
-                                                                        e.target
-                                                                            .value ===
-                                                                            "0"
-                                                                            ? null
-                                                                            : updateQuantity(
-                                                                                  item.product_id,
-                                                                                  item.size,
-                                                                                  Number(
-                                                                                      e
-                                                                                          .target
-                                                                                          .value
-                                                                                  )
-                                                                              )
-                                                                    }
-                                                                />
+                                {cartData.length > 0 ? (
+                                    cartData.map((item, index) => {
+                                        return (
+                                            <div
+                                                key={index}
+                                                className="flex gap-6"
+                                            >
+                                                <img
+                                                    className="rounded-xl lg:rounded-3xl object-cover w-[157px] h-[150px] lg:w-[207px] lg:h-[207px] border border-[#e6e6e6]"
+                                                    src={item.image}
+                                                    alt="Product Image"
+                                                />
+                                                <div className="flex flex-col justify-between flex-1">
+                                                    <div className="flex flex-col lg:flex-row justify-between items-start">
+                                                        <div className="max-w-[350px]">
+                                                            <h3 className="font-rubik font-semibold text-[16px] lg:text-[24px] uppercase text-[#232321] ]">
+                                                                {item.name}
+                                                            </h3>
+                                                            <p className="opacity-80 text-[#4e4e4c] text-[14px] lg:text-[20px] font-semibold mb-2 lg:mb-5">
+                                                                {
+                                                                    item.description
+                                                                }
+                                                            </p>
+                                                            <div className="flex justify-between ">
+                                                                <div className="flex gap-2 justify-center items-center">
+                                                                    <p className="opacity-80 text-[#4e4e4c] text-[14px] lg:text-[20px] font-semibold ">
+                                                                        Size
+                                                                    </p>
+                                                                    <input
+                                                                        className=" max-w-[50px] bg-transparent opacity-80 text-[#4e4e4c] text-[14px] lg:text-[20px] font-semibold"
+                                                                        type="number"
+                                                                        min={38}
+                                                                        max={47}
+                                                                        defaultValue={
+                                                                            item.size
+                                                                        }
+                                                                        disabled
+                                                                    />
+                                                                </div>
+                                                                <div className="flex gap-2 justify-center items-center">
+                                                                    <p className="opacity-80 text-[#4e4e4c] text-[14px] lg:text-[20px] font-semibold">
+                                                                        Quantity
+                                                                    </p>
+                                                                    <input
+                                                                        className=" max-w-[50px] bg-transparent opacity-80 text-[#4e4e4c] text-[14px] lg:text-[20px] font-semibold"
+                                                                        type="number"
+                                                                        min={1}
+                                                                        max={99}
+                                                                        defaultValue={
+                                                                            item.quantity
+                                                                        }
+                                                                        // Nếu value khác rỗng hoặc khác 0 thì mới cập nhật quantity trong ShopConText
+                                                                        onChange={(e) =>e.target.value ==="" ||e.target.value === "0"? null : updateQuantity(item.cart_id,item.size,Number(e.target.value))}
+                                                                    />
+                                                                </div>
                                                             </div>
                                                         </div>
+                                                        <p className="font-rubik text-xl my-2 lg:my-0 lg:text-[24px] font-semibold text-primary_blue">
+                                                            {currency}
+                                                            {item.price}
+                                                        </p>
                                                     </div>
-                                                    <p className="font-rubik text-xl my-2 lg:my-0 lg:text-[24px] font-semibold text-primary_blue">
-                                                        {currency}
-                                                        {productData.price}
-                                                    </p>
-                                                </div>
-                                                <div className="flex gap-4 lg:gap-6">
-                                                    <button className="">
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            width="33"
-                                                            height="32"
-                                                            viewBox="0 0 33 32"
-                                                            fill="none"
-                                                            className="w-6 h-6 lg:w-8 lg:h-8 hover:scale-105 transition-all active:scale-95"
+                                                    <div className="flex gap-4 lg:gap-6">
+                                                        <button className="">
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                width="33"
+                                                                height="32"
+                                                                viewBox="0 0 33 32"
+                                                                fill="none"
+                                                                className="w-6 h-6 lg:w-8 lg:h-8 hover:scale-105 transition-all active:scale-95"
+                                                            >
+                                                                <path
+                                                                    d="M22.8765 5C18.819 5 16.819 9 16.819 9C16.819 9 14.819 5 10.7615 5C7.464 5 4.85275 7.75875 4.819 11.0506C4.75025 17.8837 10.2396 22.7431 16.2565 26.8269C16.4224 26.9397 16.6184 27.0001 16.819 27.0001C17.0196 27.0001 17.2156 26.9397 17.3815 26.8269C23.3977 22.7431 28.8871 17.8837 28.819 11.0506C28.7852 7.75875 26.174 5 22.8765 5V5Z"
+                                                                    stroke="#232321"
+                                                                    strokeWidth="1.5"
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                />
+                                                            </svg>
+                                                        </button>
+                                                        <button
+                                                            onClick={() =>
+                                                                removeCartItem(
+                                                                    item.cart_id
+                                                                )
+                                                            }
                                                         >
-                                                            <path
-                                                                d="M22.8765 5C18.819 5 16.819 9 16.819 9C16.819 9 14.819 5 10.7615 5C7.464 5 4.85275 7.75875 4.819 11.0506C4.75025 17.8837 10.2396 22.7431 16.2565 26.8269C16.4224 26.9397 16.6184 27.0001 16.819 27.0001C17.0196 27.0001 17.2156 26.9397 17.3815 26.8269C23.3977 22.7431 28.8871 17.8837 28.819 11.0506C28.7852 7.75875 26.174 5 22.8765 5V5Z"
-                                                                stroke="#232321"
-                                                                strokeWidth="1.5"
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                            />
-                                                        </svg>
-                                                    </button>
-                                                    <button
-                                                        onClick={() =>
-                                                            updateQuantity(
-                                                                item.product_id,
-                                                                item.size,
-                                                                0
-                                                            )
-                                                        }
-                                                    >
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            width="33"
-                                                            height="32"
-                                                            viewBox="0 0 33 32"
-                                                            fill="transparent"
-                                                            className="w-6 h-6 lg:w-8 lg:h-8 hover:scale-105 transition-all active:scale-95"
-                                                        >
-                                                            <path
-                                                                d="M27.8184 9L26.0265 26.2337C25.9692 26.7203 25.7353 27.169 25.3692 27.4946C25.0031 27.8201 24.5302 28 24.0402 28H9.59711C9.10716 28 8.63426 27.8201 8.26813 27.4946C7.90201 27.169 7.66812 26.7203 7.61086 26.2337L5.81836 9"
-                                                                stroke="#232321"
-                                                                strokeWidth="1.5"
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                            />
-                                                            <path
-                                                                d="M29.8184 4H3.81836C3.26607 4 2.81836 4.44772 2.81836 5V8C2.81836 8.55228 3.26607 9 3.81836 9H29.8184C30.3706 9 30.8184 8.55228 30.8184 8V5C30.8184 4.44772 30.3706 4 29.8184 4Z"
-                                                                stroke="#232321"
-                                                                strokeWidth="1.5"
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                            />
-                                                            <path
-                                                                d="M20.3184 15L13.3184 22M20.3184 22L13.3184 15"
-                                                                stroke="#232321"
-                                                                strokeWidth="1.5"
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                            />
-                                                        </svg>
-                                                    </button>
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                width="33"
+                                                                height="32"
+                                                                viewBox="0 0 33 32"
+                                                                fill="transparent"
+                                                                className="w-6 h-6 lg:w-8 lg:h-8 hover:scale-105 transition-all active:scale-95"
+                                                            >
+                                                                <path
+                                                                    d="M27.8184 9L26.0265 26.2337C25.9692 26.7203 25.7353 27.169 25.3692 27.4946C25.0031 27.8201 24.5302 28 24.0402 28H9.59711C9.10716 28 8.63426 27.8201 8.26813 27.4946C7.90201 27.169 7.66812 26.7203 7.61086 26.2337L5.81836 9"
+                                                                    stroke="#232321"
+                                                                    strokeWidth="1.5"
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                />
+                                                                <path
+                                                                    d="M29.8184 4H3.81836C3.26607 4 2.81836 4.44772 2.81836 5V8C2.81836 8.55228 3.26607 9 3.81836 9H29.8184C30.3706 9 30.8184 8.55228 30.8184 8V5C30.8184 4.44772 30.3706 4 29.8184 4Z"
+                                                                    stroke="#232321"
+                                                                    strokeWidth="1.5"
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                />
+                                                                <path
+                                                                    d="M20.3184 15L13.3184 22M20.3184 22L13.3184 15"
+                                                                    stroke="#232321"
+                                                                    strokeWidth="1.5"
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    );
-                                })}
+                                        );
+                                    })
+                                ) : (
+                                    <p className="text-center text-2xl font-medium font-rubik uppercase">
+                                        Cart is empty!
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -267,7 +215,7 @@ const CartPage = () => {
                             <div className="flex justify-between items-center">
                                 <p className="text-[#232321] text-[16px] lg:text-xl font-semibold ">
                                     {getCartCount() + " "} ITEM
-                                </p>
+                                </p> 
                                 <p className="text-[16px] lg:text-xl font-semibold text-[#4a4a47]">
                                     {currency}
                                     {getCartAmount()}

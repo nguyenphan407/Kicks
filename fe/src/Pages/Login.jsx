@@ -34,7 +34,9 @@ const Login = () => {
             setToken(access_token);
 
             // Navigate về lại home
-            toast.success("Login successful!");
+            toast.success("Login successful!", {
+                autoClose: 1500,
+            });
             navigate("/");
         } catch (err) {
             if (err.response && err.response.status === 401) {

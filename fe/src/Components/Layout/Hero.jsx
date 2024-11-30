@@ -11,7 +11,7 @@ const Hero = () => {
                     ? 0
                     : prevIndex + 1
             );
-        }, 2000); // Đổi ảnh mỗi 5 giây
+        }, 4000); // Đổi ảnh mỗi 5 giây
 
         return () => clearInterval(interval); // Clear interval khi component unmount
     }, []);
@@ -26,8 +26,8 @@ const Hero = () => {
             </div>
 
             <div className="w-full relative h-[382px] xl:h-[750px]">
-                <div className="absolute p-2 sm:p-4 xl:p-6 -left-[0] top-[200px] xl:top-[317px] origin-top-left -rotate-90 bg-[#232321] rounded-bl-lg rounded-br-lg xl:rounded-bl-2xl xl:rounded-br-2xl inline-flex justify-center items-center">
-                    <span className="text-[#e7e7e3] text-xs xl:text-base font-semibold font-['Rubik']">
+                <div className="absolute z-10 p-2 sm:p-4 xl:p-6 -left-[0] top-[200px] xl:top-[317px] origin-top-left -rotate-90 bg-[#232321] rounded-bl-lg rounded-br-lg xl:rounded-bl-2xl xl:rounded-br-2xl inline-flex justify-center items-center">
+                    <span className="z-50 text-[#e7e7e3] text-xs xl:text-base font-semibold font-['Rubik']">
                         Nike product of the year
                     </span>
                 </div>

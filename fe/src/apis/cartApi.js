@@ -24,7 +24,7 @@ const cartApi = {
 
     // Xóa sản phẩm khỏi giỏ hàng
     removeFromCart: (cartItemId) => {
-        return axiosClient.delete(`/cart/remove/${cartItemId}`);
+        return axiosClient.delete(`/cart/${cartItemId}`);
     },
 
     // Xóa toàn bộ giỏ hàng

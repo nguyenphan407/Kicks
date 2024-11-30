@@ -1,6 +1,6 @@
-INSERT INTO users (first_name, last_name, email, phone_number, password, role, avatar, created_at, updated_at)
-VALUES 
-('bin', 'cute', 'admin@uit.edu.vn', '0332770502', SHA2('admin', 256), 'admin', NULL, NOW(), NOW());
+-- INSERT INTO users (first_name, last_name, email, phone_number, password, role, avatar, created_at, updated_at)
+-- VALUES 
+-- ('bin', 'cute', 'admin@uit.edu.vn', '0332770502', SHA2('admin', 256), 'admin', NULL, NOW(), NOW());
 
 
 -- Insert data into the categories table
