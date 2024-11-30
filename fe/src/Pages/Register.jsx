@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import authApi from "../apis/authApi";
@@ -64,7 +65,7 @@ const Register = () => {
                 setError("An error occurred. Please try again.");
             }
         } finally {
-            setIsRegistering(false); 
+            setIsRegistering(false);
         }
     };
 
@@ -120,7 +121,7 @@ const Register = () => {
                                 <input
                                     type="text"
                                     placeholder="First Name"
-                                    className="w-full p-[10px] border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                                    className="font-semibold w-full p-[10px] border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                     value={firstName}
                                     onChange={(e) =>
                                         setFirstName(e.target.value)
@@ -131,7 +132,7 @@ const Register = () => {
                                 <input
                                     type="text"
                                     placeholder="Last Name"
-                                    className="w-full p-[10px] border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                                    className="font-semibold w-full p-[10px] border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                     value={lastName}
                                     onChange={(e) =>
                                         setLastName(e.target.value)
@@ -179,7 +180,7 @@ const Register = () => {
                             <input
                                 type="email"
                                 placeholder="Email"
-                                className="w-full p-[10px] border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                                className="font-semibold w-full p-[10px] border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
@@ -188,7 +189,7 @@ const Register = () => {
                             <input
                                 type="password"
                                 placeholder="Password"
-                                className="w-full p-[10px] border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                                className="font-semibold w-full p-[10px] border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />

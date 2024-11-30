@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import MayLike from "../Components/Product/MayLike";
 import { images } from "../assets/assets";
-import OrderSummary from "../Components/OrderSummary";
 import { ShopConText } from "../context/ShopContext";
 import { Link, NavLink } from "react-router-dom";
+import cartApi from "../apis/cartApi";
+import axiosClient from "../apis/axiosClient";
 
 const CartPage = () => {
     const {
@@ -15,10 +16,35 @@ const CartPage = () => {
         getCartCount,
         delivery_fee,
         navigate,
+        token,
     } = useContext(ShopConText);
 
     // lưu sản phẩm đã thêm ở context provider
     const [cartData, setCartData] = useState([]);
+
+    useEffect(() => {
+        if (token) {
+            const fetchCartItems = async () => {
+                try {
+                    // Đảm bảo thêm Authorization header trực tiếp trong request
+                    const response = await axiosClient.get("/cart", {
+                        headers: {
+                            Authorization:
+                                "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE3MzI5MzE1NzksImV4cCI6MTczMjkzNTE3OSwibmJmIjoxNzMyOTMxNTc5LCJqdGkiOiJQZ1RxMjRKM2UzU0diSHFJIiwic3ViIjoiMyIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.OzN5CwyY8YikamE2FoNbmSllTye9GdtlN30UXnZQyqI",
+                        },
+                    });
+    
+                    console.log("response data:", response.data);
+                    // setCartData(response.data); // Lưu dữ liệu vào state
+                } catch (error) {
+                    console.error("Error fetching cart items:", error);
+                }
+            };
+            fetchCartItems(); // Gọi API khi component mount
+        }
+
+
+    }, []); // Chạy một lần khi component mount
 
     useEffect(() => {
         const tempData = [];
@@ -37,7 +63,7 @@ const CartPage = () => {
     }, [cartItems]);
 
     return (
-        <div >
+        <div>
             {/* Phần introduce */}
             <div className="container my-6">
                 <div className="min-w[782px] flex flex-col gap-2 mb-6 lg:mb-8">
@@ -173,7 +199,7 @@ const CartPage = () => {
                                                             height="32"
                                                             viewBox="0 0 33 32"
                                                             fill="none"
-                                                            className="w-6 h-6 lg:w-8 lg:h-8"
+                                                            className="w-6 h-6 lg:w-8 lg:h-8 hover:scale-105 transition-all active:scale-95"
                                                         >
                                                             <path
                                                                 d="M22.8765 5C18.819 5 16.819 9 16.819 9C16.819 9 14.819 5 10.7615 5C7.464 5 4.85275 7.75875 4.819 11.0506C4.75025 17.8837 10.2396 22.7431 16.2565 26.8269C16.4224 26.9397 16.6184 27.0001 16.819 27.0001C17.0196 27.0001 17.2156 26.9397 17.3815 26.8269C23.3977 22.7431 28.8871 17.8837 28.819 11.0506C28.7852 7.75875 26.174 5 22.8765 5V5Z"
@@ -198,8 +224,8 @@ const CartPage = () => {
                                                             width="33"
                                                             height="32"
                                                             viewBox="0 0 33 32"
-                                                            fill="none"
-                                                            className="w-6 h-6 lg:w-8 lg:h-8"
+                                                            fill="transparent"
+                                                            className="w-6 h-6 lg:w-8 lg:h-8 hover:scale-105 transition-all active:scale-95"
                                                         >
                                                             <path
                                                                 d="M27.8184 9L26.0265 26.2337C25.9692 26.7203 25.7353 27.169 25.3692 27.4946C25.0031 27.8201 24.5302 28 24.0402 28H9.59711C9.10716 28 8.63426 27.8201 8.26813 27.4946C7.90201 27.169 7.66812 26.7203 7.61086 26.2337L5.81836 9"
@@ -280,7 +306,7 @@ const CartPage = () => {
                         <button
                             className="font-rubik text-[14px] font-medium w-full bg-secondary_black my-4 lg:my-6 py-4 px-4 text-white rounded-lg
                             transform transition duration-400 hover:bg-primary_blue uppercase hover:scale-[1.003] hover:text-white active:scale-[99%]"
-                            onClick={() => navigate('/checkout')}
+                            onClick={() => navigate("/checkout")}
                         >
                             Checkout
                         </button>

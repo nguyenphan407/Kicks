@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import React, { useState, useEffect, useContext } from "react";
 import { FaFacebook, FaApple, FaGoogle } from "react-icons/fa";
 import { Link, NavLink, useNavigate } from "react-router-dom";
@@ -95,7 +96,7 @@ const Login = () => {
                 <input
                     type="email"
                     placeholder="Email"
-                    className="w-full p-[10px] border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                    className="font-semibold w-full p-[10px] border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                     onChange={(e) => setEmail(e.target.value)}
                     value={email}
                     required
@@ -105,7 +106,7 @@ const Login = () => {
                 <input
                     type="password"
                     placeholder="Password"
-                    className="w-full p-[10px] border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                    className="font-semibold w-full p-[10px] border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                     onChange={(e) => setPassword(e.target.value)}
                     value={password}
                     required

@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import queryString from "querystring";
+import cartApi from "../apis/cartApi";
 
 export const ShopConText = createContext();
 
@@ -11,7 +12,7 @@ const ShopContextProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
     const currency = "$";
     const delivery_fee = "6.99";
-    const [cartItems, setCartItems] = useState({});
+    const [cartItems, setCartItems] = useState({}); // Could be an array or structured as needed
     const navigate = useNavigate();
     const [pagination, setPagination] = useState({
         currentPage: 1,
@@ -48,9 +49,26 @@ const ShopContextProvider = ({ children }) => {
             cartData[itemId][size] = 1;
         }
         setCartItems(cartData);
-        toast.success("Added to cart successfully!", {
-            autoClose: 1500, // Thông báo sẽ tự đóng sau 3 giây
-        });
+        console.log("cart item:", cartItems)
+
+        try {
+            const response = await cartApi.addToCart(itemId, 0, size); 
+            if (response && response.data) {
+                // setCartItems(response.data);
+                toast.success("Added to cart successfully!", {
+                    autoClose: 1500,
+                });
+            } else {
+                toast.error("Failed to add to cart. Please try again.", {
+                    autoClose: 1500,
+                });
+            }
+        } catch (error) {
+            console.error("Error adding to cart:", error);
+            toast.error("Error adding to cart.", {
+                autoClose: 1500,
+            });
+        }
     };
 
     useEffect(() => {
@@ -136,6 +154,24 @@ const ShopContextProvider = ({ children }) => {
         let cartData = structuredClone(cartItems);
         cartData[itemId][size] = quantity;
         setCartItems(cartData);
+        try {
+            const response = await cartApi.updateCartItem(itemId, quantity, size); 
+            if (response && response.data) {
+                // setCartItems(response.data);
+                toast.success("Updated to cart successfully!", {
+                    autoClose: 1500,
+                });
+            } else {
+                toast.error("Failed to Updated to cart. Please try again.", {
+                    autoClose: 1500,
+                });
+            }
+        } catch (error) {
+            console.error("Error updating to cart:", error);
+            toast.error("Error updating to cart.", {
+                autoClose: 1500,
+            });
+        }
     };
 
     const getCartAmount = () => {
@@ -162,22 +198,6 @@ const ShopContextProvider = ({ children }) => {
     // Thêm các state và methods cho người dùng
     const [user, setUser] = useState({});
     const [token, setToken] = useState("");
-
-    // Đăng nhập
-    const login = (userData, userToken) => {
-        setUser(userData);
-        setToken(userToken);
-        localStorage.setItem("user", JSON.stringify(userData));
-        localStorage.setItem("token", userToken);
-    };
-
-    // Đăng xuất
-    const logout = () => {
-        setUser(null);
-        setToken(null);
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
-    };
 
     useEffect(() => {
         const savedUser = localStorage.getItem("user");
@@ -208,8 +228,6 @@ const ShopContextProvider = ({ children }) => {
         token,
         setUser,
         setToken,
-        login,
-        logout,
     };
 
     return (

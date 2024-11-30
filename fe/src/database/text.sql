@@ -1,7 +1,6 @@
--- INSERT INTO users (first_name, last_name, email, phone_number, password, role, avatar, created_at, updated_at)
--- VALUES 
--- ('Quan', 'Vo Dinh', 'vodinhquan2707.it@gmail.com', '1234567890', SHA2('password123', 256), 'customer', NULL, NOW(), NOW()),
--- ('Nguyen', 'Phan Hoang', 'nguyen@example.com', '0987654321', SHA2('password456', 256), 'admin', NULL, NOW(), NOW());
+INSERT INTO users (first_name, last_name, email, phone_number, password, role, avatar, created_at, updated_at)
+VALUES 
+('bin', 'cute', 'admin@uit.edu.vn', '0332770502', SHA2('admin', 256), 'admin', NULL, NOW(), NOW());
 
 
 -- Insert data into the categories table
@@ -16,13 +15,15 @@
 -- ('Golf'),
 -- ('Outdoor');
 -- Xóa tất cả các bản ghi trong bảng products
-DELETE FROM product_size;
-DELETE FROM product_image;
-DELETE FROM products;
+-- DELETE FROM product_size;
+-- DELETE FROM product_image;
+-- DELETE FROM products;
+
+SET FOREIGN_KEY_CHECKS = 1;  -- Bật lại kiểm tra ràng buộc khóa ngoại
+
 
 
 -- Đặt lại AUTO_INCREMENT về 1
-ALTER TABLE products AUTO_INCREMENT = 1;
-ALTER TABLE product_size AUTO_INCREMENT = 1;
-ALTER TABLE product_image AUTO_INCREMENT = 1;
+-- ALTER TABLE products AUTO_INCREMENT = 1;
+
 
