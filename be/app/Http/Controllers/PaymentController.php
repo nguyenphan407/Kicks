@@ -16,7 +16,7 @@ class PaymentController extends Controller
     public function createPaymentLink(Request $request) {
         $data = [
             "orderCode" => intval(substr(strval(microtime(true) * 10000), -6)),
-            "amount" => 2000,
+            "amount" => $request->price,
             "description" => "VQRIO123",
             "buyerName" => "Nguyen Van A",
             "buyerEmail" => "phn040704@gmail.com",

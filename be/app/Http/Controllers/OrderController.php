@@ -22,9 +22,9 @@ class OrderController extends Controller
         try {
             $order = Order::create([
                 'order_id' => $data['orderCode'],
-                'user_id' => Auth::id(),
+                'user_id' => $data['items'][0]['user_id'],
                 'order_status' => 'pending',
-                'amount' => $data['amount'],
+                'amount' => $data['amount'] / 25000,
                 'shipping_address' => $data['buyerAddress'],
                 'payment_status' => 'pending',
                 'shipping' => 'giao hang tiet kiem',
