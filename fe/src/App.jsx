@@ -28,6 +28,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import OrderSuccess from "./Pages/OrderSuccess";
 import OrderFailed from "./Pages/OrderFailed";
+import OrdersPage from "./Pages/OrdersPage"
 
 const App = () => {
   return (
@@ -42,6 +43,7 @@ const App = () => {
         <Route path="/checkOut" element={<CheckOutPage />} />
         <Route path="/listing" element={<ListingPage />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/order" element={<OrdersPage />} />
         <Route
           path="/productDetail/:productId"
           element={<ProductDetailPage />}

@@ -38,6 +38,7 @@ const CheckOutPage = () => {
             [name]: value, // Chỉ thay đổi giá trị của trường tương ứng
         }));
     };
+    useEffect
 
     const {
         currency,
