@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\ProductSize;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -50,7 +52,16 @@ class OrderController extends Controller
         return response()->json(['message' => 'Order created successfully', 'order' => $order]);
     }
 
-    public static function update(Request $request){
+    public static function update(Request $request = null, $status = null, $orderCode = null){
+        if(!$status){
+            $order = Order::find('order_id', $orderCode);
 
+            $order->update(['order_status' => $status]);
+
+            if ($status == 'paid'){
+                $cart = Cart::find('user_id', $order->first()->user_id);
+                $cart->delete();
+            }
+        }
     }
 }

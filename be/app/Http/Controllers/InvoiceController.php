@@ -61,7 +61,7 @@ class InvoiceController extends Controller
         ];
         
         try {
-            Mail::to('22520984@gm.uit.edu.vn')->send(new InvoiceMail($data));
+            Mail::to($request->email)->send(new InvoiceMail($data));
             return response()->json([
                 'message' => 'Email đã được gửi thành công!'
             ], 200);

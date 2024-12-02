@@ -57,6 +57,11 @@ class PaymentController extends Controller
             } 
 
             $payment->save();
+
+            OrderController::update(null, 'paid', $response['orderCode']);
+        }
+        else {
+            OrderController::update(null, 'failed', $response['orderCode']);
         } 
 
         return response()->json($response);

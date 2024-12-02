@@ -15,8 +15,7 @@ const  OrderSuccess = () => {
         cancel: searchParams.get('cancel') === 'true'
     };
 
-    const userData = localStorage.getItem('user-info');
-
+    const userData = JSON.parse(localStorage.getItem('user-info'));
 
     const loadData = async () => {
         try {
@@ -32,6 +31,16 @@ const  OrderSuccess = () => {
             
             const data =  await response.json() ;
 
+            const userInfo = {
+                orderCode: data.orderCode,
+                name: userData.firstName + ' ' + userData.lastName,
+                email: userData.email,
+                amount: data.amount,
+                createdAt: data.createdAt
+            }
+
+            console.log(userInfo);
+
             const invoice = await fetch(
                 'http://localhost:8000/api/admin/create_invoice',
                 {
@@ -39,13 +48,7 @@ const  OrderSuccess = () => {
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({
-                        orderCode: data.orderCode,
-                        name: userData.firstName + ' ' + userData.lastName,
-                        email: userData.email,
-                        amount: data.amount,
-                        createdAt: data.createdAt
-                    })
+                    body: JSON.stringify(userInfo)
                 }
             )
             
