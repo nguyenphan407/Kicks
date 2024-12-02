@@ -43,6 +43,11 @@ const Header = () => {
         navigate('/login');
     };
 
+    const clickOrder = (event) => {
+        setMenuOpenUser(false);
+        navigate('/order');
+    };
+
     const [menuOpenUser, setMenuOpenUser] = useState(false);
 
     const toggleMenuUser = () => {
@@ -162,7 +167,7 @@ const Header = () => {
                         {user.first_name ? user.first_name : "Guest"}
                         </div>
                         <p className="cursor-pointer font-inter text-[10px] lg:text-[14px] uppercase font-medium flex items-center justify-between px-2 py-2 lg:px-4 lg:py-4  hover:bg-gray-100"
-                        onClick={() => navigate('/orders')}
+                        onClick={(event) => clickOrder(event)}
                         >
                             Order
                             <img src={icons.OrderIcon} alt="" className="w-4 h-4 lg:w-6 lg:h-6"/>
