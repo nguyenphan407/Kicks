@@ -59,26 +59,25 @@ const CheckOutPage = () => {
         localStorage.setItem("user-info", JSON.stringify(userData));
         // Thực hiện điều hướng sang trang thanh toán.
         try {
+
+            let convertCartData = cartData.map((item) => {
+                return {
+                    ...item,
+                    price: parseFloat(item.price),
+                };
+            });
+
             const productData = {
                 description: "Thanh toán đơn hàng",
-                items: [
-                    {
-                        name: "Air Max 90",
-                        quantity: 1,
-                        price: 150.0,
-                    },
-                    // {
-                    //     "name": "Air Max 9000",
-                    //     "quantity": 2,
-                    //     "price": 150.00
-                    // }
-                ],
+                items: convertCartData,
                 returnUrl: "http://localhost:5173/order/success",
                 cancelUrl: "http://localhost:5173/order/cancel",
-                price: 2000,
+                price: getCartAmount() * 25000,
             };
 
-            localStorage.setItem("products", JSON.stringify(productData.items));
+            console.log(JSON.stringify(productData));
+
+            localStorage.setItem("products", JSON.stringify(productData));
 
             const response = await fetch(
                 "http://localhost:8000/api/payment/create-payment-link",
@@ -102,6 +101,8 @@ const CheckOutPage = () => {
             console.error("Có lỗi xảy ra:", error);
         }
     };
+
+    console.log(cartData);
 
     return (
         // div: phải đặt display thì mới dùng được justify-start items-center (kiến thức flexbox)
