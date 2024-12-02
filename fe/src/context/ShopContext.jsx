@@ -58,9 +58,9 @@ const ShopContextProvider = ({ children }) => {
         }
     };
 
-    useEffect(() => {
-        console.log(cartData);
-    }, [cartData]);
+    // useEffect(() => {
+    //     console.log(cartData);
+    // }, [cartData]);
 
     // lấy số lượng hiển thị vào cart
     const getCartCount = () => {

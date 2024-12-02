@@ -2,7 +2,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { ShopConText } from "../context/ShopContext";
 import { Link, NavLink } from "react-router-dom";
-import { icons} from "../assets/assets"
+import { icons } from "../assets/assets";
 import Modal from "../Components/Modal";
 
 const CheckOutPage = () => {
@@ -11,8 +11,10 @@ const CheckOutPage = () => {
     const handleOptionSelect = (option) => {
         setSelectedOption(option);
     };
-    
-    const [selectedOptionPayment, setSelectedOptionPayment] = useState("Payment via Momo e-wallet");
+
+    const [selectedOptionPayment, setSelectedOptionPayment] = useState(
+        "Payment via Momo e-wallet"
+    );
 
     const handleOptionSelectPayment = (option) => {
         setSelectedOptionPayment(option);
@@ -23,8 +25,8 @@ const CheckOutPage = () => {
         lastName: "",
         email: "",
         phoneNumber: "",
-        deliveryAddress: ""
-    })
+        deliveryAddress: "",
+    });
 
     const handleChange = (e) => {
         // Lấy thuộc tính 'name' và 'value' từ input đang thay đổi
@@ -32,21 +34,19 @@ const CheckOutPage = () => {
 
         // Cập nhật giá trị tương ứng trong state
         setUserData((prevData) => ({
-        ...prevData, // Giữ lại các giá trị trước đó
-        [name]: value, // Chỉ thay đổi giá trị của trường tương ứng
+            ...prevData, // Giữ lại các giá trị trước đó
+            [name]: value, // Chỉ thay đổi giá trị của trường tương ứng
         }));
-    }   
+    };
 
     const {
-        products,
         currency,
-        cartItems,
         getCartAmount,
         getCartCount,
         delivery_fee,
         navigate,
+        cartData
     } = useContext(ShopConText);
-    const [cartData, setCartData] = useState([]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -56,17 +56,17 @@ const CheckOutPage = () => {
     const handleConfirm = async () => {
         setIsModalOpen(false);
 
-        localStorage.setItem('user-info', JSON.stringify(userData));
+        localStorage.setItem("user-info", JSON.stringify(userData));
         // Thực hiện điều hướng sang trang thanh toán.
         try {
             const productData = {
                 description: "Thanh toán đơn hàng",
                 items: [
                     {
-                        "name": "Air Max 90",
-                        "quantity": 1,
-                        "price": 150.00
-                    }
+                        name: "Air Max 90",
+                        quantity: 1,
+                        price: 150.0,
+                    },
                     // {
                     //     "name": "Air Max 9000",
                     //     "quantity": 2,
@@ -78,46 +78,31 @@ const CheckOutPage = () => {
                 price: 2000,
             };
 
-            localStorage.setItem('products', JSON.stringify(productData.items));
+            localStorage.setItem("products", JSON.stringify(productData.items));
 
             const response = await fetch(
-              "http://localhost:8000/api/payment/create-payment-link",
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(productData),
-              }
+                "http://localhost:8000/api/payment/create-payment-link",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(productData),
+                }
             );
-      
+
             const textResponse = await response.text();
-      
+
             if (textResponse) {
-              window.location.href = textResponse; // Chuyển hướng tới đường dẫn
+                window.location.href = textResponse; // Chuyển hướng tới đường dẫn
             } else {
-              console.error("Link không tồn tại trong dữ liệu trả về");
+                console.error("Link không tồn tại trong dữ liệu trả về");
             }
-          } catch (error) {
+        } catch (error) {
             console.error("Có lỗi xảy ra:", error);
-          }
+        }
     };
 
-    useEffect(() => {
-        const tempData = [];
-        for (const productId in cartItems) {
-            for (const size in cartItems[productId]) {
-                if (cartItems[productId][size] > 0) {
-                    tempData.push({
-                        product_id: productId,
-                        size: size,
-                        quantity: cartItems[productId][size],
-                    });
-                }
-            }
-        }
-        setCartData(tempData);
-    }, [cartItems]);
     return (
         // div: phải đặt display thì mới dùng được justify-start items-center (kiến thức flexbox)
         // Không dùng padding để căn lề
@@ -296,12 +281,11 @@ const CheckOutPage = () => {
                         </section>
                     </section>
 
-
                     <section className="flex flex-col">
                         {/* Cái thẻ h3 này note tương tự như trên */}
                         {/* vì không dùng gap nên dùng margin bottom */}
                         <h3 className="font-rubik text-2xl lg:text-[32px] font-semibold text-secondary_black mb-4 lg:mb-8">
-                        Payment Method
+                            Payment Method
                         </h3>
                         {/* Không đặt height chỗ này nha, bỏ h-52, đặt width chỗ này, khi width của thẻ cha đặt cố định, thẻ con chỉ cần cho width full và flex-1 là nó sẽ chiếm hết không gian hiện có */}
                         {/* Đặt width full trên mobile để nó chiếm full và đặt width cố định trên desktop */}
@@ -322,15 +306,20 @@ const CheckOutPage = () => {
                                     {/* Đặt width cục này để nó căn lề ra 2 bên chuẩn */}
                                     <div className="lg:w-[684px]">
                                         <h3 className=" font-rubik text-[#232321] text-xl lg:text-2xl font-semibold">
-                                        Momo e-wallet
+                                            Momo e-wallet
                                         </h3>
                                         <p className="opacity-80 text-[#232321] text-sm lg:text-base font-semibold">
-                                        Secure payment via Momo. Enter address for delivery time.
+                                            Secure payment via Momo. Enter
+                                            address for delivery time.
                                         </p>
                                     </div>
                                     {/* Thiếu font-rubik ở thẻ span, dùng các biến toàn cục là đơn vị tiền và tiền vận chuyển */}
                                     {/* text trên mobile là 16, không phải 18 */}
-                                    <img src={icons.MomoIcon} alt="" className="max-w-[58px]"/>
+                                    <img
+                                        src={icons.MomoIcon}
+                                        alt=""
+                                        className="max-w-[58px]"
+                                    />
                                 </div>
                             </div>
                             <div
@@ -345,14 +334,18 @@ const CheckOutPage = () => {
                             >
                                 <div>
                                     <h3 className="font-rubik text-[#232321] text-xl lg:text-2xl font-semibold">
-                                    Cart Bank
+                                        Cart Bank
                                     </h3>
                                     <p className="opacity-80 text-[#232321] text-sm lg:text-base font-semibold">
-                                    Pay by bank card. Quick in-store pickup.
+                                        Pay by bank card. Quick in-store pickup.
                                     </p>
                                 </div>
                                 {/* text trên mobile là 16, không phải 18 */}
-                                <img src={icons.VisaIcon} alt="" className="max-w-[58px]"/>
+                                <img
+                                    src={icons.VisaIcon}
+                                    alt=""
+                                    className="max-w-[58px]"
+                                />
                             </div>
                             <div
                                 className={`w-full p-4 rounded-xl flex justify-between items-start cursor-pointer ${
@@ -361,19 +354,26 @@ const CheckOutPage = () => {
                                         : "border border-[#232321]"
                                 }`}
                                 onClick={() =>
-                                    handleOptionSelectPayment("Cash on Delivery")
+                                    handleOptionSelectPayment(
+                                        "Cash on Delivery"
+                                    )
                                 }
                             >
                                 <div>
                                     <h3 className="font-rubik text-[#232321] text-xl lg:text-2xl font-semibold">
-                                    Cash on Delivery
+                                        Cash on Delivery
                                     </h3>
                                     <p className="opacity-80 text-[#232321] text-sm lg:text-base font-semibold">
-                                    Pay cash upon pickup. Ideal for in-store orders.
+                                        Pay cash upon pickup. Ideal for in-store
+                                        orders.
                                     </p>
                                 </div>
                                 {/* text trên mobile là 16, không phải 18 */}
-                                <img src={icons.CashIcon} alt="" className="max-w-[58px]" />
+                                <img
+                                    src={icons.CashIcon}
+                                    alt=""
+                                    className="max-w-[58px]"
+                                />
                             </div>
                         </section>
                     </section>
@@ -422,12 +422,15 @@ const CheckOutPage = () => {
 
                     {/* Review and Pay Button */}
                     {/* Xem kĩ cách làm cái button này */}
-                    <button className="w-full lg:w-[362px] bg-secondary_black flex justify-between lg:justify-center rounded-lg text-white px-4 py-[15.5px]
+                    <button
+                        className="w-full lg:w-[362px] bg-secondary_black flex justify-between lg:justify-center rounded-lg text-white px-4 py-[15.5px]
                     
                     transform transition duration-400 hover:bg-primary_blue uppercase hover:scale-[1.003] hover:text-white active:scale-[99%]"
-                            onClick={handleOpenModal}
+                        onClick={handleOpenModal}
                     >
-                        <p className="font-rubik text-[14px] font-medium">REVIEW AND PAY</p>
+                        <p className="font-rubik text-[14px] font-medium">
+                            REVIEW AND PAY
+                        </p>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="16"
@@ -507,51 +510,57 @@ const CheckOutPage = () => {
                         Order Details
                     </h2>
                     <div className="flex flex-col gap-6">
-                    {cartData.map((item, index) => {
-                        const productData = products.find(
-                            (product) =>
-                                String(product.product_id) ===
-                                String(item.product_id)
-                        );
-                        console.log("Product Data:", productData); // Log để kiểm tra từng sản phẩm
-                        return (
-                            <div key={index} className="flex gap-6 h-full">
-                                <img
-                                    className="rounded-xl lg:rounded-3xl object-cover max-w-[157px] lg:max-h-[157px] lg:max-w-[138px] border border-[#e6e6e6]"
-                                    src={productData.images[0]}
-                                    alt="Product Image"
-                                />
-                                <div className="flex flex-col justify-between flex-1">
-                                    <div className="flex flex-col justify-between items-start">
-                                        <div className="max-w-[350px]">
-                                            <h3 className="font-rubik font-semibold text-[16px] lg:text-[20px] uppercase text-[#232321]">
-                                                {productData.name}
-                                            </h3>
-                                            <p className="opacity-80 text-[#4e4e4c] text-[14px] lg:text-[16px] font-semibold mb-2 lg:mb-2">
-                                                {productData.description}
-                                            </p>
-                                            <div className="flex  justify-between lg:justify-start gap-2 lg:gap-10">
-                                                <div className="flex gap-2 justify-center items-center">
-                                                    <p className="opacity-80 text-[#4e4e4c] text-[14px] lg:text-[16px] font-semibold ">
-                                                        Size {item.size}
+                        {cartData.length > 0 ? (
+                            cartData.map((item, index) => {
+                                return (
+                                    <div
+                                        key={index}
+                                        className="flex gap-6 h-full"
+                                    >
+                                        <img
+                                            className="rounded-xl lg:rounded-3xl object-cover max-w-[157px] lg:max-h-[157px] lg:max-w-[138px] border border-[#e6e6e6]"
+                                            src={item.image}
+                                            alt="Product Image"
+                                        />
+                                        <div className="flex flex-col justify-between flex-1">
+                                            <div className="flex flex-col justify-between items-start">
+                                                <div className="max-w-[350px]">
+                                                    <h3 className="font-rubik font-semibold text-[16px] lg:text-[20px] uppercase text-[#232321]">
+                                                        {item.name}
+                                                    </h3>
+                                                    <p className="opacity-80 text-[#4e4e4c] text-[14px] lg:text-[16px] font-semibold mb-2 lg:mb-2">
+                                                        {
+                                                            item.description
+                                                        }
                                                     </p>
+                                                    <div className="flex  justify-between lg:justify-start gap-2 lg:gap-10">
+                                                        <div className="flex gap-2 justify-center items-center">
+                                                            <p className="opacity-80 text-[#4e4e4c] text-[14px] lg:text-[16px] font-semibold ">
+                                                                Size {item.size}
+                                                            </p>
+                                                        </div>
+                                                        <div className="flex gap-2 justify-center items-center">
+                                                            <p className="opacity-80 text-[#4e4e4c] text-[14px] lg:text-[16px] font-semibold">
+                                                                Quantity{" "}
+                                                                {item.quantity}
+                                                            </p>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div className="flex gap-2 justify-center items-center">
-                                                    <p className="opacity-80 text-[#4e4e4c] text-[14px] lg:text-[16px] font-semibold">
-                                                        Quantity {item.quantity}
-                                                    </p>
-                                                </div>
+                                                <p className="font-rubik text-[16px] my-2 lg:my-0 lg:text-[20px] font-semibold text-primary_blue">
+                                                    {currency}
+                                                    {item.price}
+                                                </p>
                                             </div>
                                         </div>
-                                        <p className="font-rubik text-[16px] my-2 lg:my-0 lg:text-[20px] font-semibold text-primary_blue">
-                                            {currency}
-                                            {productData.price}
-                                        </p>
                                     </div>
-                                </div>
-                            </div>
-                        );
-                    })}
+                                );
+                            })
+                        ) : (
+                            <p className="text-center text-2xl font-medium font-rubik uppercase">
+                                Cart is empty!
+                            </p>
+                        )}
                     </div>
                 </div>
             </aside>
