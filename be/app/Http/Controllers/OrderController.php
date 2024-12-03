@@ -13,9 +13,18 @@ use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::with('items')->where('user_id', Auth::id())->get();
+        if ($request->has('status')){
+            $orders = Order::with('items')
+                ->where('user_id', Auth::id())
+                ->where('order_status', $request->status)
+                ->get();
+        }
+        else {
+            $orders = Order::with('items')->where('user_id', Auth::id())->get();
+        }
+        
         return response()->json($orders);
     }
 
@@ -53,13 +62,13 @@ class OrderController extends Controller
     }
 
     public static function update(Request $request = null, $status = null, $orderCode = null){
-        if(!$status){
-            $order = Order::find('order_id', $orderCode);
+        if($status){
+            $order = Order::find($orderCode, 'order_id');
 
-            $order->update(['order_status' => $status]);
+            $order->update(['payment_status' => $status]);
 
             if ($status == 'paid'){
-                $cart = Cart::find('user_id', $order->first()->user_id);
+                $cart = Cart::where('user_id', $order->first()->user_id);
                 $cart->delete();
             }
         }

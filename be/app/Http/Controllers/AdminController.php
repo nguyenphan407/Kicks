@@ -84,6 +84,40 @@ class AdminController extends Controller
         return response()->json($result);
     }
 
+    public function getOrders(Request $request){
+        if ($request->has('status')){
+            $orders = Order::where('order_status', $request->status)
+                ->join('payments', 'payments.order_id', '=', 'orders.order_id')
+                ->join('users', 'users.user_id', '=', 'orders.user_id')
+                ->select(
+                    'orders.order_id',
+                    'orders.created_at',
+                    'payments.payment_method',
+                    'users.user_id',
+                    'orders.order_status',
+                    'orders.amount',
+                    'orders.payment_status'
+                )
+                ->get();
+        }
+        else {
+            $orders = Order::join('payments', 'payments.order_id', '=', 'orders.order_id')
+                ->join('users', 'users.user_id', '=', 'orders.user_id')
+                ->select(
+                    'orders.order_id',
+                    'orders.created_at',
+                    'payments.payment_method',
+                    'users.user_id',
+                    'orders.order_status',
+                    'orders.amount',
+                    'orders.payment_status'
+                )
+                ->get();
+        }
+        
+        return response()->json($orders);
+    }
+
     public function getOrderInfo($id)
     {
         // Lấy dữ liệu đơn hàng và các thông tin liên quan
@@ -93,6 +127,7 @@ class AdminController extends Controller
             ->join('order_items', 'order_items.order_id', '=', 'orders.order_id')
             ->join('product_size', 'product_size.product_size_id', '=' , 'order_items.product_size_id')
             ->join('products', 'products.product_id', '=', 'product_size.product_id')
+            ->join('product_image', 'product_image.product_id', '=', 'products.product_id')
             ->select(
                 'orders.order_id',
                 'orders.user_id',
@@ -127,6 +162,43 @@ class AdminController extends Controller
                 'payments.account_name',
                 'payments.account_number',
                 'payments.description as payment_desc',
+                'payments.reference',
+                DB::raw('MIN(product_image.image) as image')
+            )
+            ->groupBy(
+                'orders.order_id',
+                'orders.user_id',
+                'orders.order_status',
+                'orders.amount',
+                'orders.shipping_address',
+                'orders.payment_status',
+                'orders.shipping',
+                'orders.created_at',
+                'orders.updated_at',
+                'users.first_name',
+                'users.last_name',
+                'users.email',
+                'users.phone_number',
+                'users.avatar',
+                'users.role',
+                'order_items.order_item_id',
+                'order_items.product_size_id',
+                'order_items.quantity',
+                'order_items.price',
+                'products.product_id',
+                'products.name',
+                'products.brand',
+                'products.gender',
+                'products.description',
+                'products.stock_quantity',
+                'products.color',
+                'products.category_id',
+                'product_size.size',
+                'payments.payment_method',
+                'payments.bank_id',
+                'payments.account_name',
+                'payments.account_number',
+                'payments.description',
                 'payments.reference'
             )
             ->get();
@@ -182,6 +254,7 @@ class AdminController extends Controller
                 'stock_quantity' => $item->stock_quantity,
                 'color' => $item->color,
                 'category_id' => $item->category_id,
+                'product_image' => $item->image,
             ];
         }
 

@@ -121,6 +121,7 @@ Route::group([
 ], function ($router) {
     Route::get('/', [AdminController::class, 'index']);
     Route::get('/category', [AdminController::class, 'getQuantityOfCategory']);
+    Route::get('/order', [AdminController::class, 'getOrders']);
     Route::get('/order/{id}', [AdminController::class, 'getOrderInfo']);
     Route::get('/statics', [AdminController::class, 'statics']);
     Route::get('/report', [AdminController::class, 'report']);

@@ -116,11 +116,18 @@ class ProductController extends Controller
         // Cập nhật sản phẩm
         $product->update($validatedData);
 
-        if ($request->filled(['size', 'quantity'])) {
-            ProductSize::updateOrCreate(
-                ['product_id' => $product->product_id, 'size' => $request->size],
-                ['quantity' => $request->quantity]
-            );
+        if ($request->filled('sizes')) {
+            $sizes = $request->sizes;
+            if (!is_array($sizes)){
+                $sizes = [$sizes];
+            }
+
+            foreach ($sizes as $size) {
+                ProductSize::updateOrCreate(
+                    ['product_id' => $product->product_id, 'size' => $size['size']],
+                    ['quantity' => $size['quantity']]
+                );
+            };
         }
 
         if ($request->hasFile('images')) {

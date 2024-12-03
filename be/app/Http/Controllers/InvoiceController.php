@@ -15,17 +15,17 @@ class InvoiceController extends Controller
     public function create(Request $request){
         $invoiceId = intval(substr(strval(microtime(true) * 10000), -6));
 
-        // Invoice::create([
-        //     'invoice_id' => $invoiceId,
-        //     'order_id' => $request->orderCode,
-        //     'due_date' => $request->createdAt,
-        //     'subject' => 'Purchase Invoice',
-        //     'customer_name' => $request->name,
-        //     'customer_email' => $request->email,
-        //     'currency' => 'USD - United States Dollar',
-        //     'subtotal' => $request->amount,
-        //     'total' => $request->amount,
-        // ]);
+        Invoice::create([
+            'invoice_id' => $invoiceId,
+            'order_id' => $request->orderCode,
+            'due_date' => $request->createdAt,
+            'subject' => 'Purchase Invoice',
+            'customer_name' => $request->name,
+            'customer_email' => $request->email,
+            'currency' => 'USD - United States Dollar',
+            'subtotal' => $request->amount / 25000,
+            'total' => $request->amount / 25000,
+        ]);
 
         $items = Product::join('product_size', 'product_size.product_id', '=', 'products.product_id')
             ->join('order_items', 'order_items.product_size_id', '=', 'product_size.product_size_id')
@@ -55,8 +55,8 @@ class InvoiceController extends Controller
             'customer_name' => $request->name,
             'customer_email' => $request->email,
             'currency' => 'USD - United States Dollar',
-            'subtotal' => $request->amount,
-            'total' => $request->amount,
+            'subtotal' => $request->amount / 25000,
+            'total' => $request->amount / 25000,
             'items' => $items
         ];
         
