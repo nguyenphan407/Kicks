@@ -7,7 +7,6 @@ const ProductCard = ({
     name,
     stock_quantity,
     regular_price,
-    price,
     description,
     category_name,
     sale,
@@ -33,8 +32,7 @@ const ProductCard = ({
                         {category_name}
                     </p>
                     <span className="font-rubik text-[14px] font-semibold text-[#232321]">
-                        ${price}
-                        {/* Chờ Nguyên trả về http://localhost:8000/api/admin thêm cái regular_price */}
+                        ${regular_price}
                     </span>
                 </div>
                 <Link to={`/productdetail/${product_id}`}>

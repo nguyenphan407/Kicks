@@ -29,6 +29,8 @@ import RoundCheckIcon from "./icons/round-check_icon.svg"
 import PrintIcon from "./icons/print_icon.svg"
 import CheckSuccess from "./icons/check-success.svg"
 import DeleteIcon from "./icons/delete_icon.svg"
+import CustomerIcon from "./icons/customer_icon.svg"
+import PayIcon from "./icons/pay_icon.svg"
 
 // Import images
 import ThumbnailImg from "./images/thumbnail_img.jpg";
@@ -68,7 +70,9 @@ export const icons = {
   RoundCheckIcon,
   PrintIcon,
   CheckSuccess,
-  DeleteIcon
+  DeleteIcon,
+  CustomerIcon,
+  PayIcon,
 };
 
 // Export all images in a single object
