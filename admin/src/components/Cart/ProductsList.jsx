@@ -39,17 +39,20 @@ const ProductList = ({ products }) => {
                 <tbody>
                     {products.map((product) => (
                         <tr key={product.id} className="border-b hover:bg-gray-200">
-                            <td className="px-2 py-4 text-[14px] font-semibold text-black text-start">
-                                {/* {product.product_name} */}
+                            <td className="px-2 py-4 text-[14px] font-semibold text-black text-start flex items-center gap-4">
+                                <img src={product.image} alt="" className="w-10 h-10 rounded-[8px]"/>
+                                <p>
+                                {product.product_name}
+                                </p>
                             </td>
                             <td className="px-2 py-4 text-[14px] font-semibold text-black text-center">
-                                {/* {product.order_id} */}
+                                {product.order_id}
                             </td>
                             <td className="px-2 py-4 text-[14px] font-semibold text-black text-center">
                                 {product.quantity}
                             </td>
                             <td className="px-2 py-4 text-[14px] font-semibold text-black text-end">
-                                {/* ${product.total.toFixed(2)} */}
+                                ${product.total.toFixed(2)}
                             </td>
                         </tr>
                     ))}

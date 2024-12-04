@@ -6,21 +6,16 @@ import { MyLineChart } from "../components/ui/MyLineChart";
 import { images, icons } from "@/assets/assets";
 import OrdersList from "@/components/Cart/OrdersList";
 import { ShopConText } from "@/context/ShopContext";
+import orderApi from "@/apis/orderApi";
+import { format, parseISO } from "date-fns";
 
 const Dashboard = () => {
     const breadcrumbs = [{ label: "Home", link: "/" }, { label: "Dashboard" }];
+    const [ordersData, setOrdersData] = useState([])
     const [dateRange, setDateRange] = useState({
         startDate: null,
         endDate: null,
     });
-
-    const { handleCategoryChange } = useContext(ShopConText);
-
-    const handleDateChange = (range) => {
-        setDateRange(range);
-        console.log("Selected Date Range:", range);
-    };
-
     const statisticsData = [
         {
             id: 1, // Thêm id
@@ -72,75 +67,36 @@ const Dashboard = () => {
         },
     ];
 
-    const ordersData = [
-        {
-            id: 1,
-            product: "Adidas Ultra boost",
-            orderId: "#25426",
-            date: "Jan 8th, 2022",
-            paymentMethod: "Cash",
-            customer: "Leo Gouse",
-            customerAvatar: images.Thumbnails[0],
-            status: "Delivered",
-            amount: 200.0,
-        },
-        {
-            id: 2,
-            product: "Adidas Ultra boost",
-            orderId: "#25425",
-            date: "Jan 7th, 2022",
-            paymentMethod: "Cash",
-            customer: "Jaxson Korsgaard",
-            customerAvatar: images.Thumbnails[0],
-            status: "Canceled",
-            amount: 200.0,
-        },
-        {
-            id: 3,
-            product: "Adidas Ultra boost",
-            orderId: "#25424",
-            date: "Jan 6th, 2022",
-            paymentMethod: "Cash",
-            customer: "Talan Botosh",
-            customerAvatar: images.Thumbnails[0],
-            status: "Delivered",
-            amount: 200.0,
-        },
-        {
-            id: 4,
-            product: "Adidas Ultra boost",
-            orderId: "#25423",
-            date: "Jan 5th, 2022",
-            paymentMethod: "Cash",
-            customer: "Ryan Philips",
-            customerAvatar: images.Thumbnails[0],
-            status: "Canceled",
-            amount: 200.0,
-        },
-        {
-            id: 5,
-            product: "Adidas Ultra boost",
-            orderId: "#25422",
-            date: "Jan 4th, 2022",
-            paymentMethod: "Cash",
-            customer: "Emerson Baptista",
-            customerAvatar: images.Thumbnails[0],
-            status: "Delivered",
-            amount: 200.0,
-        },
-        {
-            id: 6,
-            product: "Adidas Ultra boost",
-            orderId: "#25422",
-            date: "Jan 4th, 2022",
-            paymentMethod: "Cash",
-            customer: "Emerson Baptista",
-            customerAvatar: images.Thumbnails[0],
-            status: "Delivered",
-            amount: 200.0,
-        },
-    ];
 
+    const { handleCategoryChange } = useContext(ShopConText);
+
+    const handleDateChange = (range) => {
+        setDateRange(range);
+        console.log("Selected Date Range:", range);
+    };
+
+    useEffect(() => {
+        const fetchOrderData = async () => {
+           try {
+              const response = await orderApi.getAll();
+              console.log("Fetched Order Data:", response.data);
+              if (Array.isArray(response.data) && response.data.length > 0) {
+                 const formattedOrders = response.data.map((order) => {
+                    return {
+                      ...order,
+                      created_at: format(parseISO(order.created_at), "MMM dd'th', yyyy"),
+                    };
+                  });
+                  setOrdersData(formattedOrders);
+              } else {
+                 console.error("No order data found for the given orderId.");
+              }
+           } catch (error) {
+              console.error("Error fetching order data:", error);
+           }
+        };
+        fetchOrderData();
+     }, []);
     // Cuộn lên đầu trang khi trang thay đổi
     useEffect(() => {
         window.scrollTo(0, 0);

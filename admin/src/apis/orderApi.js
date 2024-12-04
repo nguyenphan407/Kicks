@@ -3,7 +3,7 @@ import axiosClient from "./axiosClient";
 
 const orderApi = {
     getAll(params) {
-        const url = 'admin/';
+        const url = 'admin/order';
         return axiosClient.get(url, { params }); // Truyền params dưới dạng object
     },
 
@@ -13,7 +13,7 @@ const orderApi = {
     },
 
     update(id, data) {
-        const url = `admin/update/${id}/?_method=PUT`;
+        const url = `admin/order/update/${id}`;
         return axiosClient.post(url, data);
     },
 
