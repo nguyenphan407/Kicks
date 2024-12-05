@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { XCircle, ChevronLeft, AlertCircle } from 'lucide-react';
 
 const OrderFailed = () => {
   const [surveySubmitted, setSurveySubmitted] = React.useState(false);
   const [selectedReason, setSelectedReason] = React.useState('');
   const [otherReason, setOtherReason] = React.useState('');
-  
+
   const searchParams = new URLSearchParams(window.location.search);
 
   const orderDetails = {
@@ -29,6 +29,41 @@ const OrderFailed = () => {
     setSurveySubmitted(true);
   };
 
+  const userData = JSON.parse(localStorage.getItem('user-info'));
+
+  const loadData = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/payment/get-info/${orderDetails.orderCode}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+
+      const data = await response.json();
+
+      const userInfo = {
+        orderCode: data.orderCode,
+        name: userData.firstName + ' ' + userData.lastName,
+        email: userData.email,
+        amount: data.amount,
+        createdAt: data.createdAt
+      }
+
+      console.log(userInfo);
+
+    } catch (error) {
+      console.error("Có lỗi xảy ra:", error);
+    }
+  }
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
   return (
     <div className="container flex items-center justify-center p-4 animate-fade-in font-sans">
       <div className="w-full max-w-md bg-white/70 backdrop-blur-md rounded-2xl shadow-xl p-6 md:p-8 border border-white/20">
@@ -37,11 +72,11 @@ const OrderFailed = () => {
           <div className="w-20 h-20 md:w-24 md:h-24 bg-gradient-to-r from-red-400 to-rose-500 rounded-full flex items-center justify-center mb-6 shadow-lg animate-pulse">
             <XCircle className="w-12 h-12 md:w-14 md:h-14 text-white" />
           </div>
-          
+
           <h1 className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-rose-500 mb-2 text-center">
             Đặt hàng không thành công
           </h1>
-          
+
           <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-r mb-6 w-full">
             <div className="flex items-start">
               <AlertCircle className="w-5 h-5 text-red-400 mt-0.5" />
@@ -93,7 +128,7 @@ const OrderFailed = () => {
                       </label>
                     </div>
                   ))}
-                  
+
                   {selectedReason === 'Khác' && (
                     <textarea
                       value={otherReason}
@@ -104,7 +139,7 @@ const OrderFailed = () => {
                     />
                   )}
                 </div>
-                
+
                 <button
                   type="submit"
                   className="mt-4 w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 px-4 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 text-sm font-medium"
@@ -121,7 +156,7 @@ const OrderFailed = () => {
             </div>
           )}
 
-          <button 
+          <button
             onClick={() => window.location.href = '/'}
             className="w-full bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white py-3.5 px-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-sm md:text-base flex items-center justify-center gap-2 group"
           >

@@ -125,11 +125,13 @@ Route::group([
     Route::get('/order/{id}', [AdminController::class, 'getOrderInfo']);
     Route::get('/statics', [AdminController::class, 'statics']);
     Route::get('/report', [AdminController::class, 'report']);
+    Route::get('/topProducts', [AdminController::class, 'getTopProducts']);
     Route::get('show/{id}', [ProductController::class, 'show']);
     Route::post('store', [ProductController::class, 'store']);
     Route::post('create_invoice', [InvoiceController::class, 'create']);  
     Route::post('size/store', [ProductSizeController::class, 'store']); 
     Route::put('update/{id}', [ProductController::class, 'update']); 
+    Route::put('update/order/{id}', [AdminController::class, 'updateOrder']);
     Route::delete('delete/{id}', [ProductController::class, 'destroy']);
     Route::delete('image/delete/{id}', [ProductImageController::class, 'delete']);
 })->middleware('admin');

@@ -68,6 +68,8 @@ const CheckOutPage = () => {
                 };
             });
 
+            localStorage.setItem("products", JSON.stringify(convertCartData));
+
             const productData = {
                 description: "Thanh toán đơn hàng",
                 items: convertCartData,

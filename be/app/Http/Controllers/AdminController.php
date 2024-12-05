@@ -93,7 +93,7 @@ class AdminController extends Controller
                     'orders.order_id',
                     'orders.created_at',
                     'payments.payment_method',
-                    'users.user_id',
+                    DB::raw('CONCAT_WS(" ", `first_name`, `last_name`) AS `name`'),
                     'orders.order_status',
                     'orders.amount',
                     'orders.payment_status'
@@ -107,7 +107,7 @@ class AdminController extends Controller
                     'orders.order_id',
                     'orders.created_at',
                     'payments.payment_method',
-                    'users.user_id',
+                    DB::raw('CONCAT_WS(" ", `first_name`, `last_name`) AS `name`'),
                     'orders.order_status',
                     'orders.amount',
                     'orders.payment_status'
@@ -265,11 +265,121 @@ class AdminController extends Controller
         return response()->json($finalResult);
     }
 
+    public function updateOrder(Request $request, $id){
+        if ($request->has('order_status')){
+            $order = Order::find($id);
+            $order->update([
+                'order_status' => $request->order_status,
+            ]);
+
+            return response()->json($order);
+        }
+        else if ($request->has('payemnt_status')){
+            $order = Order::find($id);
+            $order->update([
+                'payment_status' => $request->payment_status
+            ]);
+        }
+        else {
+            return response()->json('Tham số không hợp lệ', 500);
+        }
+    }
     // statics graph
-    public function statics(Request $request){
-        $result = Order::select(DB::raw($request->metric.'(created_at) as ' . $request->metric), DB::raw('sum(amount) as revenue'))
-            ->groupBy(DB::raw($request->metric.'(created_at)'))
-            ->get();
+    public function statics(Request $request)
+    {
+        if($request->metric == 'year') {
+            
+            $currentYear = now()->year;
+
+            // Tạo danh sách 10 năm gần nhất
+            $years = collect(range($currentYear - 9, $currentYear))->map(function ($year) {
+                return [
+                    'year' => $year,
+                    'revenue' => 0,
+                ];
+            });
+
+            $data = Order::select(DB::raw($request->metric.'(created_at) as ' . $request->metric), DB::raw('sum(amount) as revenue'))
+                ->groupBy(DB::raw($request->metric.'(created_at)'))
+                ->get()
+                ->keyBy($request->metric); // Chuyển kết quả thành dạng key-value theo năm
+
+            // Kết hợp dữ liệu thực tế vào danh sách các năm
+            $result = $years->map(function ($item) use ($data) {
+                if ($data->has($item['year'])) {
+                    $item['revenue'] = $data[$item['year']]['revenue'];
+                }
+                return $item;
+            });
+        }
+        
+        if($request->metric == 'month'){
+            
+            $currentYear = now()->year;
+
+            // Tạo danh sách 12 tháng với doanh thu mặc định là 0
+            $months = collect(range(1, 12))->map(function ($month) {
+                return [
+                    'month' => $month,
+                    'revenue' => 0,
+                ];
+            });
+
+            // Lấy dữ liệu doanh thu theo tháng từ cơ sở dữ liệu
+            $data = Order::select(
+                    DB::raw('MONTH(created_at) as month'),
+                    DB::raw('sum(amount) as revenue')
+                )
+                ->whereYear('created_at', $currentYear) // Chỉ lấy dữ liệu trong năm hiện tại
+                ->groupBy(DB::raw('MONTH(created_at)'))
+                ->get()
+                ->keyBy('month'); // Chuyển kết quả thành key-value theo tháng
+
+            // Kết hợp dữ liệu thực tế vào danh sách các tháng
+            $result = $months->map(function ($item) use ($data) {
+                if ($data->has($item['month'])) {
+                    $item['revenue'] = $data[$item['month']]['revenue'];
+                }
+                return $item;
+            });
+        }
+
+        if($request->metric == 'day'){
+            
+            // Lấy tháng và năm từ request, mặc định là tháng và năm hiện tại
+            $month = $request->input('month', now()->month);
+            $year = $request->input('year', now()->year);
+
+            // Lấy số ngày trong tháng
+            $daysInMonth = now()->setYear($year)->setMonth($month)->daysInMonth;
+
+            // Tạo danh sách các ngày trong tháng với doanh thu mặc định là 0
+            $days = collect(range(1, $daysInMonth))->map(function ($day) {
+                return [
+                    'day' => $day,
+                    'revenue' => 0,
+                ];
+            });
+
+            // Lấy dữ liệu doanh thu theo ngày từ cơ sở dữ liệu
+            $data = Order::select(
+                    DB::raw('DAY(created_at) as day'),
+                    DB::raw('sum(amount) as revenue')
+                )
+                ->whereYear('created_at', $year) // Chỉ lấy dữ liệu trong năm
+                ->whereMonth('created_at', $month) // Chỉ lấy dữ liệu trong tháng
+                ->groupBy(DB::raw('DAY(created_at)'))
+                ->get()
+                ->keyBy('day'); // Chuyển kết quả thành key-value theo ngày
+
+            // Kết hợp dữ liệu thực tế vào danh sách các ngày
+            $result = $days->map(function ($item) use ($data) {
+                if ($data->has($item['day'])) {
+                    $item['revenue'] = $data[$item['day']]['revenue'];
+                }
+                return $item;
+            });
+        }
 
         return response()->json($result);
     }
@@ -321,4 +431,21 @@ class AdminController extends Controller
         ]);
     }
 
+    public function getTopProducts(){
+        $result = Product::select(
+                'products.name', 
+                'products.price', 
+                DB::raw('SUM(order_items.price * order_items.quantity) as revenue'), 
+                DB::raw('SUM(order_items.quantity) as total_quantity')
+            )
+        ->join('product_size', 'product_size.product_id', '=', 'products.product_id')
+        ->join('order_items', 'order_items.product_size_id', '=', 'product_size.product_size_id')
+        ->join('orders', 'orders.order_id', '=', 'order_items.order_id')
+        ->where('orders.payment_status', '=', 'paid')
+        ->groupBy('products.name', 'products.price')
+        ->limit(5)
+        ->get();
+        
+        return response()->json($result);
+    }
 }
