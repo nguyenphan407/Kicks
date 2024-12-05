@@ -52,9 +52,10 @@ const OrdersList = ({ orders }) => {
                         onChange={handleSelectAll} // Khi checkbox chính được click
                      />
                   </th>
-                  <th className="px-2 py-4 font-rubik text-[16px] font-semibold text-[#6F6F6E] text-center">
-                     Product
+                  <th className="px-2 py-4 font-rubik text-[16px] font-semibold text-[#6F6F6E] text-start">
+                     Customer Name
                   </th>
+
                   <th className="px-2 py-4 font-rubik text-[16px] font-semibold text-[#6F6F6E] text-center">
                      Order ID
                   </th>
@@ -65,7 +66,7 @@ const OrdersList = ({ orders }) => {
                      Payment Method
                   </th>
                   <th className="px-2 py-4 font-rubik text-[16px] font-semibold text-[#6F6F6E] text-center">
-                     Customer Name
+                     Payment status
                   </th>
                   <th className="px-2 py-4 font-rubik text-[16px] font-semibold text-[#6F6F6E] text-center">
                      Status
@@ -78,12 +79,12 @@ const OrdersList = ({ orders }) => {
             <tbody>
                {orders.map((order, index) => (
                   <tr
-                     key={order.id}
+                     key={order.order_id}
                      className="border-b hover:bg-gray-200 cursor-pointer"
                      onClick={(e) => {
                         // Kiểm tra xem có phải click vào checkbox không, nếu có thì không gọi navigate
                         if (e.target.type !== "checkbox") {
-                           navigate(`/orderDetail/${order.id}`);
+                           navigate(`/orderDetail/${order.order_id}`);
                         }
                      }}
                   >
@@ -96,25 +97,44 @@ const OrdersList = ({ orders }) => {
                            onChange={() => handleSelectOrder(index)} // Khi checkbox của hàng hiện tại được click
                         />
                      </td>
+                     <td className="px-2 py-4 text-[14px] font-semibold text-black flex items-center text-start  gap-2">
+                        <div className="w-8 h-8 rounded-full bg-[#4A69E2] flex justify-center items-center">
+                           <img
+                              src={icons.CustomerIcon}
+                              alt={order.customer}
+                              className="w-4 h-4 "
+                           />
+                        </div>
+
+                        <span>{order.customer_name}</span>
+                     </td>
+
                      <td className="px-2 py-4 text-[14px] font-semibold text-black text-center">
-                        {order.product}
+                        {order.order_id}
                      </td>
                      <td className="px-2 py-4 text-[14px] font-semibold text-black text-center">
-                        {order.orderId}
+                        {order.created_at}
                      </td>
                      <td className="px-2 py-4 text-[14px] font-semibold text-black text-center">
-                        {order.date}
+                        {order.payment_method}
                      </td>
                      <td className="px-2 py-4 text-[14px] font-semibold text-black text-center">
-                        {order.paymentMethod}
-                     </td>
-                     <td className="px-2 py-4 text-[14px] font-semibold text-black flex items-center justify-center gap-2 text-center">
-                        <img
-                           src={order.customerAvatar}
-                           alt={order.customer}
-                           className="w-6 h-6 rounded-full"
-                        />
-                        <span>{order.customer}</span>
+                        <div className="flex items-center justify-center gap-2">
+                           <span
+                              className={`w-2 h-2 rounded-full ${
+                                 order.payment_status === "pending"
+                                    ? "bg-[#FFA52F]" // Màu cho Pending
+                                    : order.payment_status === "paid"
+                                    ? "bg-[#4A69E2]" // Màu cho Paid
+                                    : order.payment_status === "failed"
+                                    ? "bg-[#FF4F4F]" // Màu cho Failed
+                                    : "bg-[#d1d1d1]" // Màu mặc định nếu không có trạng thái hợp lệ
+                              }`}
+                           ></span>
+                           <p className="text-[14px] font-semibold text-black">
+                              {order.payment_status}
+                           </p>
+                        </div>
                      </td>
                      <td className="px-2 py-4 text-center">
                         <div className="flex items-center justify-center gap-2">
@@ -126,12 +146,12 @@ const OrdersList = ({ orders }) => {
                               }`}
                            ></span>
                            <p className="text-[14px] font-semibold text-black">
-                              {order.status}
+                              {order.order_status}
                            </p>
                         </div>
                      </td>
                      <td className="px-2 py-4 text-[14px] font-semibold text-black text-center">
-                        ${order.amount.toFixed(2)}
+                        ${order.amount}
                      </td>
                   </tr>
                ))}

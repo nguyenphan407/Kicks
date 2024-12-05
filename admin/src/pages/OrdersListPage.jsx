@@ -3,6 +3,8 @@ import Breadcrumbs from "../components/Features/Breadcrumbs";
 import DateRangePicker from "../components/Features/DateRangePicker";
 import { icons, images } from "../assets/assets";
 import OrdersList from "@/components/Cart/OrdersList";
+import orderApi from "@/apis/orderApi";
+import { format, parseISO } from "date-fns";
 
 const OrdersListPage = () => {
    const breadcrumbs = [{ label: "Home", link: "/" }, { label: "Order List" }];
@@ -20,58 +22,45 @@ const OrdersListPage = () => {
    const [selected, setSelected] = useState("pending");
    const [isOpen, setIsOpen] = useState(false);
    const options = ["Pending", "Shipped", "Delivered", "Canceled"];
+   const [ordersData, setOrdersData] = useState([]);
+   const [loading, setLoading] = useState(true);
 
-   const ordersData = [
-      {
-         id: 21000,
-         product: "Adidas Ultra boost",
-         orderId: "#25426",
-         date: "Jan 8th, 2022",
-         paymentMethod: "Cash",
-         customer: "Leo Gouse",
-         customerAvatar: images.Thumbnails[0],
-         status: "Delivered",
-         amount: 200.0,
-      },
-      {
-         id: 67910,
-         product: "Adidas Ultra boost",
-         orderId: "#25425",
-         date: "Jan 7th, 2022",
-         paymentMethod: "Cash",
-         customer: "Jaxson Korsgaard",
-         customerAvatar: images.Thumbnails[0],
-         status: "Canceled",
-         amount: 200.0,
-      },
-      {
-         id: 581639,
-         product: "Adidas Ultra boost",
-         orderId: "#25424",
-         date: "Jan 6th, 2022",
-         paymentMethod: "Cash",
-         customer: "Talan Botosh",
-         customerAvatar: images.Thumbnails[0],
-         status: "Delivered",
-         amount: 200.0,
-      },
-      {
-         id: 909167,
-         product: "Adidas Ultra boost",
-         orderId: "#25423",
-         date: "Jan 5th, 2022",
-         paymentMethod: "Cash",
-         customer: "Ryan Philips",
-         customerAvatar: images.Thumbnails[0],
-         status: "Canceled",
-         amount: 200.0,
-      },
-   ];
+   useEffect(() => {
+      const fetchOrderData = async () => {
+         try {
+            const response = await orderApi.getAll();
+            console.log("Fetched Order Data:", response.data);
+            if (Array.isArray(response.data) && response.data.length > 0) {
+               const formattedOrders = response.data.map((order) => {
+                  return {
+                    ...order,
+                    created_at: format(parseISO(order.created_at), "MMM dd'th', yyyy"),
+                  };
+                });
+                setOrdersData(formattedOrders);
+            } else {
+               console.error("No order data found for the given orderId.");
+            }
+            setLoading(false);
+         } catch (error) {
+            console.error("Error fetching order data:", error);
+            setLoading(false);
+         }
+      };
+      fetchOrderData();
+   }, []);
 
    // Cuộn lên đầu trang khi trang thay đổi
    useEffect(() => {
       window.scrollTo(0, 0);
    });
+   if (loading) {
+      return (
+         <div className="font-rubik text-4xl flex items-center justify-center">
+            Loading...
+         </div>
+      );
+   }
 
    return (
       <div>

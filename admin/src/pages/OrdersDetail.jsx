@@ -281,6 +281,7 @@ const OrdersDetail = () => {
                      order_id: `#${orderData.order_id}`,
                      quantity: item.quantity,
                      total: parseFloat(item.price) * item.quantity,
+                     image: item.product_image,
                   })) || []
                }
                taxRate={0.1} // 10%

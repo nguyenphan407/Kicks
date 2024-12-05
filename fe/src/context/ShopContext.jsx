@@ -58,16 +58,16 @@ const ShopContextProvider = ({ children }) => {
         }
     };
 
-    useEffect(() => {
-        console.log("cartData:", cartData);
-    }, [cartData]);
+    // useEffect(() => {
+    //     console.log("cartData:", cartData);
+    // }, [cartData]);
 
-    let convertCartData = cartData.map((item) => {
-        return {
-            ...item,
-            price: parseFloat(item.price),
-        };
-    });
+    // let convertCartData = cartData.map((item) => {
+    //     return {
+    //         ...item,
+    //         price: parseFloat(item.price),
+    //     };
+    // });
 
     // lấy số lượng hiển thị vào cart
     const getCartCount = () => {
