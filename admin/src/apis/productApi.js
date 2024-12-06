@@ -31,7 +31,16 @@ const productApi = {
         const url = `admin/image/delete/${publicId}`; // Thay đổi URL theo endpoint backend của bạn
         return axiosClient.delete(url);
     },
-    
+
+    /**
+     * Tìm kiếm sản phẩm dựa trên từ khóa.
+     * @param {string} query - Từ khóa tìm kiếm.
+     * @returns {Promise} - Trả về promise chứa dữ liệu từ API.
+     */
+    search(query) {
+        const url = 'admin/search';
+        return axiosClient.get(url, { params: { query } });
+    },
 };
 
 export default productApi;
