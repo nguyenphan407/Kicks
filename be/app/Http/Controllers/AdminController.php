@@ -291,7 +291,7 @@ class AdminController extends Controller
 
             return response()->json($order);
         }
-        else if ($request->has('payemnt_status')){
+        else if ($request->has('payment_status')){
             $order = Order::find($id);
             $order->update([
                 'payment_status' => $request->payment_status

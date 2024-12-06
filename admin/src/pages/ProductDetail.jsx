@@ -164,11 +164,12 @@ const ProductDetail = () => {
             formData.append("gender", data.gender || ""); // Có thể null
 
             // Xử lý danh sách kích cỡ và tồn kho
-            console.log("data size:", data.sizes);
-            data.sizes.forEach((sizeObj) => {
+            // console.log("data size:", data.sizes);
+            data.sizes.forEach((sizeObj, index) => {
                 if (sizeObj.size && sizeObj.stock !== undefined) {
-                    formData.append("size", sizeObj.size); // Truyền size
-                    formData.append("quantity", sizeObj.stock); // Truyền quantity
+                    // Dùng index để tạo tên duy nhất cho từng phần tử kích cỡ và tồn kho
+                    formData.append(`sizes[${index}][size]`, sizeObj.size); // Truyền size
+                    formData.append(`sizes[${index}][quantity]`, sizeObj.stock); // Truyền quantity
                 }
             });
 
@@ -180,12 +181,12 @@ const ProductDetail = () => {
                     formData.append(`images[${index}]`, image.url); // Truyền ảnh cũ
                 }
             });
-            for (let pair of formData.entries()) {
-                console.log(`${pair[0]}: ${pair[1]}`);
-            }
+            // for (let pair of formData.entries()) {
+            //     console.log(`${pair[0]}: ${pair[1]}`);
+            // }
 
             // Call API cập nhật sản phẩm
-            console.log("FormData:", formData);
+            // console.log("FormData:", formData);
             const response = await productApi.update(productId, formData);
             console.log("Product updated successfully:", response);
             toast.success("Product updated successfully!");
@@ -314,7 +315,7 @@ const ProductDetail = () => {
                                     {...register("name")}
                                     placeholder="Product Name"
                                     type="text"
-                                    className="w-full px-[16px] py-[10px] border border-gray-800 rounded-lg font-inter text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                                    className="w-full px-[16px] font-semibold py-[10px] border border-gray-800 rounded-lg font-inter text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                 />
                                 {errors.name && (
                                     <p className="absolute top-[100px] text-red-500 text-sm">
@@ -329,7 +330,7 @@ const ProductDetail = () => {
                                 <textarea
                                     {...register("description")}
                                     placeholder="Description"
-                                    className="w-full px-[16px] py-[10px] h-[180px] flex justify-start items-start font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none resize-none"
+                                    className="w-full px-[16px] font-medium py-[10px] h-[180px] flex justify-start items-start font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none resize-none"
                                 ></textarea>
                                 {errors.description && (
                                     <p className="absolute top-[230px] text-red-500 text-sm">
@@ -346,7 +347,7 @@ const ProductDetail = () => {
                                     {...register("category")}
                                     placeholder="Category Name"
                                     type="text"
-                                    className="w-full px-[16px] py-[10px] border border-gray-800 rounded-lg font-inter text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                                    className="w-full px-[16px] font-semibold py-[10px] border border-gray-800 rounded-lg font-inter text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                 />
                                 {errors.category && (
                                     <p className="absolute top-[100px] text-red-500 text-sm">
@@ -363,7 +364,7 @@ const ProductDetail = () => {
                                     {...register("brand")}
                                     type="text"
                                     placeholder="Brand Name"
-                                    className="w-full p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                                    className="w-full p-[10px] font-semibold px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                 />
                                 {errors.brand && (
                                     <p className="absolute top-[100px] text-red-500 text-sm">
@@ -392,7 +393,7 @@ const ProductDetail = () => {
                                                     `sizes.${index}.stock`
                                                 )}
                                                 defaultValue={sizeObj.stock}
-                                                className="w-full p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                                                className="w-full font-semibold p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                             />
                                         </div>
                                     ))}
@@ -416,7 +417,7 @@ const ProductDetail = () => {
                                             {...register("regularPrice")}
                                             type="number"
                                             placeholder="Regular Price"
-                                            className="w-full p-[10px] px-[16px] pl-[24px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                                            className="w-full font-semibold p-[10px] px-[16px] pl-[24px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                         />
                                     </div>
                                     {errors.regularPrice && (
@@ -437,7 +438,7 @@ const ProductDetail = () => {
                                             {...register("salePrice")}
                                             type="number"
                                             placeholder="Sale Price"
-                                            className="w-full p-[10px] px-[16px] pl-[24px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                                            className="w-full font-semibold p-[10px] px-[16px] pl-[24px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                         />
                                     </div>
                                     {errors.salePrice && (
@@ -456,7 +457,7 @@ const ProductDetail = () => {
                                         {...register("color")}
                                         type="text"
                                         placeholder="Color (e.g., #FFFFFF)"
-                                        className="w-full p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                                        className="w-full font-semibold p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                     />
                                     {errors.color && (
                                         <p className="absolute top-[100px] text-red-500 text-sm">
@@ -472,7 +473,7 @@ const ProductDetail = () => {
                                         {...register("gender")}
                                         type="text"
                                         placeholder="Gender"
-                                        className="w-full p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                                        className="w-full font-semibold p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                     />
                                     {errors.gender && (
                                         <p className="absolute top-[100px] text-red-500 text-sm">

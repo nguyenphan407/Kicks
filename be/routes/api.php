@@ -133,7 +133,7 @@ Route::group([
     Route::post('create_invoice', [InvoiceController::class, 'create']);  
     Route::post('size/store', [ProductSizeController::class, 'store']); 
     Route::put('update/{id}', [ProductController::class, 'update']); 
-    Route::put('update/order/{id}', [AdminController::class, 'updateOrder']);
+    Route::put('order/update/{id}', [AdminController::class, 'updateOrder']);
     Route::delete('delete/{id}', [ProductController::class, 'destroy']);
     Route::delete('image/delete/{id}', [ProductImageController::class, 'delete']);
 })->middleware('admin');

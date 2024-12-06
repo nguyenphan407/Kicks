@@ -196,7 +196,7 @@ const AddNewProduct = () => {
                                     {...register("name")}
                                     placeholder="Product Name"
                                     type="text"
-                                    className="w-full px-[16px] py-[10px] border border-gray-800 rounded-lg font-inter text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                                    className="w-full font-semibold px-[16px] py-[10px] border border-gray-800 rounded-lg font-inter text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                 />
                                 {errors.name && (
                                     <p className="absolute top-[100px] text-red-500 text-sm">
@@ -217,7 +217,7 @@ const AddNewProduct = () => {
                                 <textarea
                                     {...register("description")}
                                     placeholder="Description"
-                                    className="w-full px-[16px] py-[10px] h-[180px] flex justify-start items-start font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none resize-none"
+                                    className="w-full font-medium px-[16px] py-[10px] h-[180px] flex justify-start items-start font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none resize-none"
                                 ></textarea>
                                 {errors.description && (
                                     <p className="absolute top-[230px] text-red-500 text-sm">
@@ -239,7 +239,7 @@ const AddNewProduct = () => {
                                     {...register("brand")}
                                     type="text"
                                     placeholder="Brand Name"
-                                    className="w-full p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                                    className="w-full p-[10px] font-semibold px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                 />
                                 {errors.brand && (
                                     <p className="absolute top-[100px] text-red-500 text-sm">
@@ -294,7 +294,7 @@ const AddNewProduct = () => {
                                                                     option
                                                                 )
                                                             }
-                                                            className="px-4 py-2  hover:bg-[#d0d0d0] cursor-pointer text-[14px] font-semibold flex items-center justify-between"
+                                                            className="px-4 py-2 hover:bg-[#d0d0d0] cursor-pointer text-[14px] font-semibold flex items-center justify-between"
                                                         >
                                                             {option}
                                                             {selected ===
@@ -333,7 +333,7 @@ const AddNewProduct = () => {
                                         {...register("quantity")}
                                         type="number"
                                         placeholder="Quantity"
-                                        className="w-full p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                                        className="w-full font-semibold p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                     />
                                     {errors.quantity && (
                                         <p className="absolute top-[100px] text-red-500 text-sm">
@@ -358,7 +358,7 @@ const AddNewProduct = () => {
                                         {...register("regular_price")}
                                         type="number"
                                         placeholder="Regular Price"
-                                        className="w-full p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                                        className="w-full font-semibold p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                     />
                                     {errors.regular_price && (
                                         <p className="absolute top-[100px] text-red-500 text-sm">
@@ -380,7 +380,7 @@ const AddNewProduct = () => {
                                         {...register("price")}
                                         type="number"
                                         placeholder="Sale Price"
-                                        className="w-full p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                                        className="w-full font-semibold p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                     />
                                     {errors.price && (
                                         <p className="absolute top-[100px] text-red-500 text-sm">
@@ -404,7 +404,7 @@ const AddNewProduct = () => {
                                         {...register("color")}
                                         type="text"
                                         placeholder="Color (e.g., #FFFFFF)"
-                                        className="w-full p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                                        className="w-full font-semibold p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                     />
                                     {errors.color && (
                                         <p className="absolute top-[100px] text-red-500 text-sm">
@@ -425,7 +425,7 @@ const AddNewProduct = () => {
                                         {...register("gender")}
                                         type="text"
                                         placeholder="Gender"
-                                        className="w-full p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                                        className="w-full p-[10px] font-semibold px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                                     />
                                     {errors.gender && (
                                         <p className="absolute top-[100px] text-red-500 text-sm">
