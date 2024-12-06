@@ -104,7 +104,7 @@ export function MyLineChart() {
                     <CardTitle>Sale Graph</CardTitle>
                     <div className="flex gap-[15px]">
                         <button
-                            className={`font-inter text-[14px] font-medium px-4 py-[5px] rounded-[8px] border uppercase ${
+                            className={`font-inter text-[14px] font-medium px-4 py-[5px] rounded-[8px] border uppercase active:opacity-90  active:scale-[97%] ${
                                 metric === "day"
                                     ? "bg-black text-white"
                                     : "border-black text-black"
@@ -114,7 +114,7 @@ export function MyLineChart() {
                             Weekly
                         </button>
                         <button
-                            className={`font-inter text-[14px] font-medium px-4 py-[5px] rounded-[8px] border uppercase ${
+                            className={`font-inter text-[14px] font-medium px-4 py-[5px] rounded-[8px] border uppercase active:opacity-90  active:scale-[97%] ${
                                 metric === "month"
                                     ? "bg-black text-white"
                                     : "border-black text-black"
@@ -124,7 +124,7 @@ export function MyLineChart() {
                             Monthly
                         </button>
                         <button
-                            className={`font-inter text-[14px] font-medium px-4 py-[5px] rounded-[8px] border uppercase ${
+                            className={`font-inter text-[14px] font-medium px-4 py-[5px] rounded-[8px] border uppercase active:opacity-90  active:scale-[97%] ${
                                 metric === "year"
                                     ? "bg-black text-white"
                                     : "border-black text-black"

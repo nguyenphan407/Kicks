@@ -1,0 +1,54 @@
+/* OrdersList.css */
+
+/* Container cho bảng để quản lý cuộn dọc */
+.table-container {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: hidden; /* Ẩn thanh cuộn ngang nếu không cần */
+}
+
+/* Custom scrollbar styles for Webkit browsers (Chrome, Safari) */
+.table-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background-color: #4A69E2; /* Màu thanh cuộn */
+  border-radius: 4px;
+  border: 2px solid #f1f1f1; /* Tạo khoảng cách giữa thanh và track */
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background-color: #2d57a1; /* Màu khi hover */
+}
+
+/* Custom scrollbar styles for Firefox */
+.table-container {
+  scrollbar-width: thin;
+  scrollbar-color: #4A69E2 #f1f1f1;
+}
+
+/* Custom scrollbar styles for IE and Edge */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  .table-container {
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+  }
+}
+
+/* Thêm các lớp Tailwind vào custom-select nếu cần */
+.custom-select {
+  /* Thêm bất kỳ tùy chỉnh nào bạn muốn cho <select> ở đây */
+}
+
+/* Điều kiện áp dụng scrollbar khi chiều cao vượt quá 500px */
+@media (min-height: 500px) {
+  .table-container {
+    max-height: 550px;
+    overflow-y: auto;
+  }
+}

@@ -5,6 +5,8 @@ import { icons } from "../assets/assets";
 import ProductList from "@/components/Cart/ProductsList";
 import { useParams, useNavigate } from "react-router-dom";
 import orderApi from "../apis/orderApi";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const OrdersDetail = () => {
    const breadcrumbs = [
@@ -29,6 +31,8 @@ const OrdersDetail = () => {
    const options = ["Pending", "Shipped", "Delivered", "Canceled"];
    const [orderData, setOrderData] = useState(null); // Khởi tạo với null để dễ kiểm tra
 
+   const navigate = useNavigate();
+
    useEffect(() => {
       if (orderId) {
          const fetchOrderData = async () => {
@@ -38,6 +42,7 @@ const OrdersDetail = () => {
                console.log("Fetched Order Data:", response.data);
                if (Array.isArray(response.data) && response.data.length > 0) {
                   setOrderData(response.data[0]); // Thiết lập đối tượng đơn từ mảng
+                  setSelected(response.data[0].order_status); // Đặt trạng thái đã chọn dựa trên dữ liệu
                } else {
                   console.error("No order data found for the given orderId.");
                }
@@ -50,6 +55,23 @@ const OrdersDetail = () => {
          fetchOrderData();
       }
    }, [orderId]); // useEffect sẽ chạy lại mỗi khi orderId thay đổi
+
+   // Hàm xử lý thay đổi trạng thái đơn hàng
+   const handleChangeStatus = async (newStatus) => {
+      try {
+         const data = { order_status: newStatus.toLowerCase() };
+         await orderApi.update(orderId, data);
+         // Cập nhật trạng thái trong orderData
+         setOrderData((prevData) => ({
+            ...prevData,
+            order_status: newStatus.toLowerCase(),
+         }));
+         toast.success("Order status updated successfully!");
+      } catch (error) {
+         console.error("Failed to update order status:", error);
+         toast.error("Failed to update order status!");
+      }
+   };
 
    if (loading) {
       return (
@@ -73,7 +95,7 @@ const OrdersDetail = () => {
          <div className="flex justify-between relative items-end">
             <div>
                <h1 className="font-rubik text-[24px] font-semibold text-black mb-1">
-                  Order List
+                  Order Detail
                </h1>
                <Breadcrumbs items={breadcrumbs} />
             </div>
@@ -92,7 +114,7 @@ const OrdersDetail = () => {
                            <button
                               onClick={() => setIsOpen(!isOpen)}
                               className="flex items-center justify-between bg-[#F4F2F2] p-4 font-semibold rounded-[8px] w-[220px] text-[#232321] text-[14px] 
-                        hover:bg-[#cccccc] transition-all duration-150 ease-in-out active:scale-[97%]"
+                                    hover:bg-[#cccccc] transition-all duration-150 ease-in-out active:scale-[97%]"
                            >
                               <span>Change Status</span>
                               <svg
@@ -118,13 +140,15 @@ const OrdersDetail = () => {
                                     <li
                                        key={index}
                                        onClick={() => {
+                                          handleChangeStatus(option);
                                           setSelected(option);
                                           setIsOpen(false);
                                        }}
-                                       className="px-4 py-2  hover:bg-[#d0d0d0] cursor-pointer text-[14px] font-semibold flex items-center justify-between"
+                                       className="px-4 py-2 hover:bg-[#d0d0d0] cursor-pointer text-[14px] font-semibold flex items-center justify-between"
                                     >
                                        {option}
-                                       {selected === option && (
+                                       {orderData.order_status ===
+                                          option.toLowerCase() && (
                                           <img
                                              src={icons.RoundCheckIcon}
                                              alt="Selected"
@@ -137,11 +161,21 @@ const OrdersDetail = () => {
                            )}
                         </div>
                      </section>
-                     <button className="bg-[#F4F2F2] p-4 rounded-[8px] hover:bg-[#cccccc] transition-all duration-150 ease-in-out active:scale-[95%]">
-                        <img src={icons.PrintIcon} alt="" />
+                     <button
+                        className="bg-[#F4F2F2] p-4 rounded-[8px] hover:bg-[#cccccc] transition-all duration-150 ease-in-out active:scale-[95%]"
+                        onClick={() => {
+                           toast.error("Tao chưa làm chức năng này.");
+                        }}
+                     >
+                        <img src={icons.PrintIcon} alt="Print" />
                      </button>
-                     <button className="bg-[#F4F2F2] p-4 rounded-[8px] hover:bg-[#cccccc] transition-all duration-150 ease-in-out active:scale-[95%]">
-                        <p className="font-semibold text-[14px] ">Save</p>
+                     <button
+                        className="bg-[#F4F2F2] p-4 rounded-[8px] hover:bg-[#cccccc] transition-all duration-150 ease-in-out active:scale-[95%]"
+                        onClick={() => {
+                           toast.error("Tao chưa làm chức năng này.");
+                        }}
+                     >
+                        <p className="font-semibold text-[14px]">Save</p>
                      </button>
                   </div>
                </div>
@@ -150,8 +184,13 @@ const OrdersDetail = () => {
                <section className="flex-1 rounded-2xl bg-white p-4 border border-[#E7E7E3] flex flex-col justify-between gap-4">
                   <div className="flex gap-4">
                      <div className="p-4 rounded-[8px] bg-[#4A69E2] w-[56px] h-[56px]">
-                        <img src={icons.CustomerIcon} alt="Customer Icon" />
+                        <img
+                           src={icons.CustomerIcon}
+                           alt="Customer Icon"
+                           className="w-4 h-4"
+                        />
                      </div>
+
                      <div className="flex flex-col gap-2">
                         <p className="font-rubik text-[20px] font-semibold">
                            Customer
@@ -189,7 +228,7 @@ const OrdersDetail = () => {
                            Order Info
                         </p>
                         <p className="text-[16px] font-semibold text-[#70706E]">
-                           Shipping: {orderData["orders.shipping"] || "N/A"}
+                           Shipping: {orderData.shipping_address || "N/A"}
                         </p>
                         <p className="text-[16px] font-semibold text-[#70706E]">
                            Payment Method:{" "}
@@ -293,3 +332,4 @@ const OrdersDetail = () => {
 };
 
 export default OrdersDetail;
+("");
