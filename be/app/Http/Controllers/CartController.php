@@ -67,8 +67,16 @@ class CartController extends Controller
     public function update(Request $request, $id)
     {
         $cartItem = Cart::findOrFail($id);
-        $cartItem->update(['quantity' => $request->quantity]);
-        return response()->json(['message' => 'Cart updated', 'cartItem' => $cartItem]);
+
+        $product_size = ProductSize::find($cartItem->product_size_id);
+
+        if ($request->quantity > $product_size->quantity){
+            return response()->json(['message' => 'Số lượng vượt quá tồn kho', 'remaining' => $product_size->quantity], 500);
+        }
+        else {
+            $cartItem->update(['quantity' => $request->quantity]);
+            return response()->json(['message' => 'Cart updated', 'cartItem' => $cartItem]);
+        }
     }
 
     public function remove($id)

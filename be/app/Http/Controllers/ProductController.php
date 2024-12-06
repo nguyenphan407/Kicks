@@ -233,6 +233,13 @@ class ProductController extends Controller
         return response()->json($searchResults);
     }
 
+    public function recentViewed(){
+        $userId = Auth::user()->user_id;
+        // Lấy danh sách ID sản phẩm đã xem nhiều nhất của người dùng
+        $viewedProducts = Redis::zrevrange("user:{$userId}:viewed_products", 0, -1);
+
+        return response()->json($viewedProducts);
+    }
     // Recommendation
     public function recommendedProducts()
     {

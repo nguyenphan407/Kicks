@@ -8,6 +8,8 @@ use App\Models\Product;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Spatie\Searchable\Search;
+
 use function Laravel\Prompts\select;
 
 class AdminController extends Controller
@@ -72,6 +74,21 @@ class AdminController extends Controller
             return response()->json($product);
             // return response()->json($this->formatProduct($product->toArray()));
         }
+    }
+
+    public function search(Request $request) {
+        $searchterm = $request->input('query');
+
+        $searchResults = (new Search())
+            ->registerModel(Product::class, ['name', 'description']) //apply search on field name and description
+            //Config partial match or exactly match
+            // ->registerModel(Category::class, function (ModelSearchAspect $modelSearchAspect) {
+            //     $modelSearchAspect
+            //         ->addExactSearchableAttribute('name'); // only return results that exactly match
+            // })
+            ->perform($searchterm);
+
+        return response()->json($searchResults);
     }
 
     // Get quantity for each category

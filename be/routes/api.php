@@ -56,6 +56,7 @@ Route::group([
     Route::get('show/{id}', [ProductController::class, 'show'])->name('product.show'); // URL: /product/show/{id}
     Route::get('filter', [ProductController::class, 'filter']); // URL: /product/filter
     Route::get('recommend', [ProductController::class, 'recommendedProducts']); // URL: /product/recommend
+    Route::get('recent', [ProductController::class, 'recentViewed']);
     Route::get('search', [ProductController::class, 'search']); // URL: /product/search
 })->middleware('jwt');
 
@@ -127,6 +128,7 @@ Route::group([
     Route::get('/report', [AdminController::class, 'report']);
     Route::get('/topProducts', [AdminController::class, 'getTopProducts']);
     Route::get('show/{id}', [ProductController::class, 'show']);
+    Route::get('search', [AdminController::class, 'search']);
     Route::post('store', [ProductController::class, 'store']);
     Route::post('create_invoice', [InvoiceController::class, 'create']);  
     Route::post('size/store', [ProductSizeController::class, 'store']); 
