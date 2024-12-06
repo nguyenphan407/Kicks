@@ -14,7 +14,7 @@ const orderApi = {
 
     update(id, data) {
         const url = `admin/order/update/${id}`;
-        return axiosClient.post(url, data);
+        return axiosClient.put(url, data);
     },
 
     delete(id) {

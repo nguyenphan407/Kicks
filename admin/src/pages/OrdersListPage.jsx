@@ -18,10 +18,6 @@ const OrdersListPage = () => {
       console.log("Selected Date Range:", range);
    };
 
-   // State cho Status
-   const [selected, setSelected] = useState("pending");
-   const [isOpen, setIsOpen] = useState(false);
-   const options = ["Pending", "Shipped", "Delivered", "Canceled"];
    const [ordersData, setOrdersData] = useState([]);
    const [loading, setLoading] = useState(true);
 
@@ -78,54 +74,6 @@ const OrdersListPage = () => {
          </div>
          {/* Sidebar Sort */}
          <section className="flex ml-auto justify-end my-6">
-            <div className="relative items-center z-0">
-               <button
-                  onClick={() => setIsOpen(!isOpen)}
-                  className="flex items-center justify-between bg-[#F4F2F2] p-4 font-semibold rounded-[8px] w-[220px] text-[#232321] text-[14px] 
-                        hover:bg-[#cccccc] transition-all duration-150 ease-in-out active:scale-[97%]"
-               >
-                  <span>Change Status</span>
-                  <svg
-                     xmlns="http://www.w3.org/2000/svg"
-                     width="20"
-                     height="20"
-                     viewBox="0 0 24 25"
-                     fill="none"
-                     className="w-5 h-5 ml-2"
-                  >
-                     <path
-                        d="M5.25 9.5L12 16.25L18.75 9.5"
-                        stroke="#232321"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                     />
-                  </svg>
-               </button>
-               {isOpen && (
-                  <ul className="absolute bg-[#F4F2F2] text-secondary_black w-[220px] mt-[10px] rounded-[8px] flex flex-col shadow-2xl">
-                     {options.map((option, index) => (
-                        <li
-                           key={index}
-                           onClick={() => {
-                              setSelected(option);
-                              setIsOpen(false);
-                           }}
-                           className="px-4 py-2  hover:bg-[#d0d0d0] cursor-pointer text-[14px] font-semibold flex items-center justify-between"
-                        >
-                           {option}
-                           {selected === option && (
-                              <img
-                                 src={icons.RoundCheckIcon}
-                                 alt="Selected"
-                                 className="w-4 h-4 ml-2"
-                              />
-                           )}
-                        </li>
-                     ))}
-                  </ul>
-               )}
-            </div>
          </section>
          <section>
             <OrdersList orders={ordersData} />
