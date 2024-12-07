@@ -8,6 +8,7 @@ use App\Models\Product;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Spatie\Searchable\ModelSearchAspect;
 use Spatie\Searchable\Search;
 
 use function Laravel\Prompts\select;
@@ -79,16 +80,36 @@ class AdminController extends Controller
     public function search(Request $request) {
         $searchterm = $request->input('query');
 
-        $searchResults = (new Search())
-            ->registerModel(Product::class, ['name', 'description']) //apply search on field name and description
-            //Config partial match or exactly match
-            // ->registerModel(Category::class, function (ModelSearchAspect $modelSearchAspect) {
-            //     $modelSearchAspect
-            //         ->addExactSearchableAttribute('name'); // only return results that exactly match
-            // })
+        if (strtoupper(substr($searchterm, 0, 3)) == 'ORD'){
+            $formattedResults = Order::where('order_id', 'like', substr($searchterm, 3, strlen($searchterm)).'%')->get();
+        }
+        else {
+            $searchResults = (new Search())
+            ->registerModel(Product::class, ['name','brand', 'description']) //apply search on field name and description
             ->perform($searchterm);
 
-        return response()->json($searchResults);
+            // Xử lý trả về kết quả kèm hình ảnh
+            $formattedResults = $searchResults->map(function ($result) {
+                $product = Product::join('product_image', 'product_image.product_id', '=', 'products.product_id')
+                ->where('products.product_id', '=', $result->searchable->product_id)
+                ->select(
+                    'products.name',
+                    'products.brand',
+                    'products.description',
+                    DB::raw('MIN(product_image.image) as image')
+                )
+                ->groupBy(
+                    'products.name',
+                    'products.brand',
+                    'products.description'
+                )
+                ->get();
+
+                return $product;
+            });
+        }
+
+        return response()->json($formattedResults);
     }
 
     // Get quantity for each category

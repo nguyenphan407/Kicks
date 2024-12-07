@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
 use Cloudinary\Configuration\Configuration;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Spatie\Searchable\ModelSearchAspect;
 use Spatie\Searchable\Search;
 
@@ -222,15 +223,30 @@ class ProductController extends Controller
         $searchterm = $request->input('query');
 
         $searchResults = (new Search())
-            ->registerModel(Product::class, ['name', 'description']) //apply search on field name and description
-            //Config partial match or exactly match
-            // ->registerModel(Category::class, function (ModelSearchAspect $modelSearchAspect) {
-            //     $modelSearchAspect
-            //         ->addExactSearchableAttribute('name'); // only return results that exactly match
-            // })
+            ->registerModel(Product::class, ['name','brand', 'description']) //apply search on field name and description
             ->perform($searchterm);
 
-        return response()->json($searchResults);
+            // Xử lý trả về kết quả kèm hình ảnh
+        $formattedResults = $searchResults->map(function ($result) {
+            $product = Product::join('product_image', 'product_image.product_id', '=', 'products.product_id')
+            ->where('products.product_id', '=', $result->searchable->product_id)
+            ->select(
+                'products.name',
+                'products.brand',
+                'products.description',
+                DB::raw('MIN(product_image.image) as image')
+            )
+            ->groupBy(
+                'products.name',
+                'products.brand',
+                'products.description'
+            )
+            ->get();
+
+            return $product;
+        });
+
+        return response()->json($formattedResults);
     }
 
     public function recentViewed(){

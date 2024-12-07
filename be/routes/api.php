@@ -93,7 +93,7 @@ Route::group([
 
 ], function ($router) {
     Route::get('/', [CategoryController::class, 'index']);
-    Route::get('/{id}', [CategoryController::class, 'show']);
+    Route::get('/{id}', [CategoryController::class, 'show'])->name('category.show');
     Route::post('/', [CategoryController::class, 'store']);
     Route::put('/{id}', [CategoryController::class, 'update']);
     Route::delete('/', [CategoryController::class, 'destroy']);
