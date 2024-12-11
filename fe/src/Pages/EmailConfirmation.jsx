@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import authApi from "../apis/authApi"; // API dùng để gọi backend
 
 const EmailConfirmation = () => {
@@ -8,24 +8,39 @@ const EmailConfirmation = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
+  const location = useLocation();
+  const data = location.state;
+  console.log(data)
+
   const handleSendEmail = async () => {
-    setIsSending(true);
-    setError("");
     try {
+
       // Gọi API gửi email xác nhận
-      await authApi.sendConfirmationEmail();
-      setSuccess(true);
+      const response = await fetch(
+        "http://localhost:8000/api/send-mail",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+      //setIsSending(false);
     } catch (err) {
       setError(
         err.response?.data?.message || "Failed to send confirmation email."
-      );
-    } finally {
-      setIsSending(false);
-    }
+      )
+    };
   };
 
+
+  useEffect(() => {
+    handleSendEmail();
+  }, []);
+
   return (
-    <div className="h-screen flex flex-col justify-center items-center bg-gray-50 px-4">
+    <div className="h-screen flex flex-col justify-center items-center px-4">
       <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6">
         <h2 className="text-2xl font-semibold text-center mb-4 text-gray-800">
           Verify Your Email
@@ -43,8 +58,7 @@ const EmailConfirmation = () => {
         )}
 
         <button
-          onClick={handleSendEmail}
-          disabled={isSending}
+          //onClick={{}}
           className="w-full bg-[#008B28] text-white font-medium py-2 rounded-lg transition duration-300 hover:bg-[#006B1C] disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           {isSending ? "Sending..." : "Resend Confirmation Email"}

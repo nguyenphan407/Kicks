@@ -72,6 +72,10 @@ const CheckOutPage = () => {
 
             const productData = {
                 description: "Thanh toán đơn hàng",
+                buyerName: userData.firstName + ' ' + userData.lastName,
+                buyerEmail: userData.email,
+                buyerPhone: userData.phoneNumber,
+                buyerAddress: userData.deliveryAddress,
                 items: convertCartData,
                 returnUrl: "http://localhost:5173/order/success",
                 cancelUrl: "http://localhost:5173/order/cancel",

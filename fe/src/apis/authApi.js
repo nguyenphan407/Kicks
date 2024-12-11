@@ -14,9 +14,9 @@ const authApi = {
       },
     });
   },
-  sendConfirmationEmail() {
+  sendConfirmationEmail(data) {
     const url = "send-mail/";
-    return axios.post(url);
+    return axiosClient.post(url, data);
   },
 };
 

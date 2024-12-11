@@ -54,7 +54,7 @@ const Register = () => {
 
             console.log("Registration successful:", response.data);
 
-            navigate("/email-confirmation");
+            navigate("/email-confirmation", { state: {email} });
         } catch (err) {
             if (err.response && err.response.data) {
                 setError(
