@@ -1,9 +1,9 @@
+// src/context/ShopContext.js
 import React, { createContext, useEffect, useState } from "react";
 import productApi from "../apis/productApi";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import queryString from "querystring";
 import cartApi from "../apis/cartApi";
 
 export const ShopConText = createContext();
@@ -12,10 +12,9 @@ const ShopContextProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
     const currency = "$";
     const delivery_fee = "6.99";
-    const [cartItems, setCartItems] = useState({});
     const [cartData, setCartData] = useState([]);
     const navigate = useNavigate();
-    const [cartChanged, setCartChanged] = useState(false); // thằng này để theo dõi trạng thái giỏ hàng để get cart update lại giỏ hàng mỗi khi giỏ hàng thay đổi
+
     // Thêm các state và methods cho người dùng
     const [user, setUser] = useState({});
     const [token, setToken] = useState("");
@@ -29,72 +28,146 @@ const ShopContextProvider = ({ children }) => {
         page: 1,
     });
 
+    // Hàm để gọi API lấy giỏ hàng
+    const fetchCartItems = async () => {
+        try {
+            const response = await cartApi.getCartItems();
+            console.log("getCartItems API Response:", response.data); // Debug
+            setCartData(response.data);
+        } catch (error) {
+            console.error("Error fetching cart items:", error);
+            toast.error("Lấy dữ liệu giỏ hàng thất bại.", { autoClose: 1500 });
+        }
+    };
+
     // Thêm sản phẩm vào giỏ hàng
     const addToCart = async (itemId, size) => {
         if (!size) {
-            toast.error("Please select a size", {
-                autoClose: 1500, // Thông báo sẽ tự đóng sau 3 giây
-            });
+            toast.error("Vui lòng chọn kích cỡ", { autoClose: 1500 });
             return;
         }
+
+        // Tìm sản phẩm trong danh sách sản phẩm hiện tại
+        const product = products.find(
+            (item) => item.product_id === parseInt(itemId, 10)
+        );
+
+        if (!product) {
+            toast.error("Sản phẩm không tồn tại", { autoClose: 1500 });
+            return;
+        }
+
+        // Kiểm tra xem sản phẩm với kích cỡ đã chọn có trong giỏ hàng chưa
+        const existingCartItem = cartData.find(
+            (item) => item.product_id === parseInt(itemId, 10) && item.size === size
+        );
+
+        if (existingCartItem) {
+            updateQuantity(existingCartItem.cart_id, size, existingCartItem.quantity + 1);
+            return;
+        }
+
         try {
             const response = await cartApi.addToCart(itemId, 1, size);
+            console.log("addToCart API Response:", response.data); // Debug
+
             if (response && response.data) {
-                // setCartItems(response.data);
-                toast.success("Added to cart successfully!", {
-                    autoClose: 1500,
-                });
-                setCartChanged((prev) => !prev);
+                toast.success("Đã thêm vào giỏ hàng thành công!", { autoClose: 1500 });
+                // Sau khi thêm thành công, lấy lại dữ liệu giỏ hàng từ API
+                await fetchCartItems();
             } else {
-                toast.error("Failed to add to cart. Please try again.", {
-                    autoClose: 1500,
-                });
+                throw new Error("API không trả về dữ liệu");
             }
         } catch (error) {
             console.error("Error adding to cart:", error);
-            toast.error("Error adding to cart.", {
-                autoClose: 1500,
-            });
+            toast.error("Thêm vào giỏ hàng thất bại.", { autoClose: 1500 });
         }
     };
 
-    // useEffect(() => {
-    //     console.log("cartData:", cartData);
-    // }, [cartData]);
+    // Cập nhật số lượng sản phẩm trong giỏ hàng
+    const updateQuantity = async (cart_id, size, quantity) => {
+        if (!cart_id) {
+            toast.error("Không xác định được sản phẩm để cập nhật.", { autoClose: 1500 });
+            return;
+        }
 
-    // let convertCartData = cartData.map((item) => {
-    //     return {
-    //         ...item,
-    //         price: parseFloat(item.price),
-    //     };
-    // });
+        // Lưu lại dữ liệu cũ để hoàn nguyên nếu có lỗi
+        const oldCartData = [...cartData];
 
-    // lấy số lượng hiển thị vào cart
-    const getCartCount = () => {
-        // Trả về tổng số lượng sản phẩm trong giỏ
-        return cartData.length > 0
-            ? cartData.reduce((total, item) => total + item.quantity, 0)
-            : 0;
+        // Cập nhật số lượng tạm thời trên giao diện
+        const newCartData = cartData.map((item) => {
+            if (item.cart_id === cart_id && item.size === size) {
+                return { ...item, quantity };
+            }
+            return item;
+        });
+        setCartData(newCartData);
+
+        try {
+            const response = await cartApi.updateCartItem(cart_id, quantity, size);
+            console.log("updateCartItem API Response:", response.data); // Debug
+
+            if (response && response.data) {
+                toast.success("Cập nhật số lượng thành công!", { autoClose: 1500 });
+                // Không cần làm gì thêm nếu API đã cập nhật thành công
+            } else {
+                throw new Error("API không trả về dữ liệu");
+            }
+        } catch (error) {
+            console.error("Error updating cart:", error);
+            toast.error("Cập nhật số lượng thất bại.", { autoClose: 1500 });
+            // Hoàn nguyên dữ liệu cũ nếu có lỗi
+            setCartData(oldCartData);
+        }
     };
 
-    // Gọi API để lấy danh sách sản phẩm khi component được mount
+    // Xóa sản phẩm khỏi giỏ hàng
+    const removeCartItem = async (cart_id) => {
+        if (!cart_id) {
+            toast.error("Không xác định được sản phẩm để xóa.", { autoClose: 1500 });
+            return;
+        }
+
+        // Lưu lại dữ liệu cũ để hoàn nguyên nếu có lỗi
+        const oldCartData = [...cartData];
+        // Cập nhật cartData tạm thời trên giao diện
+        const newCartData = cartData.filter((item) => item.cart_id !== cart_id);
+        setCartData(newCartData);
+
+        try {
+            const response = await cartApi.removeFromCart(cart_id);
+            console.log("removeCartItem API Response:", response.data); // Debug
+
+            if (response && response.data) {
+                toast.success("Sản phẩm đã được xóa khỏi giỏ hàng!", { autoClose: 1500 });
+                // Không cần làm gì thêm nếu API đã xóa thành công
+            } else {
+                throw new Error("API không trả về dữ liệu");
+            }
+        } catch (error) {
+            console.error("Error removing from cart:", error);
+            toast.error("Xóa sản phẩm thất bại.", { autoClose: 1500 });
+            // Hoàn nguyên dữ liệu cũ nếu có lỗi
+            setCartData(oldCartData);
+        }
+    };
+
+    // Tính tổng số lượng sản phẩm trong giỏ hàng
+    const getCartCount = () => {
+        return cartData.reduce((total, item) => total + item.quantity, 0);
+    };
+
+    // Tính tổng giá trị của giỏ hàng
+    const getCartAmount = () => {
+        return cartData.reduce((total, item) => total + parseFloat(item.price) * item.quantity, 0);
+    };
+
+    // Gọi API để lấy danh sách sản phẩm khi component được mount hoặc khi filters thay đổi
     const fetchProducts = async () => {
         try {
-            console.log("Fetching products with page:", filters.page);
             const response = await productApi.getAll(filters);
-            console.log(
-                "Full request URL:",
-                `http://localhost:8000/api/product?page=${filters.page}`
-            );
-            console.log(
-                "API Response Current Page:",
-                response.data.current_page
-            ); // Log để kiểm tra response
-
             const productsData = response.data.data.map((product) => {
-                const imageUrls = product.images.map(
-                    (imageObj) => imageObj.image
-                );
+                const imageUrls = product.images.map((imageObj) => imageObj.image);
                 const sizes = product.sizes.map((sizeObj) => ({
                     size: sizeObj.size,
                     quantity: sizeObj.quantity,
@@ -117,12 +190,12 @@ const ShopContextProvider = ({ children }) => {
             });
         } catch (error) {
             console.error("Failed to fetch products:", error);
+            toast.error("Lấy danh sách sản phẩm thất bại.", { autoClose: 1500 });
         }
     };
 
     // Hàm chuyển trang cho Pagination
     const handlePageChange = (newPage) => {
-        console.log("new page:", newPage);
         setFilters((prev) => ({
             ...prev,
             page: newPage,
@@ -130,59 +203,17 @@ const ShopContextProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        console.log("Filters changed:", filters);
         fetchProducts();
     }, [filters]);
 
-    // Cập nhật số lượng sản phẩm
-    const updateQuantity = async (cart_id, size, quantity) => {
-        try {
-            const response = await cartApi.updateCartItem(
-                cart_id,
-                quantity,
-                size
-            );
-            setCartChanged((prev) => !prev);
-        } catch (error) {
-            console.error("Error updating to cart:", error);
-            toast.error("Error updating to cart.", {
-                autoClose: 1500,
-            });
+    // Lấy dữ liệu giỏ hàng khi token thay đổi
+    useEffect(() => {
+        if (token) {
+            fetchCartItems();
         }
-    };
+    }, [token]);
 
-    const removeCartItem = async (cart_id) => {
-        try {
-            const response = await cartApi.removeFromCart(cart_id);
-            if (response && response.data) {
-                toast.success("Product removed from cart successfully!", {
-                    autoClose: 1500,
-                });
-                setCartChanged((prev) => !prev);
-                setCartData(response.data);
-            } else {
-                toast.error("Failed to Removed from cart. Please try again.", {
-                    autoClose: 1500,
-                });
-            }
-        } catch (error) {
-            console.error("Error removing to cart:", error);
-            toast.error("Error removing to cart.", {
-                autoClose: 1500,
-            });
-        }
-    };
-
-    const getCartAmount = () => {
-        // Trả về tổng giá trị của giỏ hàng
-        return cartData.length
-            ? cartData.reduce(
-                  (total, item) => total + item.price * item.quantity,
-                  0
-              )
-            : 0;
-    };
-
+    // Lấy thông tin người dùng và token từ localStorage khi component mount
     useEffect(() => {
         const savedUser = localStorage.getItem("user");
         const savedToken = localStorage.getItem("token");
@@ -192,27 +223,12 @@ const ShopContextProvider = ({ children }) => {
             setUser(JSON.parse(savedUser)); // Chuyển chuỗi JSON thành object
         }
     }, []);
-    useEffect(() => {
-        if (token) {
-            const fetchCartItems = async () => {
-                try {
-                    const response = await cartApi.getCartItems();
-                    // console.log("response data:", response.data);
-                    setCartData(response.data); // Lưu dữ liệu vào state
-                } catch (error) {
-                    console.error("Error fetching cart items:", error);
-                }
-            };
-            fetchCartItems(); // Call API khi component mount
-        }
-    }, [token, cartChanged]);
 
     const value = {
         products,
         currency,
         delivery_fee,
         addToCart,
-        cartItems,
         getCartCount,
         updateQuantity,
         getCartAmount,
@@ -229,12 +245,10 @@ const ShopContextProvider = ({ children }) => {
         cartData,
         setCartData,
         removeCartItem,
-        cartChanged,
+        fetchCartItems, // Thêm hàm này để có thể gọi lại từ các hàm khác
     };
 
-    return (
-        <ShopConText.Provider value={value}>{children}</ShopConText.Provider>
-    );
+    return <ShopConText.Provider value={value}>{children}</ShopConText.Provider>;
 };
 
 // Xác định propTypes cho ShopContextProvider
