@@ -10,8 +10,6 @@ const axiosClient = axios.create({
 // Interceptors cho axiosClient (không phải axios gốc)
 axiosClient.interceptors.request.use(
   function (config) {
-    // Log params để chắc chắn không bị thay đổi
-    console.log("Request params:", config.params);
     return config;
   },
   function (error) {

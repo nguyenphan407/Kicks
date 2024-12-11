@@ -79,38 +79,42 @@ class AdminController extends Controller
 
     public function search(Request $request) {
         $searchterm = $request->input('query');
-
-        if (strtoupper(substr($searchterm, 0, 3)) == 'ORD'){
-            $formattedResults = Order::where('order_id', 'like', substr($searchterm, 3, strlen($searchterm)).'%')->get();
-        }
-        else {
+    
+        if (strtoupper(substr($searchterm, 0, 3)) == 'ORD') {
+            // Nếu tìm kiếm là Order ID
+            $formattedResults = Order::where('order_id', 'like', substr($searchterm, 3, strlen($searchterm)) . '%')->get();
+        } else {
+            // Nếu tìm kiếm là Product
             $searchResults = (new Search())
-            ->registerModel(Product::class, ['name','brand', 'description']) //apply search on field name and description
-            ->perform($searchterm);
-
-            // Xử lý trả về kết quả kèm hình ảnh
+                ->registerModel(Product::class, ['name', 'brand', 'description']) // áp dụng tìm kiếm trên các trường name, brand, description
+                ->perform($searchterm);
+    
+            // Xử lý trả về kết quả kèm hình ảnh và id sản phẩm
             $formattedResults = $searchResults->map(function ($result) {
                 $product = Product::join('product_image', 'product_image.product_id', '=', 'products.product_id')
-                ->where('products.product_id', '=', $result->searchable->product_id)
-                ->select(
-                    'products.name',
-                    'products.brand',
-                    'products.description',
-                    DB::raw('MIN(product_image.image) as image')
-                )
-                ->groupBy(
-                    'products.name',
-                    'products.brand',
-                    'products.description'
-                )
-                ->get();
-
+                    ->where('products.product_id', '=', $result->searchable->product_id)
+                    ->select(
+                        'products.product_id', // Chọn ID sản phẩm
+                        'products.name',
+                        'products.brand',
+                        'products.description',
+                        DB::raw('MIN(product_image.image) as image')
+                    )
+                    ->groupBy(
+                        'products.product_id', // Đảm bảo nhóm theo product_id
+                        'products.name',
+                        'products.brand',
+                        'products.description'
+                    )
+                    ->get();
+    
                 return $product;
             });
         }
-
+    
         return response()->json($formattedResults);
     }
+    
 
     // Get quantity for each category
     public function getQuantityOfCategory() {
