@@ -474,9 +474,11 @@ class AdminController extends Controller
                 'products.name', 
                 'products.price', 
                 DB::raw('SUM(order_items.price * order_items.quantity) as revenue'), 
-                DB::raw('SUM(order_items.quantity) as total_quantity')
+                DB::raw('SUM(order_items.quantity) as total_quantity'),
+                DB::raw('MIN(product_image.image) as image')
             )
         ->join('product_size', 'product_size.product_id', '=', 'products.product_id')
+        ->join('product_image', 'product_image.product_id', '=', 'products.product_id')
         ->join('order_items', 'order_items.product_size_id', '=', 'product_size.product_size_id')
         ->join('orders', 'orders.order_id', '=', 'order_items.order_id')
         ->where('orders.payment_status', '=', 'paid')

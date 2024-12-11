@@ -17,11 +17,11 @@ class PaymentController extends Controller
         $data = [
             "orderCode" => intval(substr(strval(microtime(true) * 10000), -6)),
             "amount" => $request->price,
-            "description" => "VQRIO123",
-            "buyerName" => "Nguyen Van A",
-            "buyerEmail" => "phn040704@gmail.com",
-            "buyerPhone" => "0961187213",
-            "buyerAddress" => "số nhà, đường, phường, tỉnh hoặc thành phố",
+            "description" => $request->description,
+            "buyerName" => $request->buyerName,
+            "buyerEmail" => $request->buyerEmail,
+            "buyerPhone" => $request->buyerPhone,
+            "buyerAddress" => $request->buyerAddress,
             "items" => $request->items,
             "returnUrl" => $request->returnUrl,
             "cancelUrl" => $request->cancelUrl
