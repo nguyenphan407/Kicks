@@ -32,10 +32,10 @@ const orderApi = {
       return axiosClient.delete("/cart/clear");
    },
 
-   getOrdersByStatus: (status) => axiosClient.get(`/admin/orders/?status=${status}`),
+   getOrdersByStatus: (status) => axiosClient.get(`/orders/?status=${status}`),
 
    // Lấy chi tiết đơn hàng theo ID
-   getOrderById: (id) => axiosClient.get(`/admin/orders/${id}`),
+   getOrderById: (id) => axiosClient.get(`/orders/items/${id}`),
    
 };
 

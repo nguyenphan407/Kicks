@@ -231,12 +231,14 @@ class ProductController extends Controller
             $product = Product::join('product_image', 'product_image.product_id', '=', 'products.product_id')
             ->where('products.product_id', '=', $result->searchable->product_id)
             ->select(
+                'products.product_id',
                 'products.name',
                 'products.brand',
                 'products.description',
                 DB::raw('MIN(product_image.image) as image')
             )
             ->groupBy(
+                'products.product_id',
                 'products.name',
                 'products.brand',
                 'products.description'
