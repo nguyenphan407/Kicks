@@ -1,10 +1,12 @@
-/* eslint-disable react/no-unescaped-entities */
+// src/pages/OrdersPage.jsx
+
 import React, { useState, useEffect } from "react";
-import orderApi from "../apis/orderApi"; // Import orderApi
-import PropTypes from "prop-types";
+import orderApi from "../apis/orderApi";
 import OrderCard from "../Components/Layout/OrderCard";
-import HeroMini from "../Components/Layout/HeroMini"; // Giả sử bạn đã tạo component Hero
+import HeroMini from "../Components/Layout/HeroMini";
 import { toast } from "react-toastify";
+import { motion, AnimatePresence } from "framer-motion";
+import socket from "../libs/socket";
 
 const OrdersPage = () => {
     const [activeTab, setActiveTab] = useState("pending");
@@ -39,9 +41,37 @@ const OrdersPage = () => {
         fetchOrders();
     }, [activeTab]);
 
+    useEffect(() => {
+        function onConnect() {
+            console.log(socket.id)
+        }
+    
+        function onDisconnect() {
+            console.log('disconnect')
+        }
+    
+        function onFooEvent(value) {
+
+        }
+    
+        socket.on('connect', onConnect);
+        socket.on('disconnect', onDisconnect);
+        socket.on('foo', onFooEvent);
+    
+        return () => {
+          socket.off('connect', onConnect);
+          socket.off('disconnect', onDisconnect);
+          socket.off('foo', onFooEvent);
+        };
+      }, []);
+
     const renderContent = () => {
         if (loading) {
-            return <div className="text-center text-gray-500">Loading...</div>;
+            return (
+                <div className="text-center font-rubik text-xl lg:text-3xl text-gray-500">
+                    Loading...
+                </div>
+            );
         }
 
         if (error) {
@@ -49,7 +79,11 @@ const OrdersPage = () => {
         }
 
         if (orders.length === 0) {
-            return <div className="text-center text-gray-500">No orders found.</div>;
+            return (
+                <div className="text-center text-3xl text-gray-500">
+                    No orders found.
+                </div>
+            );
         }
 
         return (
@@ -62,15 +96,15 @@ const OrdersPage = () => {
     };
 
     return (
-        <div className="container mx-auto mt-5 mb-10 px-4">
-            <div className="flex space-x-4 border-b border-gray-300">
+        <div className="container mt-5 mb-10">
+            <div className="flex space-x-2 lg:space-x-4 border-b border-gray-300 ">
                 {Object.keys(statusLabels).map((status) => (
                     <button
                         key={status}
-                        className={`py-2 px-4 ${
+                        className={`py-2 px-2 lg:px-4 ${
                             activeTab === status
-                                ? "text-primary_blue border-b-2 border-primary_blue font-bold"
-                                : "text-gray-500 hover:text-primary_blue"
+                                ? "text-primary_blue border-b-2 border-primary_blue text-[16px] font-medium lg:text-xl font-rubik"
+                                : "text-gray-500 hover:text-primary_blue text-[16px] font-medium lg:text-xl font-rubik"
                         }`}
                         onClick={() => setActiveTab(status)}
                     >
@@ -80,13 +114,23 @@ const OrdersPage = () => {
             </div>
 
             <div className="mt-6 flex flex-col lg:flex-row gap-6">
-                {/* Nội dung các tab */}
+                {/* Tab content */}
                 <div className="flex-1">
-                    {renderContent()}
+                    <AnimatePresence mode="wait"> 
+                        <motion.div
+                            key={activeTab} 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {renderContent()}
+                        </motion.div>
+                    </AnimatePresence>
                 </div>
 
                 {/* Hero Section */}
-                <div className="w-full lg:w-1/3 bg-white p-6 rounded-lg text-center">
+                <div className="w-full lg:w-1/3 bg-white p-6 rounded-xl lg:rounded-2xl text-center">
                     <HeroMini />
                 </div>
             </div>

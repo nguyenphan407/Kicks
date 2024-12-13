@@ -33,10 +33,6 @@ const orderApi = {
    },
 
    getOrdersByStatus: (status) => axiosClient.get(`/orders/?status=${status}`),
-
-   // Lấy chi tiết đơn hàng theo ID
-   getOrderById: (id) => axiosClient.get(`/orders/items/${id}`),
-   
 };
 
 export default orderApi;

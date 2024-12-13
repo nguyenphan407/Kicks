@@ -202,22 +202,22 @@ export const products = [
 export const categories = [
   {
     category_id: 1,
-    category_name: "Lifestyle Shoes",
+    category_name: "Casual shoes",
     image: LifestyleShoes, // Đảm bảo biến này đã được import chính xác
   },
   {
     category_id: 2,
-    category_name: "Basketball Shoes",
+    category_name: "Runners",
     image: BasketBall,
   },
   {
     category_id: 3,
-    category_name: "Running Shoes",
+    category_name: "Hiking",
     image: Running,
   },
   {
     category_id: 4,
-    category_name: "Soccer Shoes",
+    category_name: "Basketball",
     image: Soccer,
   },
 ];
