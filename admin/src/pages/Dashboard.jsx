@@ -112,11 +112,6 @@ const Dashboard = () => {
         fetchDashboardData();
     }, [dateRange]);
 
-    // Cuộn lên đầu trang khi trang thay đổi
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
-
     return (
         <div className="flex flex-col gap-6 mb-8">
             {/* Title */}

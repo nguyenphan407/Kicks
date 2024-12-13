@@ -11,6 +11,20 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLoader } from "@/context/LoaderContext";
 
+// Mảng các màu cố định
+const colors = [
+    { name: "Dark Blue", colorCode: "#4A69E2" },
+    { name: "Bright Orange", colorCode: "#FFA52F" },
+    { name: "Black", colorCode: "#232321" },
+    { name: "Dark Green", colorCode: "#234D41" },
+    { name: "Charcoal Gray", colorCode: "#353336" },
+    { name: "Light Orange", colorCode: "#F08155" },
+    { name: "Light Gray", colorCode: "#C9CCC6" },
+    { name: "Dark Gray", colorCode: "#677282" },
+    { name: "Dark Brown", colorCode: "#925513" },
+    { name: "Light Brown", colorCode: "#BB8056" },
+];
+
 // Schema validation với Yup
 const schema = yup.object().shape({
     name: yup.string().required("Product name is required"),
@@ -22,7 +36,7 @@ const schema = yup.object().shape({
     size: yup.string().notOneOf(["Select Size"], "Please select a size"),
     color: yup
         .string()
-        .matches(/^#[A-Fa-f0-9]{6}$/, "Invalid color code")
+        .oneOf(colors.map(color => color.colorCode), "Please select a valid color")
         .required("Color is required"),
     regular_price: yup
         .number()
@@ -57,17 +71,20 @@ const AddNewProduct = () => {
         { label: "Add New Product" },
     ];
 
-    //setup React Hook Form 
+    // Setup React Hook Form 
     const {
         register,
         handleSubmit,
         setValue,
+        watch, // Sử dụng watch thay vì getValues
         formState: { errors, isValid },
         trigger,
     } = useForm({
         resolver: yupResolver(schema),
         mode: "onChange",
     });
+
+    const selectedColor = watch("color"); // Theo dõi giá trị màu hiện tại
 
     const { currentCategory } = useContext(ShopConText);
     const navigate = useNavigate(); // dùng để quay về lại trang product list
@@ -93,48 +110,48 @@ const AddNewProduct = () => {
 
     // Form submission
     const onSubmit = async (data) => {
-      try {
-        showLoader(); 
-        const formData = new FormData();
-        formData.append("name", data.name);
-        formData.append("description", data.description);
-        formData.append("category_id", currentCategory.category_id);
-        formData.append("brand", data.brand);
-        formData.append("size", data.size);
-        formData.append("quantity", data.quantity);
-        formData.append("color", data.color);
-        formData.append("regular_price", data.regular_price);
-        formData.append("price", data.price);
-        formData.append("gender", data.gender);
-    
-        console.log(data);
-    
-        data.images.forEach((image) => {
-          if (image.file instanceof File) {
-            formData.append("images[]", image.file);
-          } else {
-            console.error("An image is not a valid File");
-          }
-        });
-    
-        const response = await productApi.add(formData);
-        console.log("Product added successfully:", response);
-        toast.success("Product added successfully!");
-        navigate("/allproduct"); // Reset form or redirect as needed
-    
-        hideLoader(); 
-      } catch (error) {
-        hideLoader(); 
-    
-        if (error.response) {
-          console.error("Server responded with:", error.response.data);
-          setServerErrors(error.response.data.errors || {});
-          toast.error(error.response.data.message || "Failed to add product!");
-        } else {
-          console.error("Error adding product:", error.message);
-          toast.error("Something went wrong while adding the product!");
+        try {
+            showLoader(); 
+            const formData = new FormData();
+            formData.append("name", data.name);
+            formData.append("description", data.description);
+            formData.append("category_id", currentCategory.category_id);
+            formData.append("brand", data.brand);
+            formData.append("size", data.size);
+            formData.append("quantity", data.quantity);
+            formData.append("color", data.color);
+            formData.append("regular_price", data.regular_price);
+            formData.append("price", data.price);
+            formData.append("gender", data.gender);
+        
+            console.log(data);
+        
+            data.images.forEach((image) => {
+                if (image.file instanceof File) {
+                    formData.append("images[]", image.file);
+                } else {
+                    console.error("An image is not a valid File");
+                }
+            });
+        
+            const response = await productApi.add(formData);
+            console.log("Product added successfully:", response);
+            toast.success("Product added successfully!");
+            navigate("/allproduct"); // Reset form hoặc chuyển hướng theo nhu cầu
+        
+            hideLoader(); 
+        } catch (error) {
+            hideLoader(); 
+        
+            if (error.response) {
+                console.error("Server responded with:", error.response.data);
+                setServerErrors(error.response.data.errors || {});
+                toast.error(error.response.data.message || "Failed to add product!");
+            } else {
+                console.error("Error adding product:", error.message);
+                toast.error("Something went wrong while adding the product!");
+            }
         }
-      }
     };
 
     const handleImageUpload = (e) => {
@@ -166,6 +183,12 @@ const AddNewProduct = () => {
             shouldValidate: true,
         });
         setIsOpen(false);
+    };
+
+    const handleColorSelect = (colorCode) => {
+        setValue("color", colorCode, {
+            shouldValidate: true,
+        });
     };
 
     return (
@@ -398,21 +421,50 @@ const AddNewProduct = () => {
                             <div className="flex justify-between items-center gap-6">
                                 <div className="w-full relative">
                                     <h3 className="text-[20px] mb-4 font-semibold font-rubik text-[#232321]">
-                                        Color (e.g., #FFFFFF)
+                                        Color
                                     </h3>
-                                    <input
-                                        {...register("color")}
-                                        type="text"
-                                        placeholder="Color (e.g., #FFFFFF)"
-                                        className="w-full font-semibold p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
-                                    />
+                                    <div className="flex flex-wrap gap-2">
+                                        {colors.map((color, index) => (
+                                            <button
+                                                key={index}
+                                                type="button"
+                                                onClick={() => handleColorSelect(color.colorCode)}
+                                                className={`w-8 h-8 rounded-full border-2 ${
+                                                    selectedColor === color.colorCode 
+                                                        ? "border-[#008B28]"
+                                                        : "border-transparent"
+                                                }`}
+                                                style={{
+                                                    backgroundColor: color.colorCode,
+                                                }}
+                                            >
+                                                {/* Hiển thị dấu tick nếu màu đang được chọn */}
+                                                {selectedColor === color.colorCode && (
+                                                    <span className="inline-block w-full h-full bg-white rounded-full opacity-50 flex items-center justify-center">
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            className="h-4 w-4 text-[#008B28]"
+                                                            viewBox="0 0 20 20"
+                                                            fill="currentColor"
+                                                        >
+                                                            <path
+                                                                fillRule="evenodd"
+                                                                d="M16.707 5.293a1 1 0 00-1.414 0L9 11.586 6.707 9.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l7-7a1 1 0 000-1.414z"
+                                                                clipRule="evenodd"
+                                                            />
+                                                        </svg>
+                                                    </span>
+                                                )}
+                                            </button>
+                                        ))}
+                                    </div>
                                     {errors.color && (
-                                        <p className="absolute top-[100px] text-red-500 text-sm">
+                                        <p className="absolute top-[60px] text-red-500 text-sm">
                                             {errors.color.message}
                                         </p>
                                     )}
                                     {serverErrors.color && (
-                                        <p className="absolute top-[120px] text-red-500 text-sm">
+                                        <p className="absolute top-[80px] text-red-500 text-sm">
                                             {serverErrors.color[0]}
                                         </p>
                                     )}
@@ -524,10 +576,11 @@ const AddNewProduct = () => {
                     <button
                         type="reset"
                         onClick={() => {
-                            // Reset form fields and uploaded images
+                            // Reset form fields và xóa ảnh đã tải lên
                             setUploadedImages([]);
                             setSelected("Select Size");
                             setIsOpen(false);
+                            setValue("color", ""); // Đặt lại màu
                         }}
                         className="w-full h-12 bg-white border border-black flex justify-center items-center rounded-lg text-[#232321] px-4 transform transition duration-400 hover:bg-gray-100 uppercase hover:scale-[1.003] hover:text-black active:scale-[99%]"
                     >
