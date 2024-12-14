@@ -6,7 +6,7 @@ import OrderCard from "../Components/Layout/OrderCard";
 import HeroMini from "../Components/Layout/HeroMini";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
-//import socket from "../libs/socket";
+// import socket from "../libs/socket";
 
 const OrdersPage = () => {
     const [activeTab, setActiveTab] = useState("pending");
@@ -41,29 +41,29 @@ const OrdersPage = () => {
         fetchOrders();
     }, [activeTab]);
 
-    useEffect(() => {
-        function onConnect() {
-            console.log(socket.id)
-        }
+    // useEffect(() => {
+    //     function onConnect() {
+    //         console.log(socket.id)
+    //     }
     
-        function onDisconnect() {
-            console.log('disconnect')
-        }
+    //     function onDisconnect() {
+    //         console.log('disconnect')
+    //     }
     
-        function onFooEvent(value) {
+    //     function onFooEvent(value) {
 
-        }
+    //     }
     
-        socket.on('connect', onConnect);
-        socket.on('disconnect', onDisconnect);
-        socket.on('foo', onFooEvent);
+    //     socket.on('connect', onConnect);
+    //     socket.on('disconnect', onDisconnect);
+    //     socket.on('foo', onFooEvent);
     
-        return () => {
-          socket.off('connect', onConnect);
-          socket.off('disconnect', onDisconnect);
-          socket.off('foo', onFooEvent);
-        };
-      }, []);
+    //     return () => {
+    //       socket.off('connect', onConnect);
+    //       socket.off('disconnect', onDisconnect);
+    //       socket.off('foo', onFooEvent);
+    //     };
+    //   }, []);
 
     const renderContent = () => {
         if (loading) {

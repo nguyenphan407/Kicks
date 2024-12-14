@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CategoryCard from "./CategoriesCard";
 import { categories } from "../../assets/assets";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { useEffect } from "react";
 
 const Categories = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -13,7 +12,16 @@ const Categories = () => {
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
-    
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            setCurrentIndex((prevIndex) => 
+                prevIndex === categories.length - 1 ? 0 : prevIndex + 1
+            );
+        }, 2000); // Change every 3 seconds
+
+        return () => clearInterval(intervalId);
+    }, []);
 
     const handlePrev = () => {
         setCurrentIndex((prevIndex) =>
@@ -51,7 +59,7 @@ const Categories = () => {
             <div className="container">
                 <div className="overflow-hidden max-h-[696px] xl:max-h-none">
                     <div
-                        className="flex flex-col xl:flex-row transition-transform duration-500 ease-out"
+                        className="flex flex-col xl:flex-row transition-transform duration-1000 ease-out"
                         style={{
                             // cuộn categories
                             transform: isMobile
@@ -68,12 +76,7 @@ const Categories = () => {
                                     image={category.image}
                                     title={category.category_name}
                                     link={`/categories/${category.category_id}`}
-                                    extraClasses={
-                                        // tại vị trí đang đứng áp dụng bo góc theo responsive
-                                        index === currentIndex
-                                            ? "xl:rounded-tl-[64px] rounded-tl-3xl"
-                                            : ""
-                                    }
+                                    extraClasses={index === currentIndex ? "xl:rounded-tl-[64px] rounded-tl-3xl" : ""}
                                 />
                             </div>
                         ))}
