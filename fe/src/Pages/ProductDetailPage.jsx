@@ -110,7 +110,7 @@ const ProductDetailPage = () => {
    };
 
    const outOfStockSizes = productData ? getUnavailableSizes(productData) : [];
-   console.log(productData);
+   // console.log(productData);
 
    // Lựa chọn size, kiểm tra size có sẵn
    const handleSizeClick = (size) => {

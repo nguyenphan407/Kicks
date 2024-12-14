@@ -1,5 +1,5 @@
 // src/context/ShopContext.js
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState, useCallback } from "react";
 import productApi from "../apis/productApi";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
@@ -11,11 +11,13 @@ export const ShopConText = createContext();
 const ShopContextProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
     const currency = "$";
-    const delivery_fee = "6.99";
+    const delivery_fee = "3.99";
     const [cartData, setCartData] = useState([]);
     const navigate = useNavigate();
 
-    // Thêm các state và methods cho người dùng
+    const [recommendedProducts, setRecommendedProducts] = useState([]);
+    const [recentProducts, setRecentProducts] = useState([]);
+
     const [user, setUser] = useState({});
     const [token, setToken] = useState("");
     const [pagination, setPagination] = useState({
@@ -28,8 +30,29 @@ const ShopContextProvider = ({ children }) => {
         page: 1,
     });
 
+    // Hàm fetch cả recent và recommended products
+    const fetchRecentAndRecommendedProducts = useCallback(async () => {
+        try {
+            const [dataRecent, dataRcm] = await Promise.all([
+                productApi.getRecentProducts(),
+                productApi.getRecommendedProducts(),
+            ]);
+            setRecentProducts(dataRecent);
+            setRecommendedProducts(dataRcm);
+            console.log("Updated Recent Products:", dataRecent);
+            console.log("Updated Recommended Products:", dataRcm);
+        } catch (error) {
+            console.error('Error fetching recent or recommended products:', error);
+        }
+    }, []);
+
+    // Fetch recent và recommended products khi component mount và khi các dependencies thay đổi
+    useEffect(() => {
+        fetchRecentAndRecommendedProducts();
+    }, [fetchRecentAndRecommendedProducts, filters, cartData]);
+
     // Hàm để gọi API lấy giỏ hàng
-    const fetchCartItems = async () => {
+    const fetchCartItems = useCallback(async () => {
         try {
             const response = await cartApi.getCartItems();
             console.log("getCartItems API Response:", response.data); // Debug
@@ -38,10 +61,17 @@ const ShopContextProvider = ({ children }) => {
             console.error("Error fetching cart items:", error);
             toast.error("Failed to retrieve cart data.", { autoClose: 1500 });
         }
-    };
+    }, []);
 
     // Thêm sản phẩm vào giỏ hàng
     const addToCart = async (itemId, size) => {
+        // Kiểm tra xem người dùng đã đăng nhập hay chưa
+        const accessToken = localStorage.getItem("token");
+        if (!accessToken) {
+            toast.error("Please log in to add items to the cart", { autoClose: 1500 });
+            return;
+        }
+
         if (!size) {
             toast.error("Please select a size", { autoClose: 1500 });
             return;
@@ -75,6 +105,8 @@ const ShopContextProvider = ({ children }) => {
                 toast.success("Added to cart successfully!", { autoClose: 1500 });
                 // Sau khi thêm thành công, lấy lại dữ liệu giỏ hàng từ API
                 await fetchCartItems();
+                // Fetch lại recent và recommended products nếu cần
+                await fetchRecentAndRecommendedProducts();
             } else {
                 throw new Error("API did not return data");
             }
@@ -109,7 +141,8 @@ const ShopContextProvider = ({ children }) => {
 
             if (response && response.data) {
                 toast.success("Quantity updated successfully!", { autoClose: 1500 });
-                // Không cần làm gì thêm nếu API đã cập nhật thành công
+                // Fetch lại recent và recommended products nếu cần
+                await fetchRecentAndRecommendedProducts();
             } else {
                 throw new Error("API did not return data");
             }
@@ -140,7 +173,8 @@ const ShopContextProvider = ({ children }) => {
 
             if (response && response.data) {
                 toast.success("Product removed from cart!", { autoClose: 1500 });
-                // Không cần làm gì thêm nếu API đã xóa thành công
+                // Fetch lại recent và recommended products nếu cần
+                await fetchRecentAndRecommendedProducts();
             } else {
                 throw new Error("API did not return data");
             }
@@ -157,13 +191,13 @@ const ShopContextProvider = ({ children }) => {
         return cartData.reduce((total, item) => total + item.quantity, 0);
     };
 
-    // Tính tổng giá trị của giỏ hàng
+    // Tính tổng giá trị của giỏ hàng (chỉ tính giá sản phẩm)
     const getCartAmount = () => {
         return cartData.reduce((total, item) => total + parseFloat(item.price) * item.quantity, 0);
     };
 
     // Gọi API để lấy danh sách sản phẩm khi component được mount hoặc khi filters thay đổi
-    const fetchProducts = async () => {
+    const fetchProducts = useCallback(async () => {
         try {
             const response = await productApi.getAll(filters);
             const productsData = response.data.data.map((product) => {
@@ -188,11 +222,14 @@ const ShopContextProvider = ({ children }) => {
                 totalItems: response.data.total,
                 itemsPerPage: response.data.per_page,
             });
+
+            // Fetch lại recent và recommended products nếu cần
+            await fetchRecentAndRecommendedProducts();
         } catch (error) {
             console.error("Failed to fetch products:", error);
             toast.error("Failed to retrieve product list.", { autoClose: 1500 });
         }
-    };
+    }, [filters, fetchRecentAndRecommendedProducts]);
 
     // Hàm chuyển trang cho Pagination
     const handlePageChange = (newPage) => {
@@ -204,14 +241,14 @@ const ShopContextProvider = ({ children }) => {
 
     useEffect(() => {
         fetchProducts();
-    }, [filters]);
+    }, [fetchProducts]);
 
     // Lấy dữ liệu giỏ hàng khi token thay đổi
     useEffect(() => {
         if (token) {
             fetchCartItems();
         }
-    }, [token]);
+    }, [token, fetchCartItems]);
 
     // Lấy thông tin người dùng và token từ localStorage khi component mount
     useEffect(() => {
@@ -245,7 +282,9 @@ const ShopContextProvider = ({ children }) => {
         cartData,
         setCartData,
         removeCartItem,
-        fetchCartItems, // Thêm hàm này để có thể gọi lại từ các hàm khác
+        fetchCartItems, 
+        recommendedProducts,
+        recentProducts,
     };
 
     return <ShopConText.Provider value={value}>{children}</ShopConText.Provider>;

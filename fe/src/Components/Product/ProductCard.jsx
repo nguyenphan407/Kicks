@@ -12,7 +12,7 @@ const ProductCard = ({ product, currency }) => {
                 {/* Image Wrapper */}
                 <div className="overflow-hidden rounded-2xl xl:rounded-[28px] w-full h-full">
                     <img
-                        src={product.images[0]} // Sử dụng product.images thay vì product.image
+                        src={product.images[0]}
                         alt={product.name}
                         className="object-cover w-full h-full transition-transform duration-300 ease-in-out hover:scale-105"
                     />

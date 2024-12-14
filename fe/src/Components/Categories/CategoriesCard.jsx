@@ -13,7 +13,7 @@ const CategoryCard = ({ image, title, link, extraClasses }) => {
             />
             <h3 className="absolute left-4 bottom-4 xl:left-12 xl:bottom-[30px] text-2xl xl:text-4xl font-semibold xl:uppercase">{title}</h3>
             <Link
-                to={link}
+                to={'/listing'}
                 className="absolute right-4 bottom-4 xl:right-[30px] xl:bottom-[30px] bg-black p-2 rounded-lg text-white flex items-center justify-center hover:bg-[#3d3d3d]"
             >
                 <FiArrowRight size={20} />

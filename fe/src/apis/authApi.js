@@ -1,3 +1,5 @@
+// authApi.js
+
 import axiosClient from "./axiosClient";
 
 const authApi = {
@@ -7,10 +9,9 @@ const authApi = {
   },
   login(data) {
     const url = "auth/login/";
-    const token = localStorage.getItem("token"); // Lấy token từ localStorage
     return axiosClient.post(url, data, {
       headers: {
-        Authorization: token ? `Bearer ${token}` : "", // Thêm token vào header nếu có
+        Authorization: localStorage.getItem("token") ? `Bearer ${localStorage.getItem("token")}` : "",
       },
     });
   },
@@ -18,21 +19,15 @@ const authApi = {
     const url = "send-mail/";
     return axiosClient.post(url, data);
   },
+  
+  logout() {
+    const url = "auth/logout/"; // Replace with your actual logout endpoint
+    return axiosClient.post(url).then(() => {
+      // Clear token and user data from localStorage after successful logout
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+    });
+  },
 };
 
 export default authApi;
-
-// Tạo một interceptor để tự động thêm token vào các request sau khi login
-axiosClient.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('token'); // Lấy token từ localStorage
-        if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`; // Thêm token vào header
-        }
-        // console.log('Request Config:', config.headers);
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
