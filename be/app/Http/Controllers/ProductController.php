@@ -256,7 +256,22 @@ class ProductController extends Controller
         // Lấy danh sách ID sản phẩm đã xem nhiều nhất của người dùng
         $viewedProducts = Redis::zrevrange("user:{$userId}:viewed_products", 0, -1);
 
-        return response()->json($viewedProducts);
+        $result = Product::whereNotIn('products.product_id', $viewedProducts)
+                ->join('product_image', 'product_image.product_id', '=', 'products.product_id')
+                ->select(
+                    'products.product_id',
+                    'products.name',
+                    'products.price',
+                    DB::raw('MIN(product_image.image) as image')
+                )
+                ->groupBy(
+                    'products.product_id',
+                    'products.name',
+                    'products.price',
+                )
+                ->get();
+
+        return response()->json($result);
     }
     // Recommendation
     public function recommendedProducts()
@@ -273,7 +288,19 @@ class ProductController extends Controller
 
         // Tìm các sản phẩm thuộc cùng danh mục nhưng không có trong danh sách đã xem
         $recommendedProducts = Product::whereIn('category_id', $viewedCategories)
-                                    ->whereNotIn('product_id', $viewedProducts)
+                                    ->whereNotIn('products.product_id', $viewedProducts)
+                                    ->join('product_image', 'product_image.product_id', '=', 'products.product_id')
+                                    ->select(
+                                        'products.product_id',
+                                        'products.name',
+                                        'products.price',
+                                        DB::raw('MIN(product_image.image) as image')
+                                    )
+                                    ->groupBy(
+                                        'products.product_id',
+                                        'products.name',
+                                        'products.price',
+                                    )
                                     ->take(5)
                                     ->get();
 
