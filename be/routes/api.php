@@ -127,7 +127,7 @@ Route::group([
     Route::get('/statics', [AdminController::class, 'statics']);
     Route::get('/report', [AdminController::class, 'report']);
     Route::get('/topProducts', [AdminController::class, 'getTopProducts']);
-    Route::get('show/{id}', [ProductController::class, 'show']);
+    Route::get('show/{id}', [AdminController::class, 'show']);
     Route::get('search', [AdminController::class, 'search']);
     Route::post('store', [ProductController::class, 'store']);
     Route::post('create_invoice', [InvoiceController::class, 'create']);  

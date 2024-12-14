@@ -6,7 +6,7 @@ import OrderCard from "../Components/Layout/OrderCard";
 import HeroMini from "../Components/Layout/HeroMini";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
-import socket from "../libs/socket";
+//import socket from "../libs/socket";
 
 const OrdersPage = () => {
     const [activeTab, setActiveTab] = useState("pending");

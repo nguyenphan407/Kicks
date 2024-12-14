@@ -492,4 +492,42 @@ class AdminController extends Controller
         
         return response()->json($result);
     }
+
+    public function show($id)
+    {
+        // Tìm sản phẩm theo ID
+        $product = Product::with(['images', 'sizes'])->find($id);
+
+        // Trả về chi tiết sản phẩm
+        return $product ? response()->json($this->formatProduct($product->toArray())) : response()->json(['error' => 'Product not found'], 404);
+    }
+
+    public function formatProduct($product)
+    {
+        // Các trường cần xử lý và hàm callback tương ứng
+        $fieldsToFormat = [
+            'images' => function ($images) {
+                return array_map(function ($image) {
+                    return $image['image'];
+                }, $images);
+            },
+            'sizes' => function ($sizes) {
+                return array_map(function ($size) {
+                    return [
+                        'size' => $size['size'],
+                        'stock' => $size['quantity'],
+                    ];
+                }, $sizes);
+            },
+        ];
+
+        // Duyệt qua các trường cần xử lý và áp dụng callback nếu trường tồn tại
+        foreach ($fieldsToFormat as $field => $callback) {
+            if (isset($product[$field]) && is_array($product[$field])) {
+                $product[$field] = $callback($product[$field]);
+            }
+        }
+
+        return $product;
+    }
 }
