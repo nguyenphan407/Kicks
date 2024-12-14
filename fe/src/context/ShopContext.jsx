@@ -36,14 +36,14 @@ const ShopContextProvider = ({ children }) => {
             setCartData(response.data);
         } catch (error) {
             console.error("Error fetching cart items:", error);
-            toast.error("Lấy dữ liệu giỏ hàng thất bại.", { autoClose: 1500 });
+            toast.error("Failed to retrieve cart data.", { autoClose: 1500 });
         }
     };
 
     // Thêm sản phẩm vào giỏ hàng
     const addToCart = async (itemId, size) => {
         if (!size) {
-            toast.error("Vui lòng chọn kích cỡ", { autoClose: 1500 });
+            toast.error("Please select a size", { autoClose: 1500 });
             return;
         }
 
@@ -53,7 +53,7 @@ const ShopContextProvider = ({ children }) => {
         );
 
         if (!product) {
-            toast.error("Sản phẩm không tồn tại", { autoClose: 1500 });
+            toast.error("Product not found", { autoClose: 1500 });
             return;
         }
 
@@ -72,22 +72,22 @@ const ShopContextProvider = ({ children }) => {
             console.log("addToCart API Response:", response.data); // Debug
 
             if (response && response.data) {
-                toast.success("Đã thêm vào giỏ hàng thành công!", { autoClose: 1500 });
+                toast.success("Added to cart successfully!", { autoClose: 1500 });
                 // Sau khi thêm thành công, lấy lại dữ liệu giỏ hàng từ API
                 await fetchCartItems();
             } else {
-                throw new Error("API không trả về dữ liệu");
+                throw new Error("API did not return data");
             }
         } catch (error) {
             console.error("Error adding to cart:", error);
-            toast.error("Thêm vào giỏ hàng thất bại.", { autoClose: 1500 });
+            toast.error("Product exceeds stock quantity.", { autoClose: 1500 });
         }
     };
 
     // Cập nhật số lượng sản phẩm trong giỏ hàng
     const updateQuantity = async (cart_id, size, quantity) => {
         if (!cart_id) {
-            toast.error("Không xác định được sản phẩm để cập nhật.", { autoClose: 1500 });
+            toast.error("Could not identify the product to update.", { autoClose: 1500 });
             return;
         }
 
@@ -108,14 +108,14 @@ const ShopContextProvider = ({ children }) => {
             console.log("updateCartItem API Response:", response.data); // Debug
 
             if (response && response.data) {
-                toast.success("Cập nhật số lượng thành công!", { autoClose: 1500 });
+                toast.success("Quantity updated successfully!", { autoClose: 1500 });
                 // Không cần làm gì thêm nếu API đã cập nhật thành công
             } else {
-                throw new Error("API không trả về dữ liệu");
+                throw new Error("API did not return data");
             }
         } catch (error) {
             console.error("Error updating cart:", error);
-            toast.error("Cập nhật số lượng thất bại.", { autoClose: 1500 });
+            toast.error("Failed to update quantity.", { autoClose: 1500 });
             // Hoàn nguyên dữ liệu cũ nếu có lỗi
             setCartData(oldCartData);
         }
@@ -124,7 +124,7 @@ const ShopContextProvider = ({ children }) => {
     // Xóa sản phẩm khỏi giỏ hàng
     const removeCartItem = async (cart_id) => {
         if (!cart_id) {
-            toast.error("Không xác định được sản phẩm để xóa.", { autoClose: 1500 });
+            toast.error("Could not identify the product to remove.", { autoClose: 1500 });
             return;
         }
 
@@ -139,14 +139,14 @@ const ShopContextProvider = ({ children }) => {
             console.log("removeCartItem API Response:", response.data); // Debug
 
             if (response && response.data) {
-                toast.success("Sản phẩm đã được xóa khỏi giỏ hàng!", { autoClose: 1500 });
+                toast.success("Product removed from cart!", { autoClose: 1500 });
                 // Không cần làm gì thêm nếu API đã xóa thành công
             } else {
-                throw new Error("API không trả về dữ liệu");
+                throw new Error("API did not return data");
             }
         } catch (error) {
             console.error("Error removing from cart:", error);
-            toast.error("Xóa sản phẩm thất bại.", { autoClose: 1500 });
+            toast.error("Failed to remove product.", { autoClose: 1500 });
             // Hoàn nguyên dữ liệu cũ nếu có lỗi
             setCartData(oldCartData);
         }
@@ -190,7 +190,7 @@ const ShopContextProvider = ({ children }) => {
             });
         } catch (error) {
             console.error("Failed to fetch products:", error);
-            toast.error("Lấy danh sách sản phẩm thất bại.", { autoClose: 1500 });
+            toast.error("Failed to retrieve product list.", { autoClose: 1500 });
         }
     };
 

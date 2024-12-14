@@ -12,6 +12,20 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
 
+// Mảng các màu cố định
+const colors = [
+    { name: "Dark Blue", colorCode: "#4A69E2" },
+    { name: "Bright Orange", colorCode: "#FFA52F" },
+    { name: "Black", colorCode: "#232321" },
+    { name: "Dark Green", colorCode: "#234D41" },
+    { name: "Charcoal Gray", colorCode: "#353336" },
+    { name: "Light Orange", colorCode: "#F08155" },
+    { name: "Light Gray", colorCode: "#C9CCC6" },
+    { name: "Dark Gray", colorCode: "#677282" },
+    { name: "Dark Brown", colorCode: "#925513" },
+    { name: "Light Brown", colorCode: "#BB8056" },
+];
+
 // Schema validation với Yup
 const schema = yup.object().shape({
     name: yup.string().required("Product name is required"),
@@ -23,7 +37,7 @@ const schema = yup.object().shape({
     brand: yup.string().required("Brand is required"),
     color: yup
         .string()
-        .matches(/^#[A-Fa-f0-9]{6}$/, "Invalid color code")
+        .oneOf(colors.map(color => color.colorCode), "Please select a valid color")
         .required("Color is required"),
     regularPrice: yup
         .number()
@@ -43,7 +57,7 @@ const schema = yup.object().shape({
         .array()
         .of(
             yup.object().shape({
-                size: yup.number().required(),
+                size: yup.number().required("Size is required"),
                 stock: yup
                     .number()
                     .typeError("Stock must be a number")
@@ -77,12 +91,15 @@ const ProductDetail = () => {
         register,
         handleSubmit,
         setValue,
+        watch, // Đảm bảo rằng watch được thêm vào destructuring
         formState: { errors, isValid },
         trigger,
     } = useForm({
         resolver: yupResolver(schema),
         mode: "onChange",
     });
+
+    const selectedColor = watch("color"); // Theo dõi giá trị màu hiện tại
 
     const [uploadedImages, setUploadedImages] = useState([]);
     // {
@@ -100,7 +117,7 @@ const ProductDetail = () => {
         if (productId) {
             const fetchProductData = async () => {
                 try {
-                    console.log("productId tai get: ", productId);
+                    console.log("productId tại get: ", productId);
                     const response = await productApiNoAuth.get(productId);
                     const productData = response.data;
 
@@ -147,6 +164,12 @@ const ProductDetail = () => {
             fetchProductData();
         }
     }, [productId]);
+    const handleColorSelect = (colorCode) => {
+        setValue("color", colorCode, {
+            shouldValidate: true,
+        });
+    };
+    
 
     // Submit cập nhật sản phẩm
     const onSubmit = async (data) => {
@@ -250,20 +273,22 @@ const ProductDetail = () => {
 
     const removeImage = async (index) => {
         const imageToRemove = uploadedImages[index];
-    
+
         // Kiểm tra nếu hình ảnh có URL và thuộc Cloudinary
         if (imageToRemove.url && imageToRemove.url.includes("res.cloudinary.com")) {
             try {
-                // Trích xuất public_id từ URL
-                const urlParts = imageToRemove.url.split('/upload/'); // Tách URL tại phần 'upload/'
-                const fullPath = urlParts[1]; // Lấy phần sau 'upload/'
-                const publicIdWithFormat = fullPath.substring(fullPath.indexOf('/') + 1).split('.')[0]; // Loại bỏ phần 'v...' và giữ public_id
-                
-                console.log("publicIdWithFormat:", publicIdWithFormat); // Kiểm tra public_id đã xử lý
-                
+                // Sử dụng regex để trích xuất public_id chính xác
+                const regex = /\/upload\/(?:v\d+\/)?(?:home\/)?([^.]+)\./;
+                const match = imageToRemove.url.match(regex);
+                if (!match || !match[1]) {
+                    throw new Error("Unable to extract public_id from URL");
+                }
+                const publicId = match[1];
+                console.log("Extracted publicId:", publicId); // Kiểm tra public_id đã xử lý
+
                 // Gọi API xóa hình ảnh trên Cloudinary thông qua backend
-                await productApi.deleteImage(publicIdWithFormat);
-    
+                await productApi.deleteImage(publicId);
+
                 // Hiển thị thông báo thành công
                 toast.success("Image deleted from Cloudinary successfully!");
             } catch (error) {
@@ -272,13 +297,12 @@ const ProductDetail = () => {
                 return; // Dừng quá trình xóa nếu có lỗi
             }
         }
-    
+
         // Cập nhật trạng thái uploadedImages
         const updatedImages = uploadedImages.filter((_, i) => i !== index);
         setUploadedImages(updatedImages);
         setValue("images", updatedImages, { shouldValidate: true });
     };
-    
 
     if (loading) {
         return (
@@ -448,19 +472,49 @@ const ProductDetail = () => {
                                     )}
                                 </div>
                             </div>
+                            {/* Color */}
                             <div className="flex justify-between items-center gap-6">
                                 <div className="w-full relative">
                                     <h3 className="text-[20px] mb-4 font-semibold font-rubik text-[#232321]">
-                                        Color (e.g., #FFFFFF)
+                                        Color
                                     </h3>
-                                    <input
-                                        {...register("color")}
-                                        type="text"
-                                        placeholder="Color (e.g., #FFFFFF)"
-                                        className="w-full font-semibold p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
-                                    />
+                                    <div className="flex flex-wrap gap-2">
+                                        {colors.map((color, index) => (
+                                            <button
+                                                key={index}
+                                                type="button"
+                                                onClick={() => handleColorSelect(color.colorCode)}
+                                                className={`w-8 h-8 rounded-full border-2 ${
+                                                    selectedColor === color.colorCode 
+                                                        ? "border-[#008B28]"
+                                                        : "border-transparent"
+                                                }`}
+                                                style={{
+                                                    backgroundColor: color.colorCode,
+                                                }}
+                                            >
+                                                {/* Hiển thị dấu tick nếu màu đang được chọn */}
+                                                {selectedColor === color.colorCode && (
+                                                    <span className="inline-block w-full h-full bg-white rounded-full opacity-50 flex items-center justify-center">
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            className="h-4 w-4 text-[#008B28]"
+                                                            viewBox="0 0 20 20"
+                                                            fill="currentColor"
+                                                        >
+                                                            <path
+                                                                fillRule="evenodd"
+                                                                d="M16.707 5.293a1 1 0 00-1.414 0L9 11.586 6.707 9.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l7-7a1 1 0 000-1.414z"
+                                                                clipRule="evenodd"
+                                                            />
+                                                        </svg>
+                                                    </span>
+                                                )}
+                                            </button>
+                                        ))}
+                                    </div>
                                     {errors.color && (
-                                        <p className="absolute top-[100px] text-red-500 text-sm">
+                                        <p className="absolute top-[60px] text-red-500 text-sm">
                                             {errors.color.message}
                                         </p>
                                     )}
@@ -484,7 +538,7 @@ const ProductDetail = () => {
                             </div>
                         </div>
                     </div>
-                    {/* Image Upload Section */}
+                    {/* Cột ảnh */}
                     <div className="flex-1 flex flex-col gap-6">
                         {/* Image thumbnails */}
                         <section className="border-[8px] rounded-[8px]">
@@ -503,7 +557,7 @@ const ProductDetail = () => {
                                 htmlFor="image-upload"
                                 className="cursor-pointer"
                             >
-                                <img src={icons.UploadImgIcon} alt="" />
+                                <img src={icons.UploadImgIcon} alt="Upload" />
                             </label>
                             <input
                                 type="file"
@@ -541,7 +595,9 @@ const ProductDetail = () => {
                                     />
                                     <div className="flex-1 flex flex-col gap-4">
                                         <span className="font-semibold text-[16px] text-[#232321]">
-                                            Product image {index + 1}
+                                            {image.file
+                                                ? `New Image ${index + 1}`
+                                                : `Existing Image ${index + 1}`}
                                         </span>
 
                                         <div className="w-auto h-1 bg-[#4a69e2] rounded-lg" />
@@ -553,7 +609,7 @@ const ProductDetail = () => {
                                     >
                                         <img
                                             src={icons.DeleteIcon}
-                                            alt=""
+                                            alt="Delete"
                                             className="w-6 h-6"
                                         />
                                     </button>
@@ -584,6 +640,10 @@ const ProductDetail = () => {
                     </button>
                     <button
                         type="button"
+                        onClick={() => {
+                            // Xử lý hủy nếu cần thiết, ví dụ quay về trang trước hoặc reset form
+                            navigate(-1); // Quay về trang trước
+                        }}
                         className="w-full h-12 bg-white border border-black flex justify-center items-center rounded-lg text-[#232321] px-4 transform transition duration-400 hover:opacity-80 hover:bg-primary_blue uppercase active:scale-[97%]"
                     >
                         <p className="text-sm font-rubik text-[14px] tracking-tight">

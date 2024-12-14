@@ -109,8 +109,6 @@ const CheckOutPage = () => {
         }
     };
 
-    console.log(cartData);
-
     return (
         // div: phải đặt display thì mới dùng được justify-start items-center (kiến thức flexbox)
         // Không dùng padding để căn lề
