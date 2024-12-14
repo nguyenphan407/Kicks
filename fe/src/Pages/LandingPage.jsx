@@ -6,12 +6,14 @@ import Categories from "../Components/Categories/Categories";
 import Reviews from "../Components/Review/Reviews";
 import Footer from "../Components/Layout/Footer";
 import NewsletterSignup from "../Components/User/NewsletterSignup";
+import RecentProduct from "../Components/Product/RecentProduct";
 
 const LandingPage = () => {
     return (
         <div>
             <div className="container mx-auto">
                 <Hero />
+                <RecentProduct />
                 <NewDrops />
             </div>
             <Categories />
