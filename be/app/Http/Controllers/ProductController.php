@@ -257,21 +257,11 @@ class ProductController extends Controller
         $viewedProducts = Redis::zrevrange("user:{$userId}:viewed_products", 0, -1);
 
         $result = Product::whereNotIn('products.product_id', $viewedProducts)
-                ->join('product_image', 'product_image.product_id', '=', 'products.product_id')
-                ->select(
-                    'products.product_id',
-                    'products.name',
-                    'products.price',
-                    DB::raw('MIN(product_image.image) as image')
-                )
-                ->groupBy(
-                    'products.product_id',
-                    'products.name',
-                    'products.price',
-                )
+                ->with('images')
                 ->get();
 
-        return response()->json($result);
+        //return $result;
+        return response()->json($this->formatProducts($result));
     }
     // Recommendation
     public function recommendedProducts()
@@ -289,18 +279,7 @@ class ProductController extends Controller
         // Tìm các sản phẩm thuộc cùng danh mục nhưng không có trong danh sách đã xem
         $recommendedProducts = Product::whereIn('category_id', $viewedCategories)
                                     ->whereNotIn('products.product_id', $viewedProducts)
-                                    ->join('product_image', 'product_image.product_id', '=', 'products.product_id')
-                                    ->select(
-                                        'products.product_id',
-                                        'products.name',
-                                        'products.price',
-                                        DB::raw('MIN(product_image.image) as image')
-                                    )
-                                    ->groupBy(
-                                        'products.product_id',
-                                        'products.name',
-                                        'products.price',
-                                    )
+                                    ->with('images')
                                     ->take(5)
                                     ->get();
 
@@ -353,4 +332,32 @@ class ProductController extends Controller
 
         return $product;
     }
+
+    public function formatProducts($products)
+    {
+        $products->transform(function ($product) {
+            $productArray = $product->toArray();
+
+            // Các trường cần xử lý và hàm callback tương ứng
+            $fieldsToFormat = [
+                'images' => function ($images) {
+                    return array_map(function ($image) {
+                        return $image['image'];
+                    }, $images);
+                },
+            ];
+
+            foreach ($fieldsToFormat as $field => $callback) {
+                if (isset($productArray[$field]) && is_array($productArray[$field])) {
+                    $productArray[$field] = $callback($productArray[$field]);
+                }
+            }
+
+            return $productArray;
+        });
+
+        return $products;
+    }
+
+
 }
