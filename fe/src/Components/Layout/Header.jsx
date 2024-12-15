@@ -103,12 +103,6 @@ const Header = () => {
 
       {/* Search, Cart, and User Icons */}
       <div className="flex items-center xl:w-[275px] justify-end gap-2 lg:gap-10">
-        <img
-          src={icons.SearchIcon}
-          className="w-7 hidden xl:block cursor-pointer"
-          alt="Search Icon"
-        />
-
         <Link to="/cart" className="relative">
           <img
             className="sm:scale-[0.9] scale-[0.8] xl:scale-100 w-6 cursor-pointer"

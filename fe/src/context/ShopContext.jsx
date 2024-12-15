@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import cartApi from "../apis/cartApi";
+import socket from "../libs/socket";
 
 export const ShopConText = createContext();
 
@@ -148,7 +149,7 @@ const ShopContextProvider = ({ children }) => {
             }
         } catch (error) {
             console.error("Error updating cart:", error);
-            toast.error("Failed to update quantity.", { autoClose: 1500 });
+            toast.error("Product exceeds available inventory quantity.", { autoClose: 1500 });
             // Hoàn nguyên dữ liệu cũ nếu có lỗi
             setCartData(oldCartData);
         }
@@ -261,6 +262,48 @@ const ShopContextProvider = ({ children }) => {
         }
     }, []);
 
+    // Socket.IO cho cập nhật sản phẩm khi tồn kho thay đổi
+    useEffect(() => {
+        // Hàm xử lý sự kiện cập nhật tồn kho
+        const onInventoryUpdated = (updatedProduct) => {
+            console.log("Received inventory update for product:", updatedProduct);
+            // Gọi hàm fetchProducts để cập nhật danh sách sản phẩm
+            fetchProducts();
+            // Hiển thị thông báo toast
+            toast.info(`Product "${updatedProduct.name}" inventory has been updated.`);
+        };
+
+        // Lắng nghe sự kiện 'inventoryUpdated' từ backend
+        socket.on("inventoryUpdated", onInventoryUpdated);
+
+        // Dọn dẹp listener khi component unmount
+        return () => {
+            socket.off("inventoryUpdated", onInventoryUpdated);
+        };
+    }, [fetchProducts]);
+    
+    useEffect(() => {
+        // Hàm xử lý sự kiện cập nhật sản phẩm
+        const onProductUpdated = (updatedProduct) => {
+            console.log("Received product update:", updatedProduct);
+            // Cập nhật sản phẩm trong state products
+            setProducts((prevProducts) =>
+                prevProducts.map((product) =>
+                    product.product_id === updatedProduct.product_id ? updatedProduct : product
+                )
+            );
+            // Hiển thị thông báo toast
+            toast.info(`Product "${updatedProduct.name}" has been updated.`);
+        };
+
+        // Lắng nghe sự kiện 'productUpdated' từ backend
+        socket.on("productUpdated", onProductUpdated);
+
+        return () => {
+            socket.off("productUpdated", onProductUpdated);
+        };
+    }, []);
+
     const value = {
         products,
         currency,
@@ -285,6 +328,7 @@ const ShopContextProvider = ({ children }) => {
         fetchCartItems, 
         recommendedProducts,
         recentProducts,
+        getProductById: (id) => products.find((product) => product.product_id === id),
     };
 
     return <ShopConText.Provider value={value}>{children}</ShopConText.Provider>;

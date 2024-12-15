@@ -7,16 +7,17 @@ import { images } from "../assets/assets";
 import MayLike from "../Components/Product/MayLike";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
+import socket from "../libs/socket"; // Nếu cần thiết
 
 const ProductDetailPage = () => {
    const location = useLocation();
    useEffect(() => {
       // Cuộn lên đầu trang mỗi khi location (URL) thay đổi
       window.scrollTo(0, 0);
-    }, [location]);;
+    }, [location]);
 
    const { productId } = useParams();
-   const { products, addToCart } = useContext(ShopConText);
+   const { products, addToCart, getProductById } = useContext(ShopConText);
    const [productData, setProductData] = useState(null);
 
    // Ánh xạ màu
@@ -42,9 +43,7 @@ const ProductDetailPage = () => {
    const isMobile = useIsMobile();
    // fetch Product
    const fetchProductData = async () => {
-      const product = products.find(
-         (item) => item.product_id === parseInt(productId, 10)
-      );
+      const product = getProductById(parseInt(productId, 10));
       if (product) {
          setProductData(product);
       } else {
@@ -69,7 +68,7 @@ const ProductDetailPage = () => {
 
    useEffect(() => {
       fetchProductData();
-   }, [productId, products]);
+   }, [productId, products]); // Cập nhật khi products thay đổi
 
    useEffect(() => {
       if (productData) {
@@ -130,6 +129,24 @@ const ProductDetailPage = () => {
       addToCart(productData.product_id, selectedSize);
    };
 
+   // Listener để cập nhật sản phẩm khi có sự thay đổi từ Socket.IO
+   useEffect(() => {
+      const onProductUpdated = (updatedProduct) => {
+         if (updatedProduct.product_id === parseInt(productId, 10)) {
+            console.log("Received update for viewed product:", updatedProduct);
+            setProductData(updatedProduct);
+            toast.info(`Product information for "${updatedProduct.name}" has been updated.`);
+         }
+      };
+
+      // Lắng nghe sự kiện 'productUpdated'
+      socket.on("productUpdated", onProductUpdated);
+
+      return () => {
+         socket.off("productUpdated", onProductUpdated);
+      };
+   }, [productId]);
+   
    return productData ? (
       <div className="container">
          <div className="flex flex-col lg:flex-row mt-6 lg:mt-8 gap-4 mb-[24px] lg:mb-[60px]">
