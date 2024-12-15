@@ -254,15 +254,24 @@ const onSubmit = async (data) => {
     };
 
     const handleImageUpload = (e) => {
-        // upload ảnh
         const files = Array.from(e.target.files);
-        if (files.length + uploadedImages.length > 4) {
-            // tối đa 4 ảnh
+        const maxSize = 2 * 1024 * 1024; // 2MB
+    
+        const validFiles = files.filter(file => {
+            if (file.size <= maxSize) {
+                return true;
+            } else {
+                toast.error(`exceeds the maximum size of 2MB.`);
+                return false;
+            }
+        });
+    
+        if (validFiles.length + uploadedImages.length > 4) {
             alert("You can only upload up to 4 images.");
             return;
         }
-
-        const newImages = files.map((file) => ({
+    
+        const newImages = validFiles.map((file) => ({
             file,
             preview: URL.createObjectURL(file),
         }));
@@ -270,6 +279,7 @@ const onSubmit = async (data) => {
         setUploadedImages(updatedImages);
         setValue("images", updatedImages, { shouldValidate: true });
     };
+    
 
     const removeImage = async (index) => {
         const imageToRemove = uploadedImages[index];
