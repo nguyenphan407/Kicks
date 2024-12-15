@@ -126,13 +126,17 @@ const AddNewProduct = () => {
         
             console.log(data);
         
-            data.images.forEach((image) => {
-                if (image.file instanceof File) {
-                    formData.append("images[]", image.file);
-                } else {
-                    console.error("An image is not a valid File");
-                }
-            });
+            if (data.images && data.images.length > 0) {
+                data.images.forEach((image) => {
+                    if (image.file instanceof File) {
+                        formData.append("images[]", image.file);
+                    } else {
+                        console.error("An image is not a valid File");
+                    }
+                });
+            } else {
+                console.warn("No images to upload");
+            }
         
             const response = await productApi.add(formData);
             console.log("Product added successfully:", response);
@@ -153,6 +157,7 @@ const AddNewProduct = () => {
             }
         }
     };
+    
 
     const handleImageUpload = (e) => {
         const files = Array.from(e.target.files);

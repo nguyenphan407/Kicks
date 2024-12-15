@@ -172,58 +172,58 @@ const ProductDetail = () => {
     
 
     // Submit cập nhật sản phẩm
-    const onSubmit = async (data) => {
-        try {
-            showLoader();
-            const formData = new FormData();
-            // Thêm các trường cơ bản
-            formData.append("name", data.name || ""); // Có thể null
-            formData.append("description", data.description || ""); // Có thể null
-            formData.append("category_id", data.category || ""); // Sửa thành category_id
-            formData.append("brand", data.brand || ""); // Có thể null
-            formData.append("color", data.color || ""); // Có thể null
-            formData.append("regular_price", data.regularPrice); // Bắt buộc
-            formData.append("price", data.salePrice || ""); // Có thể null
-            formData.append("gender", data.gender || ""); // Có thể null
+const onSubmit = async (data) => {
+    try {
+        showLoader();
+        const formData = new FormData();
+        // Thêm các trường cơ bản
+        formData.append("name", data.name || "");
+        formData.append("description", data.description || "");
+        formData.append("category_id", data.category || "");
+        formData.append("brand", data.brand || "");
+        formData.append("color", data.color || "");
+        formData.append("regular_price", data.regularPrice);
+        formData.append("price", data.salePrice || "");
+        formData.append("gender", data.gender || "");
 
-            // Xử lý danh sách kích cỡ và tồn kho
-            // console.log("data size:", data.sizes);
-            data.sizes.forEach((sizeObj, index) => {
-                if (sizeObj.size && sizeObj.stock !== undefined) {
-                    // Dùng index để tạo tên duy nhất cho từng phần tử kích cỡ và tồn kho
-                    formData.append(`sizes[${index}][size]`, sizeObj.size); // Truyền size
-                    formData.append(`sizes[${index}][quantity]`, sizeObj.stock); // Truyền quantity
-                }
-            });
-
-            // Xử lý ảnh
-            data.images.forEach((image, index) => {
-                if (image.file) {
-                    formData.append(`images[${index}]`, image.file); // Truyền file mới
-                } else if (image.url) {
-                    formData.append(`images[${index}]`, image.url); // Truyền ảnh cũ
-                }
-            });
-            // for (let pair of formData.entries()) {
-            //     console.log(`${pair[0]}: ${pair[1]}`);
-            // }
-
-            // Call API cập nhật sản phẩm
-            // console.log("FormData:", formData);
-            const response = await productApi.update(productId, formData);
-            console.log("Product updated successfully:", response);
-            toast.success("Product updated successfully!");
-            navigate("/allproduct");
-            hideLoader();
-        } catch (error) {
-            hideLoader();
-            console.error("Error updating product:", error);
-            if (error.response && error.response.data) {
-                console.error("Backend Error:", error.response.data); // Xem chi tiết lỗi từ backend
+        // Xử lý danh sách kích cỡ và tồn kho
+        data.sizes.forEach((sizeObj, index) => {
+            if (sizeObj.size && sizeObj.stock !== undefined) {
+                formData.append(`sizes[${index}][size]`, sizeObj.size);
+                formData.append(`sizes[${index}][quantity]`, sizeObj.stock);
             }
-            toast.error("Failed to update product!");
+        });
+
+        // Xử lý ảnh
+        data.images.forEach((image) => {
+            if (image.file) {
+                formData.append('images[]', image.file); // Hình ảnh mới
+            } else if (image.url) {
+                formData.append('existingImages[]', image.url); // Hình ảnh hiện có
+            }
+        });
+
+        // Gỡ comment để kiểm tra dữ liệu gửi đi
+        for (let pair of formData.entries()) {
+            console.log(`${pair[0]}: ${pair[1]}`);
         }
-    };
+
+        // Call API cập nhật sản phẩm
+        const response = await productApi.update(productId, formData);
+        console.log("Product updated successfully:", response);
+        toast.success("Product updated successfully!");
+        navigate("/allproduct");
+        hideLoader();
+    } catch (error) {
+        hideLoader();
+        console.error("Error updating product:", error);
+        if (error.response && error.response.data) {
+            console.error("Backend Error:", error.response.data);
+        }
+        toast.error("Failed to update product!");
+    }
+};
+
 
     const handleDelete = async () => {
         try {
@@ -653,6 +653,7 @@ const ProductDetail = () => {
                 </div>
             </form>
         </div>
+        // <></>
     );
 };
 

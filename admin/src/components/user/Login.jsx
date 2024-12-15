@@ -75,7 +75,7 @@ const Login = () => {
       return () => clearInterval(interval); // Clear interval khi component unmount
    }, []);
    return (
-      <div className="h-screen flex">
+      <div className="h-screen flex bg-white">
          <div className="relative left w-1/2">
             <img
                src={icons.LogoIcon}
