@@ -8,7 +8,7 @@ const ProductCard = ({ product, currency }) => {
             to={`/productDetail/${product.product_id}`}
             className="flex flex-col items-center justify-center"
         >
-            <div className="relative cursor-pointer bg-white rounded-2xl xl:rounded-[28px] p-2 w-full h-[180px] xl:h-[280px] 2xl:h-[350px] overflow-hidden mb-4">
+            <div className="relative cursor-pointer bg-white rounded-2xl xl:rounded-[28px] p-2 w-full h-[180px] xl:h-[280px] 2xl:h-[350px] overflow-hidden mb-2">
                 {/* Image Wrapper */}
                 <div className="overflow-hidden rounded-2xl xl:rounded-[28px] w-full h-full">
                     <img
@@ -21,7 +21,7 @@ const ProductCard = ({ product, currency }) => {
                     New
                 </span>
             </div>
-            <h3 className="font-rubik cursor-pointer px-2 text-[16px] xl:text-[24px] font-semibold text-center h-[48px] xl:h-[35px] overflow-hidden">
+            <h3 className="font-rubik cursor-pointer px-2 text-[16px] xl:text-[24px] font-semibold text-center h-[25px] xl:h-[35px] overflow-hidden">
                 {product.name}
             </h3>
 

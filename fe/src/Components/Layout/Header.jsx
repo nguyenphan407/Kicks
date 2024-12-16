@@ -182,83 +182,8 @@ const Header = () => {
           />
         </NavLink>
 
-        {/* Right Side: Search and Icons */}
-        <div className="flex items-center gap-2 lg:gap-4 ml-auto">
-          {/* Search Input for Desktop */}
-          <div className="relative hidden xl:block mr-4">
-            <form onSubmit={(e) => e.preventDefault()} className="relative">
-              <input
-                placeholder="Search..."
-                className="font-semibold input focus:shadow-lg focus:border-2 border-[#4A69E2] px-5 py-3 rounded-xl w-56 transition-all focus:w-64 outline-none"
-                name="search"
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onFocus={() => setIsSearchFocused(true)}
-                onBlur={() => {
-                  setTimeout(() => {
-                    setIsSearchFocused(false);
-                  }, 200);
-                }}
-              />
-              <button type="submit" className="absolute top-3 right-3">
-                <img
-                  src={icons.SearchIcon}
-                  alt="search icon"
-                  className="w-6 h-6 text-gray-500"
-                />
-              </button>
-            </form>
-
-            {/* Search Results */}
-            {products.length > 0 && isSearchFocused && (
-              <div className="absolute top-full left-0 w-full bg-white border border-[#E7E7E3] rounded-lg mt-2 max-h-60 overflow-y-auto z-50">
-                <ul>
-                  <li className="px-4 py-2 font-semibold border-b border-gray-200">
-                    Products
-                  </li>
-                  {products.map((item) => (
-                    <li
-                      key={`product-${item.product_id}`}
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2"
-                      onClick={() => {
-                        navigate(`/productdetail/${item.product_id}`);
-                        setMenuOpenUser(false);
-                        setIsSearchFocused(false);
-                        setSearchResults([]);
-                        console.log("Clicked on product:", item);
-                        console.log(
-                          "Navigated to:",
-                          `/productdetail/${item.product_id}`
-                        );
-                      }}
-                    >
-                      <img
-                        src={item.image || icons.DefaultProductIcon}
-                        alt={item.name}
-                        className="w-10 h-10 object-cover rounded"
-                      />
-                      <div>
-                        <p className="font-inter font-semibold">{item.name}</p>
-                        <p className="font-inter font-normal text-xs text-gray-500">
-                          {item.description}
-                        </p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          {/* Search Icon for Mobile */}
-          <img
-            src={icons.SearchIcon}
-            className="w-7 xl:hidden cursor-pointer"
-            alt="Search Icon"
-          />
-
-          {/* Cart Icon */}
+        {/* Search, Cart, and User Icons */}
+        <div className="flex items-center xl:w-[275px] justify-end gap-2 lg:gap-10">
           <Link to="/cart" className="relative">
             <img
               className="sm:scale-[0.9] scale-[0.8] xl:scale-100 w-6 cursor-pointer"

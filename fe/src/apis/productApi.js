@@ -47,6 +47,7 @@ const productApi = {
         throw error;
       });
   },
+
   search(query) {
     const url = "product/search";
     return axiosClient.get(url, { params: { query } });

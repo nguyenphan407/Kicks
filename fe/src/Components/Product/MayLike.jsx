@@ -12,8 +12,10 @@ const MayLike = () => {
   const itemsToShow = 4;
 
   useEffect(() => {
-    setLimitedProducts(recommendedProducts.slice(index, index + itemsToShow));
-  }, [recommendedProducts, index]);
+    // If recommendedProducts is empty, use products instead
+    const dataToDisplay = recommendedProducts.length > 0 ? recommendedProducts : products;
+    setLimitedProducts(dataToDisplay.slice(index, index + itemsToShow));
+  }, [recommendedProducts, products, index]);
 
   const handlePrev = () => {
     setIndex((prevIndex) => Math.max(prevIndex - itemsToShow, 0));
@@ -62,7 +64,7 @@ const MayLike = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.5 }}
           >
             <ProductCard product={product} currency={currency} />
           </motion.div>

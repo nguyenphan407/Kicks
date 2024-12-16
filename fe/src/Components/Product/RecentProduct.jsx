@@ -19,9 +19,9 @@ const RecentProduct = () => {
     }
 
     return (
-        <div className="mt-[24px] xl:mt-[90px] mb-[128px] font-rubik">
+        <div className="mt-[24px] xl:mt-[90px] mb-[60px] xl:mb-[128px] font-rubik">
             <div className="flex items-end justify-between mb-[24px] xl:mb-8">
-                <h2 className="xl:uppercase w-[172px] xl:w-[800px] font-semibold xl:text-medium text-[24px] leading-[95%]">
+                <h2 className="xl:uppercase w-[220px] xl:w-[800px] font-semibold xl:text-medium text-[24px] leading-[95%]">
                     Recently viewed products
                 </h2>
                 <NavLink to="/listing" className="items-center">
