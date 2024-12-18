@@ -124,11 +124,15 @@ Route::group([
     Route::get('/category', [AdminController::class, 'getQuantityOfCategory']);
     Route::get('/order', [AdminController::class, 'getOrders']);
     Route::get('/order/{id}', [AdminController::class, 'getOrderInfo']);
+    Route::get('/lastest', [AdminController::class, 'getNewOrders']);
     Route::get('/statics', [AdminController::class, 'statics']);
     Route::get('/report', [AdminController::class, 'report']);
     Route::get('/topProducts', [AdminController::class, 'getTopProducts']);
     Route::get('show/{id}', [AdminController::class, 'show']);
     Route::get('search', [AdminController::class, 'search']);
+    Route::get('user/', [AdminController::class, 'getUsers']);
+    Route::get('user/{id}', [UserController::class, 'show']);
+    Route::put('user/update', [UserController::class, 'update']);
     Route::post('store', [ProductController::class, 'store']);
     Route::post('create_invoice', [InvoiceController::class, 'create']);  
     Route::post('size/store', [ProductSizeController::class, 'store']); 

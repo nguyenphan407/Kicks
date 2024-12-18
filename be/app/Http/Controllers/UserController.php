@@ -10,16 +10,21 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class UserController extends Controller
 {
     //
-    public function show()
+    public function show($id)
     {
-        $user = Auth::user();
+        $user = User::find($id);
         
         return response()->json($user);
     }
 
     public function update(Request $request)
     {
-        $user = JWTAuth::parseToken()->toUser();
+        if ($request->has('user_id')){
+            $user = User::find($request->user_id);
+        }
+        else {
+            $user = JWTAuth::parseToken()->toUser();
+        }
 
         $validatedData = $request->validate([
             'first_name' => 'sometimes|required|string|max:50',

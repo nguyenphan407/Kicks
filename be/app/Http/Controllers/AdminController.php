@@ -6,6 +6,7 @@ use App\Events\MessageSent;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\User;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +21,7 @@ class AdminController extends Controller
     public function index(Request $request) {
         if ($request->has('category')) {
             $product = Product::leftJoin('categories', 'products.category_id', '=', 'categories.category_id')
-                ->join('product_size', 'product_size.product_id','=', 'products.product_id')
+                ->leftJoin('product_size', 'product_size.product_id','=', 'products.product_id')
                 ->leftJoin('order_items', 'product_size.product_size_id', '=', 'order_items.product_size_id')
                 ->where('category_name', $request->category)
                 ->select(
@@ -49,7 +50,7 @@ class AdminController extends Controller
         }
         else {
             $product = Product::leftJoin('categories', 'products.category_id', '=', 'categories.category_id')
-                ->join('product_size', 'product_size.product_id','=', 'products.product_id')
+                ->leftJoin('product_size', 'product_size.product_id','=', 'products.product_id')
                 ->leftJoin('order_items', 'product_size.product_size_id', '=', 'order_items.product_size_id')
                 ->select(
                     'products.product_id', 
@@ -501,6 +502,27 @@ class AdminController extends Controller
         ->get();
         
         return response()->json($result);
+    }
+
+    public function getNewOrders() {
+        $result = Order::
+        leftJoin("users", "users.user_id", "=", "orders.user_id")
+        ->select(
+            "orders.order_id",
+            DB::raw('CONCAT_WS(" ", `first_name`, `last_name`) AS `name`'),
+            "orders.payment_status",
+            "orders.updated_at as date",
+            "orders.amount as price"
+        )
+        ->orderBy('orders.updated_at', 'desc')
+        ->limit(5)
+        ->get();
+
+        return response()->json($result);
+    }
+
+    public function getUsers() {
+        return response()->json(User::get());
     }
 
     public function show($id)
