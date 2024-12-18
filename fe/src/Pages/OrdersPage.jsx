@@ -6,7 +6,7 @@ import OrderCard from "../Components/Layout/OrderCard";
 import HeroMini from "../Components/Layout/HeroMini";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
-// import socket from "../libs/socket";
+import socket from "../libs/socket";
 
 const OrdersPage = () => {
     const [activeTab, setActiveTab] = useState("pending");
@@ -28,7 +28,7 @@ const OrdersPage = () => {
             try {
                 const response = await orderApi.getOrdersByStatus(activeTab);
                 setOrders(response.data);
-                // console.log("Fetched Orders:", response.data);
+                console.log("Fetched Orders:", response.data);
             } catch (err) {
                 console.error("Error fetching orders:", err);
                 setError("Failed to fetch orders.");
@@ -41,29 +41,43 @@ const OrdersPage = () => {
         fetchOrders();
     }, [activeTab]);
 
-    // useEffect(() => {
-    //     function onConnect() {
-    //         console.log(socket.id)
-    //     }
-    
-    //     function onDisconnect() {
-    //         console.log('disconnect')
-    //     }
-    
-    //     function onFooEvent(value) {
+    useEffect(() => {
+        // Hàm xử lý kết nối
+        const onConnect = () => {
+            console.log("Connected to Socket.IO server with ID:", socket.id);
+        };
 
-    //     }
-    
-    //     socket.on('connect', onConnect);
-    //     socket.on('disconnect', onDisconnect);
-    //     socket.on('foo', onFooEvent);
-    
-    //     return () => {
-    //       socket.off('connect', onConnect);
-    //       socket.off('disconnect', onDisconnect);
-    //       socket.off('foo', onFooEvent);
-    //     };
-    //   }, []);
+        // Hàm xử lý ngắt kết nối
+        const onDisconnect = () => {
+            console.log("Disconnected from Socket.IO server");
+        };
+
+        // Hàm xử lý sự kiện cập nhật đơn hàng
+        const onOrderUpdate = (updatedOrder) => {
+            console.log("Received order update:", updatedOrder);
+
+            setOrders((prevOrders) => // chỗ này map qua từng Order cũ trước đó rồi update lại
+                prevOrders.map((order) =>
+                    order.order_id === updatedOrder.order_id ? updatedOrder : order
+                )
+            );
+
+            // Hiển thị thông báo toast
+            toast.info(`Order #${updatedOrder.order_id} status updated to ${statusLabels[updatedOrder.status]}.`);
+        };
+
+        // Lắng nghe các sự kiện từ Socket.IO
+        socket.on("connect", onConnect);
+        socket.on("disconnect", onDisconnect);
+        socket.on("orderUpdated", onOrderUpdate);
+
+        return () => {
+            // Dọn dẹp các listener khi component unmount
+            socket.off("connect", onConnect);
+            socket.off("disconnect", onDisconnect);
+            socket.off("orderUpdated", onOrderUpdate);
+        };
+    }, [orders]); 
 
     const renderContent = () => {
         if (loading) {
@@ -116,9 +130,9 @@ const OrdersPage = () => {
             <div className="mt-6 flex flex-col lg:flex-row gap-6">
                 {/* Tab content */}
                 <div className="flex-1">
-                    <AnimatePresence mode="wait"> 
+                    <AnimatePresence mode="wait">
                         <motion.div
-                            key={activeTab} 
+                            key={activeTab}
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
