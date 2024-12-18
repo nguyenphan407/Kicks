@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessageSent;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
@@ -75,6 +76,15 @@ class AdminController extends Controller
             return response()->json($product);
             // return response()->json($this->formatProduct($product->toArray()));
         }
+    }
+
+    public function sendMessage(Request $request)
+    {
+        $message = $request->message;
+
+        broadcast(new MessageSent($message))->toOthers();
+
+        return response()->json(['message' => $message]);
     }
 
     public function search(Request $request) {

@@ -29,6 +29,8 @@ import "react-toastify/dist/ReactToastify.css";
 import OrderSuccess from "./Pages/OrderSuccess";
 import OrderFailed from "./Pages/OrderFailed";
 import OrdersPage from "./Pages/OrdersPage"
+import TestSocket from "./Pages/testSocket";
+import TestSend from "./Pages/TestSend";
 
 const App = () => {
   return (
@@ -52,6 +54,8 @@ const App = () => {
         <Route path="/email-confirmation" element={<EmailConfirmation />} />
         <Route path="/order/success" element={<OrderSuccess />} />
         <Route path="/order/cancel" element={<OrderFailed />} />
+        <Route path="/socket" element={<TestSocket />} />
+        <Route path="/send" element={<TestSend />} />
       </Routes>
       <div className="container">
         <NewsletterSignup />

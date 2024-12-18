@@ -137,3 +137,5 @@ Route::group([
     Route::delete('delete/{id}', [ProductController::class, 'destroy']);
     Route::delete('image/delete/{id}', [ProductImageController::class, 'delete']);
 })->middleware('admin');
+
+Route::post('/send-message', [AdminController::class, 'sendMessage']);

@@ -1,0 +1,47 @@
+{
+	"authHost": "http://localhost",
+    "authEndpoint": "/broadcasting/auth",
+	"clients": [
+		{
+			"appId": "7bfb9489e889c090",
+			"key": "30af8a19da88cde3b95a6a2a964db12c"
+		}
+	],
+	"database": "redis",
+	"databaseConfig": {
+		"redis": {
+			"host": "127.0.0.1",
+            "port": "6379"
+		},
+		"sqlite": {
+			"databasePath": "/database/laravel-echo-server.sqlite"
+		}
+	},
+	"devMode": true,
+	"host": "localhost",
+	"port": "6001",
+	"protocol": "http",
+	"socketio": {
+		"transports": ["websocket", "polling"],
+		"cors": {
+			"origin": "*",
+			"methods": ["GET", "POST"],
+			"credentials": true
+		}
+	},
+	"secureOptions": 67108864,
+	"sslCertPath": "",
+	"sslKeyPath": "",
+	"sslCertChainPath": "",
+	"sslPassphrase": "",
+	"subscribers": {
+		"http": true,
+		"redis": true
+	},
+	"apiOriginAllow": {
+		"allowCors": true,
+		"allowOrigin": "*",
+		"allowMethods": "GET, POST",
+		"allowHeaders": "Origin, Content-Type, X-Auth-Token, X-Requested-With, Accept, Authorization, X-CSRF-TOKEN, X-Socket-Id"
+	}
+}
