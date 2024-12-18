@@ -46,17 +46,24 @@ class ProductController extends Controller
         $user = Auth::user();
         if ($user) {
             $userId = $user->user_id;
-            // Theo dõi lượt xem sản phẩm cho người dùng
-            Redis::zincrby("user:{$userId}:viewed_products", 1, $id);
+
+            // Lưu sản phẩm vào danh sách "sản phẩm đã xem" của người dùng trong Redis
+            Redis::lrem("user:{$userId}:recently_viewed", 0, $id); // Xóa nếu đã tồn tại
+            Redis::lpush("user:{$userId}:recently_viewed", $id);   // Thêm sản phẩm vào đầu danh sách
+            Redis::ltrim("user:{$userId}:recently_viewed", 0, 9);  // Giới hạn danh sách còn 10 sản phẩm gần nhất
         }
-        // Tìm sản phẩm theo ID
+
+        // Tìm sản phẩm theo ID, sử dụng Cache để giảm truy vấn DB
         $product = Cache::remember("product_{$id}", 60, function () use ($id) {
             return Product::with(['images', 'sizes'])->find($id);
         });
 
         // Trả về chi tiết sản phẩm
-        return $product ? response()->json($this->formatProduct($product->toArray())) : response()->json(['error' => 'Product not found'], 404);
+        return $product 
+            ? response()->json($this->formatProduct($product->toArray())) 
+            : response()->json(['error' => 'Product not found'], 404);
     }
+
 
     // 3. Tạo mới một sản phẩm
     public function store(Request $request)
@@ -251,18 +258,36 @@ class ProductController extends Controller
         return response()->json($formattedResults);
     }
 
-    public function recentViewed(){
-        $userId = Auth::user()->user_id;
-        // Lấy danh sách ID sản phẩm đã xem nhiều nhất của người dùng
-        $viewedProducts = Redis::zrevrange("user:{$userId}:viewed_products", 0, -1);
+    public function recentViewed()
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
 
-        $result = Product::whereNotIn('products.product_id', $viewedProducts)
-                ->with('images')
-                ->get();
+        $userId = $user->user_id;
 
-        //return $result;
-        return response()->json($this->formatProducts($result));
+        // Lấy danh sách ID sản phẩm đã xem gần đây từ Redis
+        $viewedProductsIds = Redis::lrange("user:{$userId}:recently_viewed", 0, 9);
+
+        if (empty($viewedProductsIds)) {
+            return response()->json([], 200);
+        }
+
+        // Truy vấn sản phẩm từ database dựa trên danh sách ID
+        $products = Product::whereIn('product_id', $viewedProductsIds)
+                    ->with('images')
+                    ->get();
+
+        // Sắp xếp sản phẩm theo thứ tự ID trong Redis
+        // $sortedProducts = $products->sortBy(function ($product) use ($viewedProductsIds) {
+        //     return array_search($product->product_id, $viewedProductsIds);
+        // });
+
+        // Trả về danh sách sản phẩm đã xem gần đây
+        return response()->json($this->formatProducts($products));
     }
+
     // Recommendation
     public function recommendedProducts()
     {

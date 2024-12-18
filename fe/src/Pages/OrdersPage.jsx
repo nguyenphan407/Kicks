@@ -6,7 +6,7 @@ import OrderCard from "../Components/Layout/OrderCard";
 import HeroMini from "../Components/Layout/HeroMini";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
-import socket from "../libs/socket";
+import echo from "../libs/socket";
 
 const OrdersPage = () => {
     const [activeTab, setActiveTab] = useState("pending");
@@ -41,43 +41,43 @@ const OrdersPage = () => {
         fetchOrders();
     }, [activeTab]);
 
-    useEffect(() => {
-        // Hàm xử lý kết nối
-        const onConnect = () => {
-            console.log("Connected to Socket.IO server with ID:", socket.id);
-        };
+    // useEffect(() => {
+    //     // Hàm xử lý kết nối
+    //     const onConnect = () => {
+    //         console.log("Connected to Socket.IO server with ID:", socket.id);
+    //     };
 
-        // Hàm xử lý ngắt kết nối
-        const onDisconnect = () => {
-            console.log("Disconnected from Socket.IO server");
-        };
+    //     // Hàm xử lý ngắt kết nối
+    //     const onDisconnect = () => {
+    //         console.log("Disconnected from Socket.IO server");
+    //     };
 
-        // Hàm xử lý sự kiện cập nhật đơn hàng
-        const onOrderUpdate = (updatedOrder) => {
-            console.log("Received order update:", updatedOrder);
+    //     // Hàm xử lý sự kiện cập nhật đơn hàng
+    //     const onOrderUpdate = (updatedOrder) => {
+    //         console.log("Received order update:", updatedOrder);
 
-            setOrders((prevOrders) => // chỗ này map qua từng Order cũ trước đó rồi update lại
-                prevOrders.map((order) =>
-                    order.order_id === updatedOrder.order_id ? updatedOrder : order
-                )
-            );
+    //         setOrders((prevOrders) => // chỗ này map qua từng Order cũ trước đó rồi update lại
+    //             prevOrders.map((order) =>
+    //                 order.order_id === updatedOrder.order_id ? updatedOrder : order
+    //             )
+    //         );
 
-            // Hiển thị thông báo toast
-            toast.info(`Order #${updatedOrder.order_id} status updated to ${statusLabels[updatedOrder.status]}.`);
-        };
+    //         // Hiển thị thông báo toast
+    //         toast.info(`Order #${updatedOrder.order_id} status updated to ${statusLabels[updatedOrder.status]}.`);
+    //     };
 
-        // Lắng nghe các sự kiện từ Socket.IO
-        socket.on("connect", onConnect);
-        socket.on("disconnect", onDisconnect);
-        socket.on("orderUpdated", onOrderUpdate);
+    //     // Lắng nghe các sự kiện từ Socket.IO
+    //     socket.on("connect", onConnect);
+    //     socket.on("disconnect", onDisconnect);
+    //     socket.on("orderUpdated", onOrderUpdate);
 
-        return () => {
-            // Dọn dẹp các listener khi component unmount
-            socket.off("connect", onConnect);
-            socket.off("disconnect", onDisconnect);
-            socket.off("orderUpdated", onOrderUpdate);
-        };
-    }, [orders]); 
+    //     return () => {
+    //         // Dọn dẹp các listener khi component unmount
+    //         socket.off("connect", onConnect);
+    //         socket.off("disconnect", onDisconnect);
+    //         socket.off("orderUpdated", onOrderUpdate);
+    //     };
+    // }, [orders]); 
 
     const renderContent = () => {
         if (loading) {

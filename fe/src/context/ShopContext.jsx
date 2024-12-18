@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import cartApi from "../apis/cartApi";
-import socket from "../libs/socket";
+import echo from "../libs/socket";
 
 export const ShopConText = createContext();
 
@@ -30,6 +30,8 @@ const ShopContextProvider = ({ children }) => {
     const [filters, setFilters] = useState({
         page: 1,
     });
+
+    console.log(echo.connector);
 
     // Hàm fetch cả recent và recommended products
     const fetchRecentAndRecommendedProducts = useCallback(async () => {
@@ -262,7 +264,7 @@ const ShopContextProvider = ({ children }) => {
         }
     }, []);
 
-    // Socket.IO cho cập nhật sản phẩm khi tồn kho thay đổi
+    // //Socket.IO cho cập nhật sản phẩm khi tồn kho thay đổi
     useEffect(() => {
         // Hàm xử lý sự kiện cập nhật tồn kho
         const onInventoryUpdated = (updatedProduct) => {
@@ -274,11 +276,11 @@ const ShopContextProvider = ({ children }) => {
         };
 
         // Lắng nghe sự kiện 'inventoryUpdated' từ backend
-        socket.on("inventoryUpdated", onInventoryUpdated);
+        ////socket.on("inventoryUpdated", onInventoryUpdated);
 
         // Dọn dẹp listener khi component unmount
         return () => {
-            socket.off("inventoryUpdated", onInventoryUpdated);
+            ////socket.off("inventoryUpdated", onInventoryUpdated);
         };
     }, [fetchProducts]);
     
@@ -297,10 +299,10 @@ const ShopContextProvider = ({ children }) => {
         };
 
         // Lắng nghe sự kiện 'productUpdated' từ backend
-        socket.on("productUpdated", onProductUpdated);
+        //socket.on("productUpdated", onProductUpdated);
 
         return () => {
-            socket.off("productUpdated", onProductUpdated);
+            //socket.off("productUpdated", onProductUpdated);
         };
     }, []);
 
