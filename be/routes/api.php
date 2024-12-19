@@ -138,6 +138,8 @@ Route::group([
     Route::post('size/store', [ProductSizeController::class, 'store']); 
     Route::put('update/{id}', [ProductController::class, 'update']); 
     Route::put('order/update/{id}', [AdminController::class, 'updateOrder']);
+    Route::delete('user/delete', [UserController::class, 'delete']);
+    Route::put('order/delete', [OrderController::class, 'delete']);
     Route::delete('delete/{id}', [ProductController::class, 'destroy']);
     Route::delete('image/delete/{id}', [ProductImageController::class, 'delete']);
 })->middleware('admin');

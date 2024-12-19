@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\OrderNotification;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -158,6 +159,13 @@ class OrderController extends Controller
                     'price' => $item['price'],
                 ]);
             }
+
+            $data = [
+                "event" => "created",
+                "order" => $order
+            ];
+
+            broadcast(new OrderNotification($order))->toOthers();
         } catch (Exception $e) {
             return response()->json($e);
         }
@@ -175,6 +183,31 @@ class OrderController extends Controller
                 $cart = Cart::where('user_id', $order->first()->user_id);
                 $cart->delete();
             }
+
+            broadcast(new OrderNotification($order))->toOthers();
         }
+        else {
+            $order = Order::find($request->order_id);
+
+            $validatedData = $request->validate([
+                'amount' => 'nullable|numeric|min:0',
+                'shipping' => 'nullable|string|min:0',
+                'shipping_address' => 'nullable|string|max:255',
+            ]);
+
+            $order->update($validatedData);
+
+            broadcast(new OrderNotification($order))->toOthers();
+        }
+    }
+
+    public function delete(Request $request){
+        $order = Order::findOrFail($request->order_id);
+
+        $order->delete();
+
+        OrderItem::where('order_id', '=', $request->order_id)->delete();
+
+        return response()->json("Order deleted successfully");
     }
 }
