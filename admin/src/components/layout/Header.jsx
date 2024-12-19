@@ -11,9 +11,9 @@ import Notifications from "@/components/Cart/Notifications";
 import { motion, AnimatePresence } from "framer-motion";
 
 const dropdownVariants = {
-  hidden: { opacity: 0, scale: 0.95 },
-  visible: { opacity: 1, scale: 1 },
-  exit: { opacity: 0, scale: 0.95 },
+   hidden: { opacity: 0, scale: 0.95 },
+   visible: { opacity: 1, scale: 1 },
+   exit: { opacity: 0, scale: 0.95 },
 };
 
 const Header = () => {
@@ -101,7 +101,7 @@ const Header = () => {
 
             // Nếu query là số, gọi thêm API tìm kiếm đơn hàng với tiền tố "ord"
             const orderPromise = isNumeric(query)
-               ? orderApi.search(`ord${query}`)
+               ? orderApi.search(query)
                : Promise.resolve({ data: [] });
 
             // Chờ tất cả các promise hoàn thành
@@ -129,7 +129,7 @@ const Header = () => {
             // console.log("Tìm kiếm thành công!");
          } catch (error) {
             console.error("Error searching:", error);
-            toast.error("Tìm kiếm thất bại!");
+            toast.error("Error searching!");
             setSearchResults([]);
          }
       }, 150); // 150ms debounce
@@ -161,7 +161,7 @@ const Header = () => {
          setNotifications(response.data);
       } catch (error) {
          console.error("Failed to fetch notifications:", error);
-         toast.error("Không thể tải thông báo!");
+         toast.error("Failed to fetch notifications!");
       } finally {
          setIsLoadingNotifications(false);
       }
@@ -218,7 +218,7 @@ const Header = () => {
                         {products.length > 0 && (
                            <>
                               <li className="px-4 py-2 font-semibold border-b border-gray-200">
-                                 Sản phẩm
+                                 Products
                               </li>
                               {products.map((item) => (
                                  <li
@@ -257,7 +257,7 @@ const Header = () => {
                         {orders.length > 0 && (
                            <>
                               <li className="px-4 py-2 font-semibold border-b border-gray-200 mt-2">
-                                 Đơn hàng
+                                 Orders
                               </li>
                               {orders.map((order) => (
                                  <li
@@ -276,28 +276,25 @@ const Header = () => {
                                        <div className="p-2 rounded-[8px] bg-[#4A69E2] w-[40px] h-[40px] flex items-start justify-center">
                                           <img
                                              src={icons.BagHandleIcon}
-                                             alt="icon giỏ hàng"
+                                             alt="BagHandleIcon"
                                              className=""
                                           />
                                        </div>
                                        <div>
                                           <div className="font-inter font-semibold">
-                                             ID Đơn hàng:{" "}
+                                             Order ID:{" "}
                                              <span className="text-gray-600 font-normal font-inter">
                                                 {order.order_id}
                                              </span>
                                           </div>
                                           <div className="font-inter font-semibold">
-                                             Trạng thái:{" "}
+                                             Status:{" "}
                                              <span className="text-gray-600 font-normal font-inter">
                                                 {order.payment_status}
                                              </span>
                                           </div>
                                        </div>
                                     </section>
-                                    <div className="font-inter text-sm text-gray-500">
-                                       Ngày: {order.date} | Giá: ${order.price}
-                                    </div>
                                  </li>
                               ))}
                            </>
@@ -306,7 +303,7 @@ const Header = () => {
                         {/* Hiển thị thông báo khi không có kết quả tìm kiếm */}
                         {products.length === 0 && orders.length === 0 && (
                            <li className="px-4 py-2 text-center text-gray-500">
-                              Không tìm thấy kết quả nào.
+                              Not found .
                            </li>
                         )}
                      </ul>
@@ -314,77 +311,82 @@ const Header = () => {
                )}
             </div>
 
-<div className="relative" ref={notificationsRef}>
-  <button className="relative" onClick={handleNotificationsClick}>
-    <Notifications />
-  </button>
+            <div className="relative" ref={notificationsRef}>
+               <button className="relative" onClick={handleNotificationsClick}>
+                  <Notifications />
+               </button>
 
-  <AnimatePresence>
-    {notificationsOpen && (
-      <motion.div
-        className="absolute right-0 mt-[45px] w-[460px] bg-white border border-gray-200 rounded-[16px] shadow-lg z-50"
-        variants={dropdownVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        transition={{ duration: 0.2 }}
-      >
-        <div className="flex justify-between items-center p-4">
-          <div className="border-gray-200 font-semibold font-rubik text-xl">
-            Latest Notifications
-          </div>
-          <img
-            src={icons.ErrorCircle}
-            alt=""
-            onClick={handleOverlayClick}
-            className="active:scale-90"
-          />
-        </div>
-        <ul>
-          {isLoadingNotifications ? (
-            <li className="px-4 py-2 text-center text-gray-500">
-              Loading data...
-            </li>
-          ) : notifications.length > 0 ? (
-            notifications.map((notification) => (
-              <li
-                key={notification.order_id}
-                className="flex gap-4 px-4 py-2 hover:bg-gray-100 border-b border-gray-200 cursor-pointer"
-                onClick={() => {
-                  navigate(`/orderdetail/${notification.order_id}`);
-                  setMenuOpenUser(false);
-                  setIsSearchFocused(false);
-                  setSearchResults([]);
-                }}
-              >
-                <img
-                  src={images.Thumbnails[0]}
-                  alt=""
-                  className="w-[64px] h-[64px] rounded-md"
-                />
-                <div>
-                  <div className="font-semibold">
-                    Order #{notification.order_id} from {notification.name}
-                  </div>
-                  <div className="text-sm text-gray-600 font-semibold">
-                    Payment Status: {notification.payment_status}
-                  </div>
-                  <div className="text-xs text-gray-500 font-semibold">
-                    Date: {notification.date} | Price: ${notification.price}
-                  </div>
-                </div>
-              </li>
-            ))
-          ) : (
-            <li className="px-4 py-2 text-center text-gray-500">
-              No new notifications.
-            </li>
-          )}
-        </ul>
-      </motion.div>
-    )}
-  </AnimatePresence>
-</div>
+               <AnimatePresence>
+                  {notificationsOpen && (
+                     <motion.div
+                        className="absolute right-0 mt-[45px] w-[460px] bg-white border border-gray-200 rounded-[16px] shadow-lg z-50"
+                        variants={dropdownVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        transition={{ duration: 0.2 }}
+                     >
+                        <div className="flex justify-between items-center p-4">
+                           <div className="border-gray-200 font-semibold font-rubik text-xl">
+                              Latest Notifications
+                           </div>
+                           <img
+                              src={icons.ErrorCircle}
+                              alt=""
+                              onClick={handleOverlayClick}
+                              className="active:scale-90"
+                           />
+                        </div>
+                        <ul>
+                           {isLoadingNotifications ? (
+                              <li className="px-4 py-2 text-center text-gray-500">
+                                 Loading data...
+                              </li>
+                           ) : notifications.length > 0 ? (
+                              notifications.map((notification) => (
+                                 <li
+                                    key={notification.order_id}
+                                    className="flex gap-4 px-4 py-2 hover:bg-gray-100 border-b border-gray-200 cursor-pointer"
+                                    onClick={() => {
+                                       navigate(
+                                          `/orderdetail/${notification.order_id}`
+                                       );
+                                       setMenuOpenUser(false);
+                                       setIsSearchFocused(false);
+                                       setSearchResults([]);
+                                    }}
+                                 >
+                                    <img
+                                       src={images.Thumbnails[0]}
+                                       alt=""
+                                       className="w-[64px] h-[64px] rounded-md"
+                                    />
+                                    <div>
+                                       <div className="font-semibold">
+                                          Order #{notification.order_id} from{" "}
+                                          {notification.name}
+                                       </div>
+                                       <div className="text-sm text-gray-600 font-semibold">
+                                          Payment Status:{" "}
+                                          {notification.payment_status}
+                                       </div>
+                                       <div className="text-xs text-gray-500 font-semibold">
+                                          Date: {notification.date} | Price: $
+                                          {notification.price}
+                                       </div>
+                                    </div>
+                                 </li>
+                              ))
+                           ) : (
+                              <li className="px-4 py-2 text-center text-gray-500">
+                                 No new notifications.
+                              </li>
+                           )}
+                        </ul>
+                     </motion.div>
+                  )}
+               </AnimatePresence>
+            </div>
 
             {/* User Dropdown */}
             <div className="relative">

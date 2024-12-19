@@ -13,8 +13,6 @@ import {
 import {
     Card,
     CardContent,
-    CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
@@ -24,75 +22,59 @@ import {
     ChartTooltipContent,
 } from "@/components/ui/chart";
 
-import { getStatics } from "@/apis/reportApi"; // Đảm bảo đường dẫn đúng
+import { getStatics } from "@/apis/reportApi";
 
 const chartConfig = {
     revenue: {
-        label: "revenue",
-        color: "hsl(var(--chart-1))", // Sử dụng màu từ biến CSS của ShadCN
+        label: "Revenue",
+        color: "hsl(var(--chart-1))",
     },
 };
 
-// Mảng tên tháng để chuyển đổi từ số sang tên
 const monthNames = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
 ];
 
 export function MyLineChart() {
-    const [metric, setMetric] = useState("month"); // Mặc định là 'month'
+    const [metric, setMetric] = useState("month");
     const [chartData, setChartData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Hàm fetch dữ liệu từ API
     const fetchChartData = async (selectedMetric) => {
         setLoading(true);
         setError(null);
+
         try {
             const response = await getStatics(selectedMetric);
-            // Giả sử API trả về dữ liệu dạng [{ day: "2024-12-01", revenue: 1000 }, ...]
-            // Hoặc [{ month: 1, revenue: 1836 }, ...] nếu metric là 'month'
-            // Hoặc [{ year: 2024, revenue: 3140 }, ...] nếu metric là 'year'
 
             const transformedData = response.data.map((item) => {
-                let key;
-                let value;
+                let key = "Unknown";
                 if (selectedMetric === "day") {
-                    key = item.day;
+                    key = item.day || "Unknown Day";
                 } else if (selectedMetric === "month") {
-                    // Kiểm tra nếu item.month là số, chuyển đổi thành tên tháng
-                    if (typeof item.month === 'number' && item.month >= 1 && item.month <= 12) {
-                        key = monthNames[item.month - 1];
-                    } else if (typeof item.month === 'string') {
-                        key = item.month;
-                    } else {
-                        key = "Unknown";
-                    }
+                    key = monthNames[item.month - 1] || "Unknown Month";
                 } else if (selectedMetric === "year") {
-                    key = item.year; // Ví dụ: "2024"
+                    key = item.year || "Unknown Year";
                 }
-                value = item.revenue;
-                return {
-                    [selectedMetric]: key,
-                    revenue: value,
-                };
+                const revenue = parseFloat(item.revenue) || 0;
+                return { [selectedMetric]: key, revenue };
             });
+
             setChartData(transformedData);
         } catch (err) {
             console.error(err);
-            setError("Đã xảy ra lỗi khi tải dữ liệu.");
+            setError("Failed to fetch data. Please try again later.");
         } finally {
             setLoading(false);
         }
     };
 
-    // Gọi fetch dữ liệu khi component mount và khi metric thay đổi
     useEffect(() => {
         fetchChartData(metric);
     }, [metric]);
 
-    // Hàm xử lý khi người dùng chọn metric
     const handleMetricChange = (selectedMetric) => {
         setMetric(selectedMetric);
     };
@@ -101,45 +83,32 @@ export function MyLineChart() {
         <Card>
             <CardHeader>
                 <div className="flex justify-between items-center border-b border-black pb-4">
-                    <CardTitle>Sale Graph</CardTitle>
-                    <div className="flex gap-[15px]">
-                        <button
-                            className={`font-inter text-[14px] font-medium px-4 py-[5px] rounded-[8px] border uppercase active:opacity-90  active:scale-[97%] ${
-                                metric === "day"
-                                    ? "bg-black text-white"
-                                    : "border-black text-black"
-                            }`}
-                            onClick={() => handleMetricChange("day")}
-                        >
-                            Weekly
-                        </button>
-                        <button
-                            className={`font-inter text-[14px] font-medium px-4 py-[5px] rounded-[8px] border uppercase active:opacity-90  active:scale-[97%] ${
-                                metric === "month"
-                                    ? "bg-black text-white"
-                                    : "border-black text-black"
-                            }`}
-                            onClick={() => handleMetricChange("month")}
-                        >
-                            Monthly
-                        </button>
-                        <button
-                            className={`font-inter text-[14px] font-medium px-4 py-[5px] rounded-[8px] border uppercase active:opacity-90  active:scale-[97%] ${
-                                metric === "year"
-                                    ? "bg-black text-white"
-                                    : "border-black text-black"
-                            }`}
-                            onClick={() => handleMetricChange("year")}
-                        >
-                            Yearly
-                        </button>
+                    <CardTitle>Sales Graph</CardTitle>
+                    <div className="flex gap-4">
+                        {["day", "month", "year"].map((type) => (
+                            <button
+                                key={type}
+                                className={`font-inter text-[14px] font-medium px-4 py-[5px] rounded-[8px] border uppercase active:opacity-90 active:scale-95 ${
+                                    metric === type
+                                        ? "bg-black text-white"
+                                        : "border-black text-black"
+                                }`}
+                                onClick={() => handleMetricChange(type)}
+                            >
+                                {type === "day"
+                                    ? "Daily"
+                                    : type === "month"
+                                    ? "Monthly"
+                                    : "Yearly"}
+                            </button>
+                        ))}
                     </div>
                 </div>
             </CardHeader>
             <CardContent>
                 {loading ? (
                     <div className="flex justify-center items-center h-96">
-                        <span>Đang tải dữ liệu...</span>
+                        <span>Loading data...</span>
                     </div>
                 ) : error ? (
                     <div className="flex justify-center items-center h-96 text-red-500">
@@ -157,20 +126,16 @@ export function MyLineChart() {
                                     bottom: 20,
                                 }}
                             >
-                                <CartesianGrid
-                                    vertical={false}
-                                    strokeDasharray="3 3"
-                                />
+                                <CartesianGrid vertical={false} strokeDasharray="3 3" />
                                 <YAxis
                                     width={40}
-                                    axisLine={{ stroke: "#E5E7EB", strokeWidth: 1 }}
                                     tickLine={false}
                                     tickFormatter={(value) => `$${value}`}
+                                    domain={[0, 'dataMax']} // Giới hạn từ 0 đến giá trị lớn nhất
                                     tick={{
                                         fontFamily: "Inter",
-                                        fontSize: 16,
+                                        fontSize: 14,
                                         fill: "#8E8E8E",
-                                        fontWeight: "600",
                                     }}
                                 />
                                 <XAxis
@@ -178,34 +143,21 @@ export function MyLineChart() {
                                     tickLine={false}
                                     axisLine={false}
                                     tickMargin={8}
-                                    tickFormatter={(value) => {
-                                        if (metric === "day") {
-                                            const date = new Date(value);
-                                            if (!isNaN(date)) {
-                                                return date.toLocaleDateString();
-                                            }
-                                            return value;
-                                        } else if (metric === "month") {
-                                            return typeof value === 'string' ? value.slice(0, 3) : value;
-                                        } else if (metric === "year") {
-                                            return value;
-                                        }
-                                        return value;
-                                    }}
+                                    tickFormatter={(value) =>
+                                        metric === "month"
+                                            ? value.slice(0, 3)
+                                            : value
+                                    }
                                     tick={{
                                         fontFamily: "Inter",
-                                        fontSize: 16,
+                                        fontSize: 14,
                                         fill: "black",
-                                        fontWeight: "600",
                                     }}
                                 />
-                                <ChartTooltip
-                                    cursor={false}
-                                    content={<ChartTooltipContent hideLabel />}
-                                />
+                                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
                                 <Line
                                     dataKey="revenue"
-                                    type="natural"
+                                    type="monotone"
                                     stroke="#4A69E2"
                                     strokeWidth={3}
                                     dot={false}
