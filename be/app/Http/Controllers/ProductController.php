@@ -294,7 +294,7 @@ class ProductController extends Controller
         $userId = Auth::user()->user_id;
 
         // Lấy danh sách ID sản phẩm đã xem nhiều nhất của người dùng
-        $viewedProducts = Redis::zrevrange("user:{$userId}:viewed_products", 0, -1);
+        $viewedProducts = Redis::lrange("user:{$userId}:recently_viewed", 0, 9);
 
         // Lấy danh mục của các sản phẩm đã xem
         $viewedCategories = Product::whereIn('product_id', $viewedProducts)
@@ -308,7 +308,7 @@ class ProductController extends Controller
                                     ->take(5)
                                     ->get();
 
-        return response()->json($recommendedProducts);
+        return response()->json($this->formatProducts($recommendedProducts));
     }
 
     private function handleProductImages($images, $productId)
