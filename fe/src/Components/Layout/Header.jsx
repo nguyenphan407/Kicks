@@ -1,3 +1,4 @@
+// Header.jsx
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { icons } from "../../assets/assets";
 import { Link, NavLink, useNavigate } from "react-router-dom";
@@ -5,7 +6,6 @@ import { ShopConText } from "../../context/ShopContext";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import authApi from "../../apis/authApi";
-import productApi from "../../apis/productApi";
 
 const Header = () => {
   const [visible, setVisible] = useState(false);
@@ -13,30 +13,19 @@ const Header = () => {
     useContext(ShopConText);
   const sidebarRef = useRef(null);
   const headerRef = useRef(null);
-  const debounceRef = useRef(null);
   const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
-
-  // Search-related states
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [query, setQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
     const count = getCartCount();
     setCartCount(count);
   }, [cartData, cartChanged]);
 
-  // Click outside handler for sidebar and search
+  // Click outside handler for sidebar
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        (sidebarRef.current && !sidebarRef.current.contains(event.target)) ||
-        (headerRef.current && !headerRef.current.contains(event.target))
-      ) {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
         setVisible(false);
-        setIsSearchFocused(false);
-        setSearchResults([]);
       }
     };
 
@@ -44,44 +33,7 @@ const Header = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [sidebarRef, headerRef]);
-
-  // Search functionality
-  useEffect(() => {
-    if (!query.trim()) {
-      setSearchResults([]);
-      return;
-    }
-
-    // Debounce search
-    debounceRef.current = setTimeout(async () => {
-      try {
-        // Search for products
-        const productResponse = await productApi.search(query);
-
-        // Process product data
-        const products = productResponse.data.flat().map((item) => ({
-          ...item,
-          type: "product",
-        }));
-
-        // Set search results
-        setSearchResults(products);
-      } catch (error) {
-        console.error("Error searching:", error);
-        toast.error("Search failed!");
-        setSearchResults([]);
-      }
-    }, 150);
-
-    // Cleanup timeout
-    return () => {
-      clearTimeout(debounceRef.current);
-    };
-  }, [query]);
-
-  // Filter search results
-  const products = searchResults.filter((item) => item.type === "product");
+  }, [sidebarRef]);
 
   const logout = async () => {
     try {
@@ -116,16 +68,12 @@ const Header = () => {
       ref={headerRef}
       className="flex items-center justify-between p-4 sm:p-6 xl:p-8 font-semibold font-rubik bg-[#FAFAFA] rounded-xl sm:rounded-3xl mt-8 relative"
     >
-      {/* Overlay */}
-      {(menuOpenUser || isSearchFocused) && (
+      {/* Overlay for user menu */}
+      {menuOpenUser && (
         <div
           style={{ zIndex: 5 }}
           className="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-20"
-          onClick={() => {
-            setMenuOpenUser(false);
-            setIsSearchFocused(false);
-            setSearchResults([]);
-          }}
+          onClick={() => setMenuOpenUser(false)}
         ></div>
       )}
 
@@ -143,7 +91,6 @@ const Header = () => {
       <div className="flex items-center justify-between w-full">
         {/* Left Side: Navigation Links */}
         <div className="flex items-center">
-          {/* Navigation Menu */}
           <ul className="hidden xl:flex text-base lg:gap-10 mr-4">
             <NavLink to="/listing" className="items-center">
               <p className="font-semibold">New Drops🔥</p>
@@ -169,80 +116,8 @@ const Header = () => {
           />
         </NavLink>
 
-        {/* Right Side: Search and Icons */}
+        {/* Right Side: Icons */}
         <div className="flex items-center gap-2 lg:gap-4 ml-auto">
-          {/* Search Input for Desktop */}
-          <div className="relative hidden xl:block mr-4">
-            <form onSubmit={(e) => e.preventDefault()} className="relative">
-              <input
-                placeholder="Search..."
-                className="font-semibold input focus:shadow-lg focus:border-2 border-[#4A69E2] px-5 py-3 rounded-xl w-56 transition-all focus:w-64 outline-none"
-                name="search"
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onFocus={() => setIsSearchFocused(true)}
-                onBlur={() => {
-                  setTimeout(() => {
-                    setIsSearchFocused(false);
-                  }, 200);
-                }}
-              />
-              <button type="submit" className="absolute top-3 right-3">
-                <img
-                  src={icons.SearchIcon}
-                  alt="search icon"
-                  className="w-6 h-6 text-gray-500"
-                />
-              </button>
-            </form>
-
-            {/* Search Results */}
-            {products.length > 0 && isSearchFocused && (
-              <div className="absolute top-full left-0 w-full bg-white border border-[#E7E7E3] rounded-lg mt-2 max-h-60 overflow-y-auto z-10">
-                <ul>
-                  <li className="px-4 py-2 font-semibold border-b border-gray-200">
-                    Products
-                  </li>
-                  {products.map((item) => (
-                    <li
-                      key={`product-${item.product_id}`}
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2"
-                      onClick={() => {
-                        console.log(
-                          `Navigating to product detail: ${item.product_id}`
-                        );
-                        navigate(`/productdetail/${item.product_id}`);
-                        setMenuOpenUser(false);
-                        setIsSearchFocused(false);
-                        setSearchResults([]);
-                      }}
-                    >
-                      <img
-                        src={item.image || icons.DefaultProductIcon}
-                        alt={item.name}
-                        className="w-10 h-10 object-cover rounded"
-                      />
-                      <div>
-                        <p className="font-inter font-semibold">{item.name}</p>
-                        <p className="font-inter font-normal text-xs text-gray-500">
-                          {item.description}
-                        </p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          {/* Search Icon for Mobile */}
-          <img
-            src={icons.SearchIcon}
-            className="w-7 xl:hidden cursor-pointer"
-            alt="Search Icon"
-          />
-
           {/* Cart Icon */}
           <Link to="/cart" className="relative">
             <img
