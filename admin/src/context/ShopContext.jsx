@@ -3,6 +3,9 @@ import productApi from "../apis/productApi";
 import categoryApi from "../apis/categoryApi";
 import PropTypes from "prop-types";
 import { useLoader } from "./LoaderContext";
+import io from "socket.io-client";
+import Echo from "laravel-echo";
+import { toast } from "react-toastify";
 
 export const ShopConText = createContext();
 
@@ -20,6 +23,14 @@ const ShopContextProvider = ({ children }) => {
     const [categories, setCategories] = useState([]);
     const [currentCategory, setCurrentCategory] = useState({ category_id: 1, category_name: null });
     const [isOpenCategories, setIsOpenCategories] = useState(false); // khai báo thằng này ở đây để chỉ hiện khi nào mở trang
+
+    const echo = new Echo({
+        broadcaster: 'socket.io',
+        host: 'ws://localhost:6001', // URL của Laravel Echo Server
+        client: io, // Truyền đối tượng socket.io client
+        transports: ['websocket'],
+        reconnectionDelayMax: 10000,
+    });
 
     // Toggle hiển thị dropdown
     const toggleDropdownCategories = () =>
@@ -106,6 +117,34 @@ const ShopContextProvider = ({ children }) => {
         setIsOpenCategories,
         toggleDropdownCategories,
     };
+
+    useEffect(() => {
+        console.log(echo.connector);
+
+        // Lắng nghe sự kiện 'MessageSent' trên channel 'kicks_database_messages'
+        echo.channel('kicks_database_orders')
+            .listen('.OrderNotification', function (event) {
+                console.log(event.order);  // In ra thông tin sự kiện
+
+                if (event.order.event == "created"){
+                    toast.info("Order " + event.order.order.order_id + " has created", { autoClose: 2000 })
+                }
+                // Cập nhật state để hiển thị message
+                if (event.order.event == "updated"){
+                    if (event.order.order.payment_status == "failed"){
+                        toast.error("Order " + event.order.order.order_id + " was cancelled", { autoClose: 2000 })
+                    }
+                    if (event.order.order.payment_status == "paid"){
+                        toast.success("Order " + event.order.order.order_id + " has paid", { autoClose: 2000 })
+                    }
+                }
+            });
+
+        // Dọn dẹp khi component bị unmount
+        return () => {
+            echo.leaveChannel('kicks_database_messages');
+        };
+    }, []);
 
     return (
         <ShopConText.Provider value={value}>{children}</ShopConText.Provider>

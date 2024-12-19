@@ -29,7 +29,7 @@ class UserController extends Controller
         $validatedData = $request->validate([
             'first_name' => 'sometimes|required|string|max:50',
             'last_name'  => 'sometimes|required|string|max:50',
-            'email'      => 'sometimes|required|email|unique:users,email,' . $user->id,
+            'email'      => 'sometimes|required|email|unique:users,email,' . $user->user_id,
             'phone_number' => 'sometimes|string|max:20',
             'password'   => 'sometimes|string|min:6',
             'avatar' => 'sometimes',

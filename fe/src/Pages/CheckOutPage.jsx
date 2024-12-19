@@ -89,7 +89,7 @@ const CheckOutPage = () => {
             items: convertCartData,
             returnUrl: "http://localhost:5173/order/success",
             cancelUrl: "http://localhost:5173/order/cancel",
-            price: totalAmount, // Sửa lại để sử dụng tổng tiền thực tế
+            price: totalAmount * 25000, // Sửa lại để sử dụng tổng tiền thực tế
          };
 
          console.log(JSON.stringify(productData));

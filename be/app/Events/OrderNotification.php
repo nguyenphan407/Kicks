@@ -39,8 +39,10 @@ class OrderNotification implements ShouldBroadcast
         return 'OrderNotification';  // Tên sự kiện
     }
 
-    public function broadcastWith()
-    {
-        return ["order" => $this->order];
-    }
+    // public function broadcastWith()
+    // {
+    //     return [
+    //         "order" => $this->order
+    //     ];
+    // }
 }

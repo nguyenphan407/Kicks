@@ -165,7 +165,7 @@ class OrderController extends Controller
                 "order" => $order
             ];
 
-            broadcast(new OrderNotification($order))->toOthers();
+            broadcast(new OrderNotification($data))->toOthers();
         } catch (Exception $e) {
             return response()->json($e);
         }
@@ -184,7 +184,12 @@ class OrderController extends Controller
                 $cart->delete();
             }
 
-            broadcast(new OrderNotification($order))->toOthers();
+            $data = [
+                'event' => "updated",
+                "order" => $order
+            ];
+
+            broadcast(new OrderNotification($data))->toOthers();
         }
         else {
             $order = Order::find($request->order_id);
@@ -197,7 +202,12 @@ class OrderController extends Controller
 
             $order->update($validatedData);
 
-            broadcast(new OrderNotification($order))->toOthers();
+            $data = [
+                'even' => "updated",
+                "order" => $order
+            ];
+
+            broadcast(new OrderNotification($data))->toOthers();
         }
     }
 
