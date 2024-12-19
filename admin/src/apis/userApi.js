@@ -1,15 +1,21 @@
+// userApi.js
 import axiosClient from "./axiosClient";
 
 const userApi = {
-  getUserById(id) {
-    // Lấy thông tin user theo ID
-    return axiosClient.get(`user/${id}`);
-  },
+    getAll(params) {
+        const url = "admin/user";
+        return axiosClient.get(url, { params });
+    },
 
-  updateUser(data) {
-    // Cập nhật thông tin user
-    return axiosClient.put("user/update", data);
-  },
+    getUserById(id) {
+        const url = `admin/user/${id}`;
+        return axiosClient.get(url);
+    },
+
+    update(data) {
+        const url = "admin/user/update"; 
+        return axiosClient.put(url, data); 
+    },
 };
 
 export default userApi;

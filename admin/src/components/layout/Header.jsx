@@ -1,22 +1,36 @@
 // admin/Header.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom"; // Để điều hướng sau khi logout
-import { icons } from "../../assets/assets";
+import { icons, images } from "../../assets/assets";
 import authApi from "../../apis/authApi";
 import productApi from "@/apis/productApi"; // Import productApi
 import orderApi from "@/apis/orderApi"; // Import orderApi
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Notifications from "@/components/Cart/Notifications";
+import { motion, AnimatePresence } from "framer-motion";
+
+const dropdownVariants = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { opacity: 1, scale: 1 },
+  exit: { opacity: 0, scale: 0.95 },
+};
 
 const Header = () => {
+   // Các state hiện tại
    const [menuOpenUser, setMenuOpenUser] = useState(false);
    const [isSearchFocused, setIsSearchFocused] = useState(false);
    const [query, setQuery] = useState(""); // State quản lý từ khóa tìm kiếm
    const [searchResults, setSearchResults] = useState([]); // State quản lý kết quả tìm kiếm
-   const navigate = useNavigate(); // Sử dụng hook điều hướng
+   const navigate = useNavigate(); // Hook để điều hướng
    const headerRef = useRef(null); // Ref cho Header để quản lý overlay
    const debounceRef = useRef(null); // Ref cho debounce
+
+   // Các state mới cho thông báo
+   const [notificationsOpen, setNotificationsOpen] = useState(false); // Quản lý hiển thị dropdown thông báo
+   const [notifications, setNotifications] = useState([]); // Lưu trữ dữ liệu thông báo
+   const [isLoadingNotifications, setIsLoadingNotifications] = useState(false); // Quản lý trạng thái tải dữ liệu thông báo
+   const notificationsRef = useRef(null); // Ref cho dropdown thông báo
 
    // Hàm để toggle menu user
    const toggleMenuUser = () => {
@@ -32,10 +46,10 @@ const Header = () => {
 
          // Điều hướng tới trang login
          navigate("/login");
-         toast.success("Logged out successfully!");
+         toast.success("Đăng xuất thành công!");
       } catch (error) {
          console.error("Logout failed:", error.response?.data || error.message);
-         toast.error("Logout failed!");
+         toast.error("Đăng xuất thất bại!");
       }
    };
 
@@ -44,15 +58,22 @@ const Header = () => {
       setMenuOpenUser(false);
       setIsSearchFocused(false);
       setSearchResults([]);
+      setNotificationsOpen(false); // Đóng dropdown thông báo nếu đang mở
    };
 
-   // Đóng menu user và bỏ focus khi nhấp vào bên ngoài Header
+   // Đóng menu user, search và thông báo khi nhấp ra ngoài Header
    useEffect(() => {
       const handleClickOutside = (event) => {
-         if (headerRef.current && !headerRef.current.contains(event.target)) {
+         if (
+            headerRef.current &&
+            !headerRef.current.contains(event.target) &&
+            notificationsRef.current &&
+            !notificationsRef.current.contains(event.target)
+         ) {
             setMenuOpenUser(false);
             setIsSearchFocused(false);
             setSearchResults([]);
+            setNotificationsOpen(false); // Đóng dropdown thông báo nếu đang mở
          }
       };
 
@@ -80,7 +101,7 @@ const Header = () => {
 
             // Nếu query là số, gọi thêm API tìm kiếm đơn hàng với tiền tố "ord"
             const orderPromise = isNumeric(query)
-               ? orderApi.search(query)
+               ? orderApi.search(`ord${query}`)
                : Promise.resolve({ data: [] });
 
             // Chờ tất cả các promise hoàn thành
@@ -123,26 +144,49 @@ const Header = () => {
    const products = searchResults.filter((item) => item.type === "product");
    const orders = searchResults.filter((item) => item.type === "order");
 
+   // Hàm xử lý khi nhấn vào nút thông báo
+   const handleNotificationsClick = async () => {
+      // Nếu dropdown đang mở, chỉ cần đóng nó
+      if (notificationsOpen) {
+         setNotificationsOpen(false);
+         return;
+      }
+
+      // Mở dropdown và bắt đầu tải dữ liệu
+      setNotificationsOpen(true);
+      setIsLoadingNotifications(true);
+
+      try {
+         const response = await orderApi.getLatest();
+         setNotifications(response.data);
+      } catch (error) {
+         console.error("Failed to fetch notifications:", error);
+         toast.error("Không thể tải thông báo!");
+      } finally {
+         setIsLoadingNotifications(false);
+      }
+   };
+
    return (
       <>
          {/* Overlay */}
-         {(menuOpenUser || isSearchFocused) && (
+         {(menuOpenUser || isSearchFocused || notificationsOpen) && (
             <div
                style={{ zIndex: 5 }}
-               className="fixed top-[96px] left-[260px] right-0 bottom-0 bg-black bg-opacity-20"
+               className="fixed top-[96px] left-[260px] z-10 right-0 bottom-0 bg-black bg-opacity-20"
                onClick={handleOverlayClick}
             ></div>
          )}
 
          <div
             ref={headerRef}
-            className="z-10 top-0 w-full h-[96px] px-[60px] py-[30px] bg-white flex justify-end items-center gap-10"
+            className="z-50 top-0 w-full h-[96px] px-[60px] py-[30px] bg-white flex justify-end items-center gap-10"
          >
             {/* Search Input */}
             <div className="relative">
                <form onSubmit={(e) => e.preventDefault()}>
                   <input
-                     placeholder="Search..."
+                     placeholder="Tìm kiếm..."
                      className="font-semibold input focus:shadow-lg focus:border-2 border-[#4A69E2] px-5 py-3 rounded-xl w-56 transition-all focus:w-64 outline-none"
                      name="search"
                      type="text"
@@ -160,7 +204,7 @@ const Header = () => {
                   <button type="submit" className="absolute top-3 right-3">
                      <img
                         src={icons.SearchIcon}
-                        alt="search icon"
+                        alt="icon tìm kiếm"
                         className="w-6 h-6 text-gray-500"
                      />
                   </button>
@@ -174,7 +218,7 @@ const Header = () => {
                         {products.length > 0 && (
                            <>
                               <li className="px-4 py-2 font-semibold border-b border-gray-200">
-                                 Products
+                                 Sản phẩm
                               </li>
                               {products.map((item) => (
                                  <li
@@ -192,12 +236,11 @@ const Header = () => {
                                     <img
                                        src={
                                           item.image || icons.DefaultProductIcon
-                                       } // Sử dụng URL hình ảnh từ sản phẩm hoặc một icon mặc định
+                                       }
                                        alt={item.name}
                                        className="w-10 h-10 object-cover rounded"
                                     />
                                     <div>
-                                       {" "}
                                        <p className="font-inter font-semibold">
                                           {item.name}
                                        </p>
@@ -214,7 +257,7 @@ const Header = () => {
                         {orders.length > 0 && (
                            <>
                               <li className="px-4 py-2 font-semibold border-b border-gray-200 mt-2">
-                                 Orders
+                                 Đơn hàng
                               </li>
                               {orders.map((order) => (
                                  <li
@@ -233,72 +276,151 @@ const Header = () => {
                                        <div className="p-2 rounded-[8px] bg-[#4A69E2] w-[40px] h-[40px] flex items-start justify-center">
                                           <img
                                              src={icons.BagHandleIcon}
-                                             alt="Bag Handle Icon"
+                                             alt="icon giỏ hàng"
                                              className=""
                                           />
                                        </div>
                                        <div>
                                           <div className="font-inter font-semibold">
-                                             Order ID:{" "}
+                                             ID Đơn hàng:{" "}
                                              <span className="text-gray-600 font-normal font-inter">
                                                 {order.order_id}
                                              </span>
                                           </div>
                                           <div className="font-inter font-semibold">
-                                             Status:{" "}
+                                             Trạng thái:{" "}
                                              <span className="text-gray-600 font-normal font-inter">
-                                                {order.order_status}
+                                                {order.payment_status}
                                              </span>
                                           </div>
                                        </div>
                                     </section>
+                                    <div className="font-inter text-sm text-gray-500">
+                                       Ngày: {order.date} | Giá: ${order.price}
+                                    </div>
                                  </li>
                               ))}
                            </>
+                        )}
+
+                        {/* Hiển thị thông báo khi không có kết quả tìm kiếm */}
+                        {products.length === 0 && orders.length === 0 && (
+                           <li className="px-4 py-2 text-center text-gray-500">
+                              Không tìm thấy kết quả nào.
+                           </li>
                         )}
                      </ul>
                   </div>
                )}
             </div>
 
-            {/* Notifications Icon */}
-            <Notifications />
+<div className="relative" ref={notificationsRef}>
+  <button className="relative" onClick={handleNotificationsClick}>
+    <Notifications />
+  </button>
+
+  <AnimatePresence>
+    {notificationsOpen && (
+      <motion.div
+        className="absolute right-0 mt-[45px] w-[460px] bg-white border border-gray-200 rounded-[16px] shadow-lg z-50"
+        variants={dropdownVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        transition={{ duration: 0.2 }}
+      >
+        <div className="flex justify-between items-center p-4">
+          <div className="border-gray-200 font-semibold font-rubik text-xl">
+            Latest Notifications
+          </div>
+          <img
+            src={icons.ErrorCircle}
+            alt=""
+            onClick={handleOverlayClick}
+            className="active:scale-90"
+          />
+        </div>
+        <ul>
+          {isLoadingNotifications ? (
+            <li className="px-4 py-2 text-center text-gray-500">
+              Loading data...
+            </li>
+          ) : notifications.length > 0 ? (
+            notifications.map((notification) => (
+              <li
+                key={notification.order_id}
+                className="flex gap-4 px-4 py-2 hover:bg-gray-100 border-b border-gray-200 cursor-pointer"
+                onClick={() => {
+                  navigate(`/orderdetail/${notification.order_id}`);
+                  setMenuOpenUser(false);
+                  setIsSearchFocused(false);
+                  setSearchResults([]);
+                }}
+              >
+                <img
+                  src={images.Thumbnails[0]}
+                  alt=""
+                  className="w-[64px] h-[64px] rounded-md"
+                />
+                <div>
+                  <div className="font-semibold">
+                    Order #{notification.order_id} from {notification.name}
+                  </div>
+                  <div className="text-sm text-gray-600 font-semibold">
+                    Payment Status: {notification.payment_status}
+                  </div>
+                  <div className="text-xs text-gray-500 font-semibold">
+                    Date: {notification.date} | Price: ${notification.price}
+                  </div>
+                </div>
+              </li>
+            ))
+          ) : (
+            <li className="px-4 py-2 text-center text-gray-500">
+              No new notifications.
+            </li>
+          )}
+        </ul>
+      </motion.div>
+    )}
+  </AnimatePresence>
+</div>
 
             {/* User Dropdown */}
             <div className="relative">
                <button
                   className={`flex justify-between uppercase gap-1 font-rubik px-4 py-2 rounded-lg border-2
-                            ${
-                               menuOpenUser
-                                  ? "bg-[#4A69E2] text-white border-[#4A69E2]"
-                                  : "bg-inherit text-black border-black"
-                            }`}
+                      ${
+                         menuOpenUser
+                            ? "bg-[#4A69E2] text-white border-[#4A69E2]"
+                            : "bg-inherit text-black border-black"
+                      }`}
                   onClick={toggleMenuUser}
                >
                   <span>admin</span>
                   <img
                      src={icons.ChevronDownIcon}
-                     alt="Chevron Down Icon"
-                     className={` transition-transform duration-200 ${
+                     alt="icon mũi tên xuống"
+                     className={`transition-transform duration-200 ${
                         menuOpenUser ? "transform rotate-180" : ""
-                     } `}
+                     }`}
                   />
                </button>
 
                {/* Dropdown Menu */}
                <div
                   className={`flex z-50 flex-col items-between justify-between absolute right-[-2px] mt-10 w-[233px] bg-white rounded-lg border-2 border-[#E7E7E3]
-                            transform transition-all duration-150 ease-in-out ${
-                               menuOpenUser
-                                  ? "opacity-100 scale-100"
-                                  : "opacity-0 scale-95 pointer-events-none"
-                            }`}
+                      transform transition-all duration-150 ease-in-out ${
+                         menuOpenUser
+                            ? "opacity-100 scale-100"
+                            : "opacity-0 scale-95 pointer-events-none"
+                      }`}
                >
                   <div className="font-rubik text-xl font-semibold text-secondary_black leading-6 px-4 py-4">
                      UserName
                   </div>
                   <p className="cursor-pointer font-inter text-[14px] uppercase font-medium flex items-center justify-between py-4 px-4 hover:bg-gray-100">
-                     Change password
+                     Đổi mật khẩu
                      <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="16"
@@ -320,7 +442,7 @@ const Header = () => {
                      className="cursor-pointer font-inter text-[14px] uppercase font-medium flex items-center justify-between py-4 px-4 hover:bg-gray-100"
                      onClick={handleLogout} // Thêm sự kiện logout
                   >
-                     Logout
+                     Đăng xuất
                      <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="16"

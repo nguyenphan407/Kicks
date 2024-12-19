@@ -5,8 +5,13 @@ import PropTypes from "prop-types"; // Import PropTypes
 import { icons } from "../../assets/assets";
 
 const DateRangePicker = ({ onDateChange }) => {
-    const [startDate, setStartDate] = useState(new Date());
-    const [endDate, setEndDate] = useState(new Date());
+    // Lấy ngày hiện tại và ngày cách đó 7 ngày
+    const today = new Date();
+    const lastWeek = new Date(today);
+    lastWeek.setDate(today.getDate() - 7);
+
+    const [startDate, setStartDate] = useState(lastWeek);
+    const [endDate, setEndDate] = useState(today);
 
     const handleDateChange = (dates) => {
         const [start, end] = dates;

@@ -17,8 +17,8 @@ const Dashboard = () => {
     const breadcrumbs = [{ label: "Home", link: "/" }, { label: "Dashboard" }];
     const [ordersData, setOrdersData] = useState([]);
     const [dateRange, setDateRange] = useState({
-        startDate: null,
-        endDate: null,
+        startDate: new Date(), // Ngày hiện tại
+        endDate: new Date(),   // Ngày hiện tại
     });
     const [statisticsData, setStatisticsData] = useState([]);
     const [topProducts, setTopProducts] = useState([]);
@@ -31,7 +31,6 @@ const Dashboard = () => {
         console.log("Selected Date Range:", range);
     };
 
-    // Hàm định dạng ngày theo dd-mm-yyyy
     const formatDate = (date) => {
         return format(date, "dd-MM-yyyy");
     };
@@ -109,8 +108,10 @@ const Dashboard = () => {
                 }
             }
         };
+
+        // Gọi hàm fetchDashboardData khi component render lần đầu
         fetchDashboardData();
-    }, [dateRange]);
+    }, [dateRange]);  // gọi lại mỗi khi dateRange thay đổi
 
     return (
         <div className="flex flex-col gap-6 mb-8">
@@ -140,7 +141,6 @@ const Dashboard = () => {
             </section>
             <section className="grid grid-cols-3 gap-[14px]">
                 <div className="col-span-2 ">
-                    {/* Pass reportData to MyLineChart if needed */}
                     <MyLineChart data={reportData} />
                 </div>
                 <div className="px-4 py-6 bg-white rounded-[16px] flex flex-col gap-4">
@@ -163,7 +163,7 @@ const Dashboard = () => {
                             <div className="flex items-center space-x-4">
                                 {/* Hình ảnh */}
                                 <img
-                                    src={product.product_image || images.Thumbnails[0]} // Đảm bảo có hình ảnh fallback
+                                    src={product.product_image || images.Thumbnails[0]}
                                     alt={product.name}
                                     className="w-16 h-16 rounded-[8px]"
                                 />
@@ -195,7 +195,7 @@ const Dashboard = () => {
                         transform transition duration-400 hover:bg-[#4A69E2] uppercase hover:scale-[1.005] hover:text-white"
                             onClick={() => {
                                 // Điều hướng tới trang báo cáo hoặc thực hiện chức năng báo cáo
-                                navigate("/report"); // Giả sử bạn có route /report
+                                navigate("/");
                             }}
                         >
                             REPORT

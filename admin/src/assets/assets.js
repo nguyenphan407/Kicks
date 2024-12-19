@@ -31,6 +31,9 @@ import CheckSuccess from "./icons/check-success.svg"
 import DeleteIcon from "./icons/delete_icon.svg"
 import CustomerIcon from "./icons/customer_icon.svg"
 import PayIcon from "./icons/pay_icon.svg"
+import UserActiveIcon from "./icons/user-active_icon.svg"
+import UserIcon from "./icons/user_icon.svg"
+import ErrorCircle from "./icons/Error-circle.svg"
 
 // Import images
 import ThumbnailImg from "./images/thumbnail_img.jpg";
@@ -73,6 +76,9 @@ export const icons = {
   DeleteIcon,
   CustomerIcon,
   PayIcon,
+  UserActiveIcon,
+  UserIcon,
+  ErrorCircle
 };
 
 // Export all images in a single object
