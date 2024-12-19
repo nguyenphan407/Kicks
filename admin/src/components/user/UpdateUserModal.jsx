@@ -111,13 +111,13 @@ const UpdateUserModal = ({ isOpen, onClose, user, onUpdate }) => {
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 bg-gray-300 rounded rounded-md hover:bg-gray-400 active:scale-95 transition-all"
+                            className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400 active:scale-95 transition-all font-rubik font-medium"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="px-4 py-2 bg-[#4A69E2] text-white rounded-md hover:opacity-85 active:scale-95 transition-all"
+                            className="px-4 py-2 bg-[#4A69E2] text-white rounded-md hover:opacity-85 active:scale-95 transition-all font-rubik font-medium"
                         >
                             Update
                         </button>
@@ -129,3 +129,4 @@ const UpdateUserModal = ({ isOpen, onClose, user, onUpdate }) => {
 };
 
 export default UpdateUserModal;
+ 

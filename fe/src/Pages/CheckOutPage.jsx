@@ -120,7 +120,7 @@ const CheckOutPage = () => {
    };
 
    // State và hàm cho gợi ý địa chỉ
-   const [addressSuggestions, setAddressSuggestions] = useState([]); 
+   const [addressSuggestions, setAddressSuggestions] = useState([]);
    const [showSuggestions, setShowSuggestions] = useState(false);
 
    const fetchAddressSuggestions = async (query) => {
@@ -136,9 +136,9 @@ const CheckOutPage = () => {
       try {
          const response = await fetch(url, {
             headers: {
-               'Accept-Language': 'vi', // Ngôn ngữ trả về 
-               'User-Agent': 'VoDinhMinhQuan/1.0 (vodinhquan2707.it@gmail.com)'
-            }
+               "Accept-Language": "vi", // Ngôn ngữ trả về
+               "User-Agent": "VoDinhMinhQuan/1.0 (vodinhquan2707.it@gmail.com)",
+            },
          });
 
          if (response.ok) {
@@ -233,7 +233,8 @@ const CheckOutPage = () => {
                            placeholder="Find Delivery Address*"
                            className="font-rubik font-normal w-full flex-1 lg:w-[342px] h-12 px-4 py-[12px] text-[18px] border border-gray-800 rounded-lg text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                            onFocus={() => {
-                              if (addressSuggestions.length > 0) setShowSuggestions(true);
+                              if (addressSuggestions.length > 0)
+                                 setShowSuggestions(true);
                            }}
                            onBlur={() => {
                               // Delay để cho phép click vào suggestion trước khi ẩn
@@ -245,7 +246,9 @@ const CheckOutPage = () => {
                               {addressSuggestions.map((suggestion) => (
                                  <li
                                     key={suggestion.place_id}
-                                    onClick={() => handleSelectSuggestion(suggestion)}
+                                    onClick={() =>
+                                       handleSelectSuggestion(suggestion)
+                                    }
                                     className="px-4 py-2 hover:bg-gray-200 cursor-pointer font-rubik text-[18px]"
                                  >
                                     {suggestion.display_name}
@@ -281,10 +284,10 @@ const CheckOutPage = () => {
                   </h3>
                   <section className="flex-col justify-start items-start gap-6 inline-flex w-full lg:w-[782px]">
                      <div
-                        className={`w-full p-4 rounded-xl lg:rounded-2xl flex justify-between items-start cursor-pointer ${
+                        className={`w-full p-4 rounded-xl lg:rounded-2xl flex justify-between items-start cursor-pointer transform transition-all duration-300 ${
                            selectedOption === "Standard Delivery"
-                              ? "bg-[#FAFAFA]"
-                              : "border border-[#232321]"
+                              ? "bg-[#FAFAFA]  shadow-lg border border-[#FAFAFA]"
+                              : "border border-[#232321] hover:shadow-md"
                         }`}
                         onClick={() => handleOptionSelect("Standard Delivery")}
                      >
@@ -305,10 +308,10 @@ const CheckOutPage = () => {
                         </div>
                      </div>
                      <div
-                        className={`w-full p-4 rounded-xl flex justify-between items-start cursor-pointer ${
+                        className={`w-full p-4 rounded-xl flex justify-between items-start cursor-pointer transform transition-all duration-300 ${
                            selectedOption === "Collect in Store"
-                              ? "bg-[#FAFAFA]"
-                              : "border border-[#232321]"
+                              ? "bg-[#FAFAFA] shadow-lg border border-[#FAFAFA]"
+                              : "border border-[#232321]  hover:shadow-md"
                         }`}
                         onClick={() => handleOptionSelect("Collect in Store")}
                      >
@@ -333,11 +336,11 @@ const CheckOutPage = () => {
                      Payment Method
                   </h3>
                   <section className="flex-col justify-start items-start gap-6 inline-flex w-full lg:w-[782px]">
-                     <div
-                        className={`w-full p-4 rounded-xl lg:rounded-2xl flex justify-between items-start cursor-pointer ${
+                     {/* <div
+                        className={`w-full p-4 rounded-xl lg:rounded-2xl flex justify-between items-start cursor-pointer transform transition-all duration-300 ${
                            selectedOptionPayment === "Momo e-wallet"
-                              ? "bg-[#FAFAFA]"
-                              : "border border-[#232321]"
+                              ? "bg-[#FAFAFA] shadow-lg border border-[#FAFAFA]"
+                              : "border border-[#232321] hover:shadow-md"
                         }`}
                         onClick={() =>
                            handleOptionSelectPayment("Momo e-wallet")
@@ -359,21 +362,24 @@ const CheckOutPage = () => {
                               className="max-w-[58px]"
                            />
                         </div>
-                     </div>
+                     </div> */}
                      <div
-                        className={`w-full p-4 rounded-xl flex justify-between items-start cursor-pointer ${
+                        className={`w-full p-4 rounded-xl flex justify-between items-start cursor-pointer transform transition-all duration-300 ${
                            selectedOptionPayment === "Bank QR Code"
-                              ? "bg-[#FAFAFA]"
-                              : "border border-[#232321]"
+                              ? "bg-[#FAFAFA] shadow-lg border border-[#FAFAFA]"
+                              : "border border-[#232321] hover:shadow-md"
                         }`}
-                        onClick={() => handleOptionSelectPayment("Bank QR Code")}
+                        onClick={() =>
+                           handleOptionSelectPayment("Bank QR Code")
+                        }
                      >
                         <div>
                            <h3 className="font-rubik text-[#232321] text-xl lg:text-2xl font-semibold">
-                           Bank QR Code
+                              Bank QR Code
                            </h3>
                            <p className="opacity-80 text-[#232321] text-sm lg:text-base font-semibold">
-                           Pay easily using your banking app's QR scan feature. Fast and secure.
+                              Pay easily using your banking app's QR scan
+                              feature. Fast and secure.
                            </p>
                         </div>
                         <img
@@ -383,10 +389,10 @@ const CheckOutPage = () => {
                         />
                      </div>
                      <div
-                        className={`w-full p-4 rounded-xl flex justify-between items-start cursor-pointer ${
+                        className={`w-full p-4 rounded-xl flex justify-between items-start cursor-pointer transform transition-all duration-300 ${
                            selectedOptionPayment === "Cash on Delivery"
-                              ? "bg-[#FAFAFA]"
-                              : "border border-[#232321]"
+                              ? "bg-[#FAFAFA] shadow-lg border border-[#FAFAFA]"
+                              : "border border-[#232321] hover:shadow-md"
                         }`}
                         onClick={() =>
                            handleOptionSelectPayment("Cash on Delivery")
@@ -535,7 +541,7 @@ const CheckOutPage = () => {
                         return (
                            <div key={index} className="flex gap-6 h-full">
                               <img
-                                 className="rounded-xl lg:rounded-3xl object-cover max-w-[157px] lg:max-h-[157px] lg:max-w-[138px] border border-[#e6e6e6]"
+                                 className="rounded-xl lg:rounded-3xl object-cover max-w-[157px] h-[138px] w-[138px] border border-[#e6e6e6]"
                                  src={item.image}
                                  alt="Product Image"
                               />
