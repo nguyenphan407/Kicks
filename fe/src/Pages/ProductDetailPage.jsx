@@ -1,24 +1,29 @@
-// src/pages/ProductDetailPage.js
+// src/pages/ProductDetailPage.jsx
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { ShopConText } from "../context/ShopContext";
+import { ShopConText } from "../context/ShopContext"; // Giữ lại để sử dụng addToCart
 import useIsMobile from "../Components/User/useIsMobile";
 import { images } from "../assets/assets";
 import MayLike from "../Components/Product/MayLike";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
-import socket from "../libs/socket"; // Nếu cần thiết
+import { motion, AnimatePresence } from "framer-motion";
+import productApi from "../apis/productApi";
+
+// import socket from "../libs/socket"; // Nếu cần thiết
 
 const ProductDetailPage = () => {
    const location = useLocation();
    useEffect(() => {
       // Cuộn lên đầu trang mỗi khi location (URL) thay đổi
       window.scrollTo(0, 0);
-    }, [location]);
+   }, [location]);
 
    const { productId } = useParams();
-   const { products, addToCart, getProductById } = useContext(ShopConText);
+   const { addToCart } = useContext(ShopConText); // Giữ lại addToCart
    const [productData, setProductData] = useState(null);
+   const [loading, setLoading] = useState(true); // State để quản lý trạng thái tải
+   const [error, setError] = useState(null); // State để quản lý lỗi
 
    // Ánh xạ màu
    const colors = {
@@ -39,16 +44,28 @@ const ProductDetailPage = () => {
       setIsSelectedColor(!isSelectedColor); // Đảo ngược trạng thái
    };
 
-   // state kiểm tra trạng thái mobile
+   // State kiểm tra trạng thái mobile
    const isMobile = useIsMobile();
-   // fetch Product
+
+   // fetch Product từ productApi
    const fetchProductData = async () => {
-      const product = getProductById(parseInt(productId, 10));
-      if (product) {
-         setProductData(product);
-      } else {
-         console.log(`Product with ID ${productId} not found`);
-         toast.error("Sản phẩm không tồn tại", { autoClose: 2000 });
+      setLoading(true);
+      setError(null);
+      try {
+         const product = await productApi.get(productId); // Sử dụng productApi.get(id)
+         if (product) {
+            console.log("quan")
+            setProductData(product);
+         } else {
+            console.log(`Product with ID ${productId} not found`);
+            toast.error("Sản phẩm không tồn tại", { autoClose: 2000 });
+         }
+      } catch (err) {
+         console.error(err);
+         setError(err.message || "Đã có lỗi xảy ra");
+         toast.error("Không thể tải dữ liệu sản phẩm.", { autoClose: 2000 });
+      } finally {
+         setLoading(false);
       }
    };
 
@@ -68,7 +85,7 @@ const ProductDetailPage = () => {
 
    useEffect(() => {
       fetchProductData();
-   }, [productId, products]); // Cập nhật khi products thay đổi
+   }, [productId]); // Cập nhật khi productId thay đổi
 
    useEffect(() => {
       if (productData) {
@@ -103,7 +120,7 @@ const ProductDetailPage = () => {
          const productSize = product.sizes.find(
             (sizeObj) => sizeObj.size === size
          );
-         return !productSize || productSize.quantity === 0;
+         return !productSize || productSize.stock === 0;
       });
       return outOfStockSizes;
    };
@@ -130,30 +147,71 @@ const ProductDetailPage = () => {
    };
 
    // Listener để cập nhật sản phẩm khi có sự thay đổi từ Socket.IO
-   useEffect(() => {
-      const onProductUpdated = (updatedProduct) => {
-         if (updatedProduct.product_id === parseInt(productId, 10)) {
-            console.log("Received update for viewed product:", updatedProduct);
-            setProductData(updatedProduct);
-            toast.info(`Product information for "${updatedProduct.name}" has been updated.`);
-         }
-      };
+   // useEffect(() => {
+   //    const onProductUpdated = (updatedProduct) => {
+   //       if (updatedProduct.product_id === parseInt(productId, 10)) {
+   //          console.log("Received update for viewed product:", updatedProduct);
+   //          setProductData(updatedProduct);
+   //          toast.info(`Product information for "${updatedProduct.name}" has been updated.`);
+   //       }
+   //    };
 
-      // Lắng nghe sự kiện 'productUpdated'
-      socket.on("productUpdated", onProductUpdated);
+   //    // Lắng nghe sự kiện 'productUpdated'
+   //    socket.on("productUpdated", onProductUpdated);
 
-      return () => {
-         socket.off("productUpdated", onProductUpdated);
-      };
-   }, [productId]);
-   
-   return productData ? (
+   //    return () => {
+   //       socket.off("productUpdated", onProductUpdated);
+   //    };
+   // }, [productId]);
+
+   if (error) {
+      return (
+         <div className="flex justify-center items-center h-screen">
+            <p>{error}</p>
+         </div>
+      );
+   }
+   if (loading) {
+      return (
+         <motion.div
+            className="flex justify-center items-center h-screen font-rubik text-5xl font-medium"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+         >
+            <p>LOADING PRODUCT...</p>
+         </motion.div>
+      );
+   }
+
+   if (error) {
+      return (
+         <motion.div
+            className="flex justify-center items-center h-screen"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+         >
+            <p>{error}</p>
+         </motion.div>
+      );
+   }
+   return (
+      <AnimatePresence>
+         {productData && (
+            <motion.div
+               className="product-detail-container"
+               initial={{ opacity: 0, y: 100 }} // Trượt từ dưới lên
+               animate={{ opacity: 1, y: 0 }} // Hiển thị tại vị trí ban đầu
+               exit={{ opacity: 0, y: 100 }} // Trượt xuống khi rời đi
+               transition={{ duration: 0.4 }} // Thời gian hiệu ứng
+            >
       <div className="container">
          <div className="flex flex-col lg:flex-row mt-6 lg:mt-8 gap-4 mb-[24px] lg:mb-[60px]">
             {/* Ảnh thumbnail trên mobile */}
             <div className="block lg:hidden">
                <img
-                  src={image || productData.images[0]}
+                  src={images || productData.images[0]}
                   alt="Detailed Product"
                   className={`transition-opacity duration-300 ${
                      fadeEffect ? "opacity-0" : "opacity-100"
@@ -163,19 +221,19 @@ const ProductDetailPage = () => {
 
             {/* 4 ảnh của product */}
             <div className="lg:max-w-[650px] 2xl:max-w-[874px] object-cover grid grid-cols-4 lg:grid-cols-2 gap-2 xl:gap-4">
-               <img
+                  <img
                   className="rounded-lg lg:rounded-none h-full lg:h-[500px] lg:rounded-tl-[48px] cursor-pointer object-cover
                     transform transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-2xl hover:opacity-90"
                   src={productData.images[0]}
                   alt="productImage_1"
-                  onClick={() => {
-                     if (isMobile) {
+                     onClick={() => {
+                        if (isMobile) {
                         changeImage(productData.images[0]);
-                     } else {
+                        } else {
                         openModal(productData.images[0]);
-                     }
-                  }}
-               />
+                        }
+                     }}
+                  />
                <img
                   className="rounded-lg lg:rounded-none lg:h-[500px] h-full lg:rounded-tr-[48px] cursor-pointer object-cover
                     transform transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-2xl hover:opacity-90"
@@ -221,7 +279,7 @@ const ProductDetailPage = () => {
             <div className="flex-1">
                <button
                   className="mb-2 lg:mb-4 font-rubik py-2 px-4 lg:py-3 bg-primary_blue rounded-lg lg:rounded-xl text-white font-semibold text-xs
-                    transform transition duration-400 hover:bg-primary_blue hover:scale-[1.02] max-sm:text-xs"
+                        transform transition duration-400 hover:bg-primary_blue hover:scale-[1.02] max-sm:text-xs"
                >
                   New Release
                </button>
@@ -390,11 +448,9 @@ const ProductDetailPage = () => {
             <MayLike />
          </div>
       </div>
-   ) : (
-      <div className="opacity-0">
-         <h1>Hello word</h1>
-      </div>
+      </motion.div>
+         )}
+      </AnimatePresence>
    );
 };
-
 export default ProductDetailPage;

@@ -1,4 +1,4 @@
-// Header.jsx
+// src/components/Header.jsx
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { icons } from "../../assets/assets";
 import { Link, NavLink, useNavigate } from "react-router-dom";
@@ -6,10 +6,13 @@ import { ShopConText } from "../../context/ShopContext";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import authApi from "../../apis/authApi";
+import productApi from "../../apis/productApi";
+import userApi from "../../apis/userApi"; // Import userApi
+import UpdateUserModal from "../User/UpdateUserModal"; // Import UpdateUserModal
 
 const Header = () => {
   const [visible, setVisible] = useState(false);
-  const { getCartCount, token, setToken, user, cartData, cartChanged } =
+  const { getCartCount, token, setToken, user, setUser, cartData, cartChanged } =
     useContext(ShopConText);
   const sidebarRef = useRef(null);
   const headerRef = useRef(null);
@@ -62,6 +65,9 @@ const Header = () => {
       setMenuOpenUser((prev) => !prev);
     }
   };
+
+  // State để quản lý modal cập nhật thông tin người dùng
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   return (
     <div
@@ -166,9 +172,9 @@ const Header = () => {
               </p>
               <p
                 className="cursor-pointer font-inter text-[10px] lg:text-[14px] uppercase font-medium flex items-center justify-between px-2 py-2 lg:px-4 lg:py-4 hover:bg-gray-100"
-                onClick={() => navigate("/change-password")}
+                onClick={() => setIsUpdateModalOpen(true)} // Mở modal khi click
               >
-                Change Password
+                Update information
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
@@ -211,6 +217,12 @@ const Header = () => {
           </div>
         </div>
       </div>
+
+      {/* Update User Modal */}
+      <UpdateUserModal 
+        visible={isUpdateModalOpen} 
+        onClose={() => setIsUpdateModalOpen(false)} 
+      />
 
       {/* Sidebar Menu */}
       <div

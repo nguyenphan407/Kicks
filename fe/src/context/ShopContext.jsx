@@ -1,12 +1,11 @@
-// src/context/ShopContext.js
+// src/context/ShopContext.jsx
 import React, { createContext, useEffect, useState, useCallback } from "react";
 import productApi from "../apis/productApi";
+import userApi from "../apis/userApi"; // Import userApi
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import cartApi from "../apis/cartApi";
-import echo from "../libs/socket";
-
 export const ShopConText = createContext();
 
 const ShopContextProvider = ({ children }) => {
@@ -31,23 +30,23 @@ const ShopContextProvider = ({ children }) => {
         page: 1,
     });
 
-    console.log(echo.connector);
-
     // Hàm fetch cả recent và recommended products
     const fetchRecentAndRecommendedProducts = useCallback(async () => {
         try {
-            const [dataRecent, dataRcm] = await Promise.all([
-                productApi.getRecentProducts(),
-                productApi.getRecommendedProducts(),
-            ]);
-            setRecentProducts(dataRecent);
-            setRecommendedProducts(dataRcm);
-            console.log("Updated Recent Products:", dataRecent);
-            console.log("Updated Recommended Products:", dataRcm);
+            if (token) {
+                const [dataRecent, dataRcm] = await Promise.all([
+                    productApi.getRecentProducts(),
+                    productApi.getRecommendedProducts(),
+                ]);
+                setRecentProducts(dataRecent);
+                setRecommendedProducts(dataRcm);
+                console.log("Updated Recent Products:", dataRecent);
+                console.log("Updated Recommended Products:", dataRcm);
+            }
         } catch (error) {
             console.error('Error fetching recent or recommended products:', error);
         }
-    }, []);
+    }, [token]);
 
     // Fetch recent và recommended products khi component mount và khi các dependencies thay đổi
     useEffect(() => {
@@ -250,6 +249,8 @@ const ShopContextProvider = ({ children }) => {
     useEffect(() => {
         if (token) {
             fetchCartItems();
+        } else {
+            setCartData([]); // Xóa giỏ hàng nếu không có token
         }
     }, [token, fetchCartItems]);
 
@@ -263,48 +264,46 @@ const ShopContextProvider = ({ children }) => {
             setUser(JSON.parse(savedUser)); // Chuyển chuỗi JSON thành object
         }
     }, []);
+    // Socket.IO cho cập nhật sản phẩm khi tồn kho thay đổi
+    // useEffect(() => {
+    //     // Hàm xử lý sự kiện cập nhật tồn kho
+    //     const onInventoryUpdated = (updatedProduct) => {
+    //         console.log("Received inventory update for product:", updatedProduct);
+    //         // Gọi hàm fetchProducts để cập nhật danh sách sản phẩm
+    //         fetchProducts();
+    //         // Hiển thị thông báo toast
+    //         toast.info(`Product "${updatedProduct.name}" inventory has been updated.`);
+    //     };
 
-    // //Socket.IO cho cập nhật sản phẩm khi tồn kho thay đổi
-    useEffect(() => {
-        // Hàm xử lý sự kiện cập nhật tồn kho
-        const onInventoryUpdated = (updatedProduct) => {
-            console.log("Received inventory update for product:", updatedProduct);
-            // Gọi hàm fetchProducts để cập nhật danh sách sản phẩm
-            fetchProducts();
-            // Hiển thị thông báo toast
-            toast.info(`Product "${updatedProduct.name}" inventory has been updated.`);
-        };
+    //     // Lắng nghe sự kiện 'inventoryUpdated' từ backend
+    //     socket.on("inventoryUpdated", onInventoryUpdated);
 
-        // Lắng nghe sự kiện 'inventoryUpdated' từ backend
-        ////socket.on("inventoryUpdated", onInventoryUpdated);
-
-        // Dọn dẹp listener khi component unmount
-        return () => {
-            ////socket.off("inventoryUpdated", onInventoryUpdated);
-        };
-    }, [fetchProducts]);
+    //     // Dọn dẹp listener khi component unmount
+    //     return () => {
+    //         socket.off("inventoryUpdated", onInventoryUpdated);
+    //     };
+    // }, [fetchProducts]);
     
-    useEffect(() => {
-        // Hàm xử lý sự kiện cập nhật sản phẩm
-        const onProductUpdated = (updatedProduct) => {
-            console.log("Received product update:", updatedProduct);
-            // Cập nhật sản phẩm trong state products
-            setProducts((prevProducts) =>
-                prevProducts.map((product) =>
-                    product.product_id === updatedProduct.product_id ? updatedProduct : product
-                )
-            );
-            // Hiển thị thông báo toast
-            toast.info(`Product "${updatedProduct.name}" has been updated.`);
-        };
+    // useEffect(() => {
+    //     // Hàm xử lý sự kiện cập nhật sản phẩm
+    //     const onProductUpdated = (updatedProduct) => {
+    //         console.log("Received product update:", updatedProduct);
+    //         // Cập nhật sản phẩm trong state products
+    //         setProducts((prevProducts) =>
+    //             prevProducts.map((product) =>
+    //                 product.product_id === updatedProduct.product_id ? updatedProduct : product
+    //             )
+    //         );
+    //         // Hiển thị thông báo toast
+    //         toast.info(`Product "${updatedProduct.name}" has been updated.`);
+    //     };
+    //     // Lắng nghe sự kiện 'productUpdated' từ backend
+    //     socket.on("productUpdated", onProductUpdated);
 
-        // Lắng nghe sự kiện 'productUpdated' từ backend
-        //socket.on("productUpdated", onProductUpdated);
-
-        return () => {
-            //socket.off("productUpdated", onProductUpdated);
-        };
-    }, []);
+    //     return () => {
+    //         socket.off("productUpdated", onProductUpdated);
+    //     };
+    // }, []);
 
     const value = {
         products,
@@ -321,8 +320,8 @@ const ShopContextProvider = ({ children }) => {
         setFilters,
         handlePageChange,
         user,
-        token,
         setUser,
+        token,
         setToken,
         cartData,
         setCartData,

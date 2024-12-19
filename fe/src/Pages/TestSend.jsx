@@ -16,6 +16,7 @@ const TestSend = () => {
     const [messages, setMessages] = useState([]);
 
     useEffect(() => {
+        console.log("hello")
         // Lắng nghe sự kiện từ channel "chat"
         echo.channel('kicks_database_messages')
             .listen('.MessageSent', (e) => {
