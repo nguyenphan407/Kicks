@@ -123,7 +123,7 @@ const Header = () => {
         </NavLink>
 
         {/* Right Side: Icons */}
-        <div className="flex items-center gap-2 lg:gap-4 ml-auto">
+        <div className="flex items-center gap-4 lg:gap-8 ml-auto">
           {/* Cart Icon */}
           <Link to="/cart" className="relative">
             <img

@@ -8,7 +8,7 @@ const socket = io('http://localhost:6001', {
 });
 
 // Cấu hình Laravel Echo
-const echo = new Echo({
+const echo = new Echo({ 
     broadcaster: 'socket.io',
     host: 'http://localhost:6001', // URL của Laravel Echo Server
     client: socket, // Truyền đối tượng socket.io client

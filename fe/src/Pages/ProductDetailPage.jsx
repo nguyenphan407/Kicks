@@ -174,7 +174,7 @@ const ProductDetailPage = () => {
    if (loading) {
       return (
          <motion.div
-            className="flex justify-center items-center h-screen font-rubik text-5xl font-medium"
+            className="flex justify-center items-center h-screen font-rubik text-xl lg:text-5xl font-medium"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -211,7 +211,7 @@ const ProductDetailPage = () => {
             {/* Ảnh thumbnail trên mobile */}
             <div className="block lg:hidden">
                <img
-                  src={images || productData.images[0]}
+                  src={image || productData.images[0]}
                   alt="Detailed Product"
                   className={`transition-opacity duration-300 ${
                      fadeEffect ? "opacity-0" : "opacity-100"

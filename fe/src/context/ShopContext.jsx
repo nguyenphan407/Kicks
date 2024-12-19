@@ -30,6 +30,7 @@ const ShopContextProvider = ({ children }) => {
         page: 1,
     });
 
+
     // Hàm fetch cả recent và recommended products
     const fetchRecentAndRecommendedProducts = useCallback(async () => {
         try {
