@@ -8,7 +8,7 @@ import UserIcon from "./icons/user_icon.svg";
 import LogoIconWhite from "./icons/Logo-white.svg";
 import CartIcon from "./icons/cart_icon.svg"
 import MomoIcon from "./icons/momo-icon.png";
-import VisaIcon from "./icons/visa-icon.png"
+import VisaIcon from "./icons/bi_qr-code-scan.svg"
 import CashIcon from "./icons/cash-icon.png"
 import OrderIcon from "./icons/order_icon.svg"
 

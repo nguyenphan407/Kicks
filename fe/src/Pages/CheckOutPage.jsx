@@ -1,9 +1,11 @@
+/* eslint-disable react/no-unescaped-entities */
 // src/pages/CheckOutPage.jsx
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { ShopConText } from "../context/ShopContext";
 import { Link, NavLink } from "react-router-dom";
 import { icons } from "../assets/assets";
 import Modal from "../Components/Modal";
+import debounce from "lodash.debounce"; // Import debounce
 
 const CheckOutPage = () => {
    const [selectedOption, setSelectedOption] = useState("Standard Delivery");
@@ -35,6 +37,10 @@ const CheckOutPage = () => {
          ...prevData,
          [name]: value,
       }));
+
+      if (name === "deliveryAddress") {
+         debouncedFetchAddressSuggestions(value);
+      }
    };
 
    const { currency, getCartAmount, getCartCount, navigate, cartData } =
@@ -83,7 +89,7 @@ const CheckOutPage = () => {
             items: convertCartData,
             returnUrl: "http://localhost:5173/order/success",
             cancelUrl: "http://localhost:5173/order/cancel",
-            price: 2000, // Tổng tiền bao gồm phí vận chuyển
+            price: totalAmount, // Sửa lại để sử dụng tổng tiền thực tế
          };
 
          console.log(JSON.stringify(productData));
@@ -113,6 +119,56 @@ const CheckOutPage = () => {
       }
    };
 
+   // State và hàm cho gợi ý địa chỉ
+   const [addressSuggestions, setAddressSuggestions] = useState([]); 
+   const [showSuggestions, setShowSuggestions] = useState(false);
+
+   const fetchAddressSuggestions = async (query) => {
+      if (!query) {
+         setAddressSuggestions([]);
+         return;
+      }
+
+      const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+         query
+      )}&format=json&addressdetails=1&limit=5`;
+
+      try {
+         const response = await fetch(url, {
+            headers: {
+               'Accept-Language': 'vi', // Ngôn ngữ trả về 
+               'User-Agent': 'VoDinhMinhQuan/1.0 (vodinhquan2707.it@gmail.com)'
+            }
+         });
+
+         if (response.ok) {
+            const data = await response.json();
+            setAddressSuggestions(data);
+            setShowSuggestions(true);
+         } else {
+            console.error("Nominatim API trả về lỗi:", response.status);
+         }
+      } catch (error) {
+         console.error("Error fetching address suggestions:", error);
+      }
+   };
+
+   // Sử dụng debounce để hạn chế số lượng yêu cầu API
+   const debouncedFetchAddressSuggestions = useRef(
+      debounce((query) => {
+         fetchAddressSuggestions(query);
+      }, 500) // 500ms debounce
+   ).current;
+
+   const handleSelectSuggestion = (suggestion) => {
+      setUserData((prevData) => ({
+         ...prevData,
+         deliveryAddress: suggestion.display_name,
+      }));
+      setAddressSuggestions([]);
+      setShowSuggestions(false);
+   };
+
    return (
       <div className="h-auto container flex flex-col-reverse lg:flex-row justify-between mt-8">
          {/* Contact & Order */}
@@ -138,7 +194,7 @@ const CheckOutPage = () => {
                      name="email"
                      value={userData.email}
                      placeholder="Email"
-                     className="text-[18px] font-rubik font-normal w-full lg:w-[342px] h-12 px-4 py-[14.5px] border border-gray-800 rounded-lg text-sm text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                     className="font-rubik font-normal w-full lg:w-[342px] h-12 px-4 py-[12px] text-[18px] border border-gray-800 rounded-lg text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                      onChange={handleChange}
                   />
                </div>
@@ -157,7 +213,7 @@ const CheckOutPage = () => {
                            name="firstName"
                            value={userData.firstName}
                            onChange={handleChange}
-                           className="text-[18px] font-rubik font-normal w-full flex-1 lg:w-[342px] h-12 px-4 py-[14.5px] border border-gray-800 rounded-lg text-sm text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                           className="font-rubik font-normal w-full flex-1 lg:w-[342px] h-12 px-4 py-[12px] text-[18px] border border-gray-800 rounded-lg text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                         />
                         <input
                            type="text"
@@ -165,18 +221,38 @@ const CheckOutPage = () => {
                            value={userData.lastName}
                            onChange={handleChange}
                            placeholder="Last Name*"
-                           className="text-[18px] font-rubik font-normal w-full lg:w-[342px] h-12 px-4 py-[14.5px] border border-gray-800 rounded-lg text-sm text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                           className="font-rubik font-normal w-full flex-1 lg:w-[342px] h-12 px-4 py-[12px] text-[18px] border border-gray-800 rounded-lg text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                         />
                      </div>
-                     <div>
+                     <div className="relative">
                         <input
                            type="text"
                            name="deliveryAddress"
                            value={userData.deliveryAddress}
                            onChange={handleChange}
                            placeholder="Find Delivery Address*"
-                           className="text-[18px] font-rubik font-normal w-full flex flex-1 lg:w-[342px] h-12 px-4 py-[14.5px] border border-gray-800 rounded-lg text-sm text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                           className="font-rubik font-normal w-full flex-1 lg:w-[342px] h-12 px-4 py-[12px] text-[18px] border border-gray-800 rounded-lg text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                           onFocus={() => {
+                              if (addressSuggestions.length > 0) setShowSuggestions(true);
+                           }}
+                           onBlur={() => {
+                              // Delay để cho phép click vào suggestion trước khi ẩn
+                              setTimeout(() => setShowSuggestions(false), 100);
+                           }}
                         />
+                        {showSuggestions && addressSuggestions.length > 0 && (
+                           <ul className="absolute z-10 bg-white border border-gray-300 w-full max-h-60 overflow-y-auto mt-1 rounded-md shadow-lg">
+                              {addressSuggestions.map((suggestion) => (
+                                 <li
+                                    key={suggestion.place_id}
+                                    onClick={() => handleSelectSuggestion(suggestion)}
+                                    className="px-4 py-2 hover:bg-gray-200 cursor-pointer font-rubik text-[18px]"
+                                 >
+                                    {suggestion.display_name}
+                                 </li>
+                              ))}
+                           </ul>
+                        )}
                         <p className="text-neutral-700 text-xs mt-1">
                            Start typing your street address or zip code for
                            suggestions
@@ -189,7 +265,7 @@ const CheckOutPage = () => {
                            value={userData.phoneNumber}
                            onChange={handleChange}
                            placeholder="Phone Number*"
-                           className="text-[18px] font-rubik font-normal w-full flex flex-1 lg:w-[342px] h-12 px-4 py-[14.5px] border border-gray-800 rounded-lg text-sm text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
+                           className="font-rubik font-normal w-full flex-1 lg:w-[342px] h-12 px-4 py-[12px] text-[18px] border border-gray-800 rounded-lg text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                         />
                         <p className="text-xs text-gray-700 mt-1">
                            E.g. (123) 456-7890
@@ -286,24 +362,24 @@ const CheckOutPage = () => {
                      </div>
                      <div
                         className={`w-full p-4 rounded-xl flex justify-between items-start cursor-pointer ${
-                           selectedOptionPayment === "Cart Bank"
+                           selectedOptionPayment === "Bank QR Code"
                               ? "bg-[#FAFAFA]"
                               : "border border-[#232321]"
                         }`}
-                        onClick={() => handleOptionSelectPayment("Cart Bank")}
+                        onClick={() => handleOptionSelectPayment("Bank QR Code")}
                      >
                         <div>
                            <h3 className="font-rubik text-[#232321] text-xl lg:text-2xl font-semibold">
-                              Cart Bank
+                           Bank QR Code
                            </h3>
                            <p className="opacity-80 text-[#232321] text-sm lg:text-base font-semibold">
-                              Pay by bank card. Quick in-store pickup.
+                           Pay easily using your banking app's QR scan feature. Fast and secure.
                            </p>
                         </div>
                         <img
                            src={icons.VisaIcon}
                            alt="Visa"
-                           className="max-w-[58px]"
+                           className="max-w-[58px] fill-black"
                         />
                      </div>
                      <div
