@@ -54,4 +54,11 @@ class UserController extends Controller
         }
     }
 
+    public function delete(Request $request) {
+        $user = User::findOrFail($request->user_id);
+
+        $user->delete();
+
+        return response()->json("User deleted successfully");
+    }
 }
