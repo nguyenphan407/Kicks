@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import { motion } from "framer-motion";
 import Breadcrumbs from "../components/Features/Breadcrumbs";
 import { images, icons } from "../assets/assets";
 import ProductCard from "@/components/Cart/ProductCard";
@@ -23,11 +24,33 @@ const AllProductsPage = () => {
 
     const { products, filters, setIsOpenCategories } = useContext(ShopConText);
 
-    // Cuộn lên đầu trang khi trang thay đổi
+    // Scroll to top when page changes
     useEffect(() => {
         setIsOpenCategories(true);
         window.scrollTo(0, 0);
-    }, [filters.page]); // Chạy lại khi `page` thay đổi
+    }, [filters.page]);
+
+    // Framer Motion Variants
+    const containerVariants = {
+        hidden: { opacity: 0, scale: 0.95 },
+        visible: {
+            opacity: 1,
+            scale: 1,
+            transition: {
+                delayChildren: 0.2,
+                staggerChildren: 0.1,
+            },
+        },
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 30 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.3 },
+        },
+    };
 
     return (
         <div>
@@ -43,7 +66,7 @@ const AllProductsPage = () => {
                     <NavLink
                         to="/addnewproduct"
                         className="bg-[#232321] flex items-center justify-between gap-2 px-[26px] py-[15.5px] rounded-[8px]
-                    transform transition duration-400 hover:bg-primary_blue uppercase hover:scale-[1.005] active:opacity-90 hover:text-white active:scale-[97%]"
+                        transform transition duration-400 hover:bg-primary_blue uppercase hover:scale-[1.005] active:opacity-90 hover:text-white active:scale-[97%]"
                     >
                         <img src={icons.AddIcon} alt="" />
                         <p className="font-rubik text-[14px] font-medium text-white">
@@ -52,20 +75,34 @@ const AllProductsPage = () => {
                     </NavLink>
                 </div>
             </div>
-            <section className="flex flex-col">
+
+            {/* Products */}
+            <motion.section
+                className="flex flex-col"
+                initial="hidden"
+                animate="visible"
+                variants={containerVariants}
+            >
                 <div className="grid grid-cols-3 gap-[14px]">
                     {products.map((product) => {
                         return (
                             <ProductCard
-                                key={product.product_id}
+                            key={product.product_id}
                                 {...product}
                             />
                         );
                     })}
                 </div>
-                {/* Pagination */}
-                <Pagination></Pagination>
-            </section>
+            </motion.section>
+
+            {/* Pagination */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+            >
+                <Pagination />
+            </motion.div>
         </div>
     );
 };
