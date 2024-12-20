@@ -420,7 +420,7 @@ const OrdersDetail = () => {
                            {orderData.payment.account_name || "N/A"}
                         </p>
                         <p className="text-[16px] font-semibold text-[#70706E]">
-                           <span className="text-black">Account Number</span>{" "}
+                           <span className="text-black">Account Number:</span>{" "}
                            {orderData.payment.account_number || "N/A"}
                         </p>
                      </div>

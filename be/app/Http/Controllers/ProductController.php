@@ -28,7 +28,9 @@ class ProductController extends Controller
         // Lưu cache theo từng trang, sử dụng page trong key cache
         $cacheKey = "products_list_page_{$page}";
         $products = Cache::remember($cacheKey, 60, function () {
-            return Product::with(['images', 'sizes'])->paginate(12);
+            return Product::with(['images', 'sizes'])
+                ->join("categories", "categories.category_id", '=', 'products.category_id')
+                ->paginate(12);
         });
 
         // $results = [];
