@@ -58,17 +58,6 @@ const ListingPage = () => {
    const [selectedCategories, setSelectedCategories] = useState([]);
    const [selectedGender, setSelectedGender] = useState([]);
 
-   // Bảng ánh xạ tên danh mục thành id
-   const categoryNameToId = {
-      "Casual shoes": "1",
-      Runners: "2",
-      Hiking: "3",
-      Sneaker: "4",
-      Basketball: "5",
-      Golf: "6",
-      Outdoor: "7",
-   };
-
    // Cập nhật lựa chọn danh mục
    const handleCategoryChange = (index) => {
       setSelectedCategories((prevSelectedCategories) => {
@@ -135,7 +124,7 @@ const ListingPage = () => {
       }
       if (selectedCategories.length > 0) {
          productsCopy = productsCopy.filter((item) =>
-            selectedCategories.includes(item.category_id)
+            selectedCategories.includes(item.category_name)
          );
       }
       if (selectedColors.length > 0) {
@@ -424,14 +413,11 @@ const ListingPage = () => {
                         {isOpenCategories && (
                            <div className="flex flex-col gap-2 mt-4">
                               {[
-                                 "Casual shoes",
-                                 "Runners",
-                                 "Sandals",
-                                 "Hiking",
-                                 "Sneaker",
                                  "Basketball",
-                                 "Golf",
-                                 "Outdoor",
+                                 "Boots",
+                                 "Formal",
+                                 "Running",
+                                 "Sneakers",
                               ].map((category, index) => (
                                  <label
                                     key={category}
@@ -441,10 +427,10 @@ const ListingPage = () => {
                                        type="checkbox"
                                        className="mr-4 w-4 h-4 outline-none border-2 border-gray-400 rounded-sm accent-[#1F1A24]"
                                        checked={selectedCategories.includes(
-                                          index + 1
+                                          category
                                        )}
                                        onChange={() =>
-                                          handleCategoryChange(index + 1)
+                                          handleCategoryChange(category)
                                        }
                                     />
                                     <span className="text-secondary_black text-x[16px] font-semibold">
