@@ -543,8 +543,10 @@ const AddNewProduct = () => {
                               className="min-w-[64px] w-[64px] h-[64px] object-cover rounded-md"
                            />
                            <div className="flex-1 flex flex-col gap-4">
-                              <span className="font-semibold text-[16px]  text-[#232321]">
-                                 {image.file.name}
+                              <span className="font-semibold text-[16px] text-[#232321]">
+                                 {image.file.name.length > 30
+                                    ? `${image.file.name.substring(0, 30)}...`
+                                    : image.file.name}
                               </span>
                               <div className="w-auto h-1 bg-[#4a69e2] rounded-lg" />
                            </div>
