@@ -54,11 +54,11 @@ const ProductDetailPage = () => {
       try {
          const product = await productApi.get(productId); // Sử dụng productApi.get(id)
          if (product) {
-            console.log("quan")
+            console.log(product)
             setProductData(product);
          } else {
             console.log(`Product with ID ${productId} not found`);
-            toast.error("Sản phẩm không tồn tại", { autoClose: 2000 });
+            toast.error(`Product with ID ${productId} not found`, { autoClose: 2000 });
          }
       } catch (err) {
          console.error(err);
@@ -298,7 +298,7 @@ const ProductDetailPage = () => {
                      className="w-8 h-8 lg:w-12 lg:h-12 rounded-full p-1 border-2 lg:border-4 flex items-center justify-center"
                      style={{
                         borderColor: isSelectedColor
-                           ? colors[productData.color]
+                           ? productData.color
                            : "transparent",
                      }}
                      onClick={toggleSelectColor}
@@ -306,7 +306,7 @@ const ProductDetailPage = () => {
                      <span
                         className="w-5 h-5 lg:w-8 lg:h-8 rounded-full"
                         style={{
-                           backgroundColor: colors[productData.color] || "#000",
+                           backgroundColor: productData.color || "#000",
                         }}
                      ></span>
                   </button>

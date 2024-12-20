@@ -27,9 +27,9 @@ const CartPage = () => {
 
     // Định nghĩa các biến thể cho animation
     const itemVariants = {
-        hidden: { opacity: 0, y: 20 },
+        hidden: { opacity: 0, y: 5 },
         visible: { opacity: 1, y: 0 },
-        exit: { opacity: 0, y: -20 },
+        exit: { opacity: 0, y: -5 },
     };
 
     return (

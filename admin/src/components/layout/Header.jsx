@@ -46,10 +46,10 @@ const Header = () => {
 
          // Điều hướng tới trang login
          navigate("/login");
-         toast.success("Đăng xuất thành công!");
+         toast.success("Logged out successfully!");
       } catch (error) {
          console.error("Logout failed:", error.response?.data || error.message);
-         toast.error("Đăng xuất thất bại!");
+         toast.error("Logout failed!");
       }
    };
 
@@ -186,7 +186,7 @@ const Header = () => {
             <div className="relative">
                <form onSubmit={(e) => e.preventDefault()}>
                   <input
-                     placeholder="Tìm kiếm..."
+                     placeholder="Search..."
                      className="font-semibold input focus:shadow-lg focus:border-2 border-[#4A69E2] px-5 py-3 rounded-xl w-56 transition-all focus:w-64 outline-none"
                      name="search"
                      type="text"
@@ -204,7 +204,7 @@ const Header = () => {
                   <button type="submit" className="absolute top-3 right-3">
                      <img
                         src={icons.SearchIcon}
-                        alt="icon tìm kiếm"
+                        alt="SearchIcon"
                         className="w-6 h-6 text-gray-500"
                      />
                   </button>
@@ -402,7 +402,7 @@ const Header = () => {
                   <span>admin</span>
                   <img
                      src={icons.ChevronDownIcon}
-                     alt="icon mũi tên xuống"
+                     alt="ChevronDownIcon"
                      className={`transition-transform duration-200 ${
                         menuOpenUser ? "transform rotate-180" : ""
                      }`}
@@ -422,7 +422,7 @@ const Header = () => {
                      UserName
                   </div>
                   <p className="cursor-pointer font-inter text-[14px] uppercase font-medium flex items-center justify-between py-4 px-4 hover:bg-gray-100">
-                     Đổi mật khẩu
+                     Change password
                      <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="16"
@@ -444,7 +444,7 @@ const Header = () => {
                      className="cursor-pointer font-inter text-[14px] uppercase font-medium flex items-center justify-between py-4 px-4 hover:bg-gray-100"
                      onClick={handleLogout} // Thêm sự kiện logout
                   >
-                     Đăng xuất
+                     Logout
                      <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="16"
