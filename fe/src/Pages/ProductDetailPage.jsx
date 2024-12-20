@@ -222,7 +222,7 @@ const ProductDetailPage = () => {
             {/* 4 ảnh của product */}
             <div className="lg:max-w-[650px] 2xl:max-w-[874px] object-cover grid grid-cols-4 lg:grid-cols-2 gap-2 xl:gap-4">
                   <img
-                  className="rounded-lg lg:rounded-none h-full lg:h-[500px] lg:rounded-tl-[48px] cursor-pointer object-cover
+                  className="rounded-lg lg:rounded-none h-full lg:h-[430px] lg:rounded-tl-[48px] cursor-pointer object-cover
                     transform transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-2xl hover:opacity-90"
                   src={productData.images[0]}
                   alt="productImage_1"
@@ -235,7 +235,7 @@ const ProductDetailPage = () => {
                      }}
                   />
                <img
-                  className="rounded-lg lg:rounded-none lg:h-[500px] h-full lg:rounded-tr-[48px] cursor-pointer object-cover
+                  className="rounded-lg lg:rounded-none lg:h-[430px] h-full lg:rounded-tr-[48px] cursor-pointer object-cover
                     transform transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-2xl hover:opacity-90"
                   src={productData.images[1]}
                   alt="productImage_2"
@@ -248,7 +248,7 @@ const ProductDetailPage = () => {
                   }}
                />
                <img
-                  className="rounded-lg lg:rounded-none lg:h-[500px] h-full lg:rounded-bl-[48px] cursor-pointer object-cover
+                  className="rounded-lg lg:rounded-none lg:h-[430px] h-full lg:rounded-bl-[48px] cursor-pointer object-cover
                     transform transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-2xl hover:opacity-90"
                   src={productData.images[2]}
                   alt="productImage_3"
@@ -261,7 +261,7 @@ const ProductDetailPage = () => {
                   }}
                />
                <img
-                  className="rounded-lg lg:rounded-none lg:h-[500px] h-full lg:rounded-br-[48px] cursor-pointer object-cover
+                  className="rounded-lg lg:rounded-none lg:h-[430px] h-full lg:rounded-br-[48px] cursor-pointer object-cover
                     transform transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-2xl hover:opacity-90"
                   src={productData.images[3]}
                   alt="productImage_4"
