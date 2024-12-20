@@ -151,6 +151,7 @@ class AdminController extends Controller
                     'orders.amount',
                     'orders.payment_status'
                 )
+                ->orderBy('orders.updated_at', 'desc')
                 ->get();
         }
         else {
@@ -165,6 +166,7 @@ class AdminController extends Controller
                     'orders.amount',
                     'orders.payment_status'
                 )
+                ->orderBy('orders.updated_at', 'desc')
                 ->get();
         }
         
@@ -268,7 +270,7 @@ class AdminController extends Controller
                     'order_status' => $item->order_status,
                     'amount' => $item->amount,
                     'shipping_address' => $item->shipping_address,
-                    'orders.shipping' => $item->shipping,
+                    'shipping' => $item->shipping,
                     'payment_status' => $item->payment_status,
                     'created_at' => $item->created_at,
                     'updated_at' => $item->updated_at,
@@ -487,20 +489,24 @@ class AdminController extends Controller
     public function getTopProducts(){
         $result = Product::select(
                 'products.name', 
-                'products.price', 
+                'products.price',
+                'product_image_new.image',
                 DB::raw('SUM(order_items.price * order_items.quantity) as revenue'), 
-                DB::raw('SUM(order_items.quantity) as total_quantity'),
-                DB::raw('MIN(product_image.image) as image')
+                DB::raw('SUM(order_items.quantity) as total_quantity')
             )
         ->join('product_size', 'product_size.product_id', '=', 'products.product_id')
-        ->join('product_image', 'product_image.product_id', '=', 'products.product_id')
         ->join('order_items', 'order_items.product_size_id', '=', 'product_size.product_size_id')
         ->join('orders', 'orders.order_id', '=', 'order_items.order_id')
-        ->where('orders.payment_status', '=', 'paid')
-        ->groupBy('products.name', 'products.price')
-        ->limit(5)
+        ->join(DB::raw(
+            '(select product_id, MIN(image) as image from product_image group by product_id) as product_image_new'
+        ), 'product_image_new.product_id', '=', 'products.product_id')
+        ->whereNot('orders.order_status', '=', 'canceled')
+        ->groupBy('products.name', 'products.price', 'product_image_new.image')
+        ->orderByRaw('SUM(order_items.price * order_items.quantity) desc')
+        ->limit(3)
         ->get();
-        
+
+
         return response()->json($result);
     }
 

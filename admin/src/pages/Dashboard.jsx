@@ -78,14 +78,14 @@ const Dashboard = () => {
                         },
                         {
                             id: 2,
-                            title: "Total Orders",
+                            title: "Total Delivered",
                             amount: `${parseFloat(now[1] || 0).toFixed(2)}`,
                             percentage: percent[1] || 0,
                             description: "Compared to previous period",
                         },
                         {
                             id: 3,
-                            title: "Total Products Sold",
+                            title: "Total Shipped",
                             amount: `${parseFloat(now[2] || 0).toFixed(2)}`,
                             percentage: percent[2] || 0,
                             description: "Compared to previous period",
@@ -189,13 +189,15 @@ const Dashboard = () => {
                         >
                             <div className="flex items-center space-x-4">
                                 <img
-                                    src={product.product_image || images.Thumbnails[0]}
+                                    src={product.image || images.Thumbnails[0]}
                                     alt={product.name}
                                     className="w-16 h-16 rounded-[8px]"
                                 />
                                 <div className="flex flex-col gap-1">
-                                    <p className="text-[16px] font-semibold text-black">
-                                        {product.name}
+                                     <p className="text-[16px] font-semibold text-black">
+                                        {product.name.length > 15
+                                            ? product.name.substring(0, 15) + "..."
+                                            : product.name}
                                     </p>
                                     <p className="text-[14px] text-[#646464] font-semibold">
                                         ${parseFloat(product.price).toFixed(2)}

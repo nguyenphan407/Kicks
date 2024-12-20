@@ -10,7 +10,7 @@ const DashboardCard = ({ title, amount, percentage = 0, description = ""}) => {
         >
             <div className="flex justify-between items-center mb-2">
                 <h3 className="font-rubik text-[14px] font-semibold text-black">
-                    ${title}
+                    {title}
                 </h3>
                 <button className="w-6 h-6 rounded-[4px] bg-transparent hover:bg-gray-300 transition-all">
                     <img src={icons.DotsThreeIcon} alt="dots three icon" />

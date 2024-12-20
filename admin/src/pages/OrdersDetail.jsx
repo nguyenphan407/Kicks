@@ -18,32 +18,32 @@ const OrdersDetail = () => {
 
 
   const handlePrintInvoice = () => {
-   if (orderData.payment_status === 'paid') {
-     const doc = new jsPDF();
+    if (orderData.payment_status === 'paid') {
+      const doc = new jsPDF();
 
-     // Thêm thông tin hóa đơn vào PDF
-     doc.text(`Invoice for Order #${orderData.order_id}`, 20, 20);
-     doc.text(`Customer: ${orderData.customer.first_name} ${orderData.customer.last_name}`, 20, 30);
-     doc.text(`Email: ${orderData.customer.email}`, 20, 40);
-     doc.text(`Phone: ${orderData.customer.phone_number || 'N/A'}`, 20, 50);
-     doc.text(`Shipping Address: ${orderData.shipping_address}`, 20, 60);
-     doc.text(`Order Status: ${orderData.order_status}`, 20, 70);
-     doc.text(`Payment Status: ${orderData.payment_status}`, 20, 80);
-     
-     let yPosition = 90;
-     doc.text("Items:", 20, yPosition);
-     orderData.products.forEach((product, index) => {
-       yPosition += 10;
-       doc.text(`${product.name} - $${product.price}`, 20, yPosition);
-     });
+      // Thêm thông tin hóa đơn vào PDF
+      doc.text(`Invoice for Order #${orderData.order_id}`, 20, 20);
+      doc.text(`Customer: ${orderData.customer.first_name} ${orderData.customer.last_name}`, 20, 30);
+      doc.text(`Email: ${orderData.customer.email}`, 20, 40);
+      doc.text(`Phone: ${orderData.customer.phone_number || 'N/A'}`, 20, 50);
+      doc.text(`Shipping Address: ${orderData.shipping_address}`, 20, 60);
+      doc.text(`Order Status: ${orderData.order_status}`, 20, 70);
+      doc.text(`Payment Status: ${orderData.payment_status}`, 20, 80);
 
-     // Lưu hóa đơn dưới dạng PDF
-     doc.save(`invoice_order_${orderData.order_id}.pdf`);
-   } else {
-     toast.error("Order is not paid yet!");
-   }
- };
- 
+      let yPosition = 90;
+      doc.text("Items:", 20, yPosition);
+      orderData.products.forEach((product, index) => {
+        yPosition += 10;
+        doc.text(`${product.name} - $${product.price}`, 20, yPosition);
+      });
+
+      // Lưu hóa đơn dưới dạng PDF
+      doc.save(`invoice_order_${orderData.order_id}.pdf`);
+    } else {
+      toast.error("Order is not paid yet!");
+    }
+  };
+
   const [dateRange, setDateRange] = useState({
     startDate: null,
     endDate: null,
@@ -310,14 +310,14 @@ const OrdersDetail = () => {
                   Customer
                 </p>
                 <p className="text-[16px] font-semibold text-[#70706E]">
-                  Full Name: {orderData.customer.first_name}{" "}
+                  <span className="text-black">Full Name:</span> {orderData.customer.first_name}{" "}
                   {orderData.customer.last_name}
                 </p>
                 <p className="text-[16px] font-semibold text-[#70706E]">
-                  Email: {orderData.customer.email}
+                  <span className="text-black">Email:</span> {orderData.customer.email}
                 </p>
                 <p className="text-[16px] font-semibold text-[#70706E]">
-                  Phone: {orderData.customer.phone_number || "N/A"}
+                  <span className="text-black">Phone:</span> {orderData.customer.phone_number || "N/A"}
                 </p>
               </div>
             </div>
@@ -343,16 +343,16 @@ const OrdersDetail = () => {
                   Order Info
                 </p>
                 <p className="text-[16px] font-semibold text-[#70706E]">
-                  Shipping: {orderData.shipping_address || "N/A"}
+                  <span className="text-black">Shipping:</span> {orderData.shipping || "N/A"}
                 </p>
                 <p className="text-[16px] font-semibold text-[#70706E]">
-                  Payment Method: {orderData.payment.payment_method || "N/A"}
+                  <span className="text-black">Payment Method:</span> {orderData.payment.payment_method || "N/A"}
                 </p>
                 <p className="text-[16px] font-semibold text-[#70706E]">
-                  Status: {orderData.order_status || "N/A"}
+                  <span className="text-black">Status:</span> {orderData.order_status || "N/A"}
                 </p>
                 <p className="text-[16px] font-semibold text-[#70706E]">
-                  Payment Status: {orderData.payment_status || "N/A"}
+                  <span className="text-black">Payment status:</span> {orderData.payment_status || "N/A"}
                 </p>
               </div>
             </div>
@@ -374,14 +374,14 @@ const OrdersDetail = () => {
                   Deliver to
                 </p>
                 <p className="text-[16px] font-semibold text-[#70706E]">
-                  Address: {orderData.shipping_address || "N/A"}
+                  <span className="text-black">Address:</span> {orderData.shipping_address || "N/A"}
                 </p>
-                <p className="text-[16px] font-semibold text-[#70706E]">
+                {/* <p className="text-[16px] font-semibold text-[#70706E]">
                   85342 2345 Westheimer Rd.
                 </p>
                 <p className="text-[16px] font-semibold text-[#70706E]">
                   Block 9A
-                </p>
+                </p> */}
               </div>
             </div>
             <button
@@ -403,16 +403,15 @@ const OrdersDetail = () => {
                 <div className="flex gap-2">
                   <img src={icons.PayIcon} alt="Pay Icon" />
                   <p className="text-[16px] font-semibold text-[#70706E]">
-                    Full Name: {orderData.customer.first_name}{" "}
-                    {orderData.customer.last_name}
+                    <span className="text-black">Reference:</span> {orderData.payment.reference || "N/A"}
                   </p>
                 </div>
 
                 <p className="text-[16px] font-semibold text-[#70706E]">
-                  Email: {orderData.customer.email}
+                  <span className="text-black">Name:</span> {orderData.payment.account_name || "N/A"}
                 </p>
                 <p className="text-[16px] font-semibold text-[#70706E]">
-                  Phone: {orderData.customer.phone_number || "N/A"}
+                  <span className="text-black">Account Number</span> {orderData.payment.account_number || "N/A"}
                 </p>
               </div>
             </div>

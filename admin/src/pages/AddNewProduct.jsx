@@ -382,7 +382,7 @@ const AddNewProduct = () => {
                            </h3>
                            <input
                               {...register("regular_price")}
-                              type="number"
+                              type="float"
                               placeholder="Regular Price"
                               className="w-full font-semibold p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                            />
@@ -404,7 +404,7 @@ const AddNewProduct = () => {
                            </h3>
                            <input
                               {...register("price")}
-                              type="number"
+                              type="float"
                               placeholder="Sale Price"
                               className="w-full font-semibold p-[10px] px-[16px] font-inter border border-gray-800 rounded-lg text-[16px] text-gray-700 bg-transparent focus:border-[#008B28] focus:outline-none"
                            />
