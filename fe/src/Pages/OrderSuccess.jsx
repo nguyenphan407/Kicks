@@ -216,10 +216,10 @@ const OrderSuccess = () => {
                                                     </h3>
                                                     <div className='flex space-x-2'>
                                                         <p className="text-gray-600 text-lg mt-2">
-                                                            {'size ' + item.size}
+                                                            {'Size ' + item.size}
                                                         </p>
                                                         <p className="text-gray-600 text-lg mt-2">
-                                                            {"quantity " + item.quantity}
+                                                            {"Quantity " + item.quantity}
                                                         </p>
                                                     </div>
                                                     <div className="mt-2 text-lg font-semibold text-blue-600">
