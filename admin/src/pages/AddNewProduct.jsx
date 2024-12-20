@@ -157,7 +157,7 @@ const AddNewProduct = () => {
 
    const handleImageUpload = (e) => {
       const files = Array.from(e.target.files);
-      const maxSize = 2 * 1024 * 1024; // 2MB
+      const maxSize = 10 * 1024 * 1024; // 4MB
 
       const validFiles = files.filter((file) => {
          if (file.size <= maxSize) {
