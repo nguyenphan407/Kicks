@@ -3,6 +3,7 @@ import axiosClient from "./axiosClient";
 const productApi = {
   getAll(params) {
     const url = "product/";
+    console.log("http://localhost:8000/api/" + url + {params})
     return axiosClient.get(url, { params }); // Truyền params dưới dạng object
   },
 

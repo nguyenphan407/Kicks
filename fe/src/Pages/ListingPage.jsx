@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import categoryApi from "../apis/categoryApi"; // Import categoryApi
 import { icons, images } from "../assets/assets";
 import { ShopConText } from "../context/ShopContext";
 import { FiChevronUp, FiChevronDown } from "react-icons/fi";
@@ -12,6 +13,11 @@ const ListingPage = () => {
    const [filterProducts, setFilterProducts] = useState([]);
    const { products, filters } = useContext(ShopConText);
 
+   // State mới để lưu trữ danh mục
+   const [categories, setCategories] = useState([]);
+   const [loadingCategories, setLoadingCategories] = useState(true);
+   const [errorCategories, setErrorCategories] = useState(null);
+
    // Đặt lại filter
    const resetFilters = () => {
       setSelectedColors([]);
@@ -23,7 +29,7 @@ const ListingPage = () => {
    };
 
    // Hiển thị hoặc ẩn bộ lọc
-   const handleShowFilter = (showFilter) => {
+   const handleShowFilter = () => {
       setShowFilter(!showFilter);
    };
 
@@ -59,12 +65,12 @@ const ListingPage = () => {
    const [selectedGender, setSelectedGender] = useState([]);
 
    // Cập nhật lựa chọn danh mục
-   const handleCategoryChange = (index) => {
+   const handleCategoryChange = (category) => {
       setSelectedCategories((prevSelectedCategories) => {
-         if (prevSelectedCategories.includes(index)) {
-            return prevSelectedCategories.filter((item) => item !== index);
+         if (prevSelectedCategories.includes(category)) {
+            return prevSelectedCategories.filter((item) => item !== category);
          } else {
-            return [...prevSelectedCategories, index];
+            return [...prevSelectedCategories, category];
          }
       });
    };
@@ -138,7 +144,9 @@ const ListingPage = () => {
          );
       }
       if (price > 0) {
-         productsCopy = productsCopy.filter((item) => item.price <= price);
+         productsCopy = productsCopy.filter(
+            (item) => parseFloat(item.price) <= parseFloat(price)
+         );
       }
 
       setFilterProducts(productsCopy);
@@ -152,7 +160,7 @@ const ListingPage = () => {
    // Áp dụng bộ lọc khi lựa chọn thay đổi
    useEffect(() => {
       applyFilter();
-   }, [selectedCategories, selectedColors, price, searchQuery]);
+   }, [selectedCategories, selectedColors, selectedGender, price, searchQuery]);
 
    // Sắp xếp sản phẩm
    const sortProduct = () => {
@@ -160,17 +168,21 @@ const ListingPage = () => {
 
       switch (selected) {
          case "Low to high":
-            setFilterProducts(fpCopy.sort((a, b) => a.price - b.price));
+            setFilterProducts(
+               fpCopy.sort((a, b) => parseFloat(a.price) - parseFloat(b.price))
+            );
             break;
          case "High to low":
-            setFilterProducts(fpCopy.sort((a, b) => b.price - a.price));
+            setFilterProducts(
+               fpCopy.sort((a, b) => parseFloat(b.price) - parseFloat(a.price))
+            );
             break;
-         case "a -> z":
+         case "a → z":
             setFilterProducts(
                fpCopy.sort((a, b) => a.name.localeCompare(b.name))
             );
             break;
-         case "z -> a":
+         case "z → a":
             setFilterProducts(
                fpCopy.sort((a, b) => b.name.localeCompare(a.name))
             );
@@ -184,10 +196,29 @@ const ListingPage = () => {
    useEffect(() => {
       sortProduct();
    }, [selected]);
+
    const handleSearch = (e) => {
       e.preventDefault();
       applyFilter();
    };
+
+   // Gọi API để lấy danh mục khi component được mount
+   useEffect(() => {
+      const fetchCategories = async () => {
+         try {
+            const response = await categoryApi.getCategories();
+            setCategories(response.data); // Giả sử API trả về { data: [...] }
+            setLoadingCategories(false);
+         } catch (error) {
+            console.error("Error fetching categories:", error);
+            setErrorCategories("Failed to load categories.");
+            setLoadingCategories(false);
+         }
+      };
+
+      fetchCategories();
+   }, []);
+
    return (
       <div className="container">
          {/* Thumbnail */}
@@ -322,7 +353,7 @@ const ListingPage = () => {
                               fill="none"
                            >
                               <path
-                                 d="M6.75781 17.2428L12.0008 11.9998M17.2438 6.75684L11.9998  11.9998M11.9998 11.9998L6.75781 6.75684M12.0008 11.9998L17.2438 17.2428"
+                                 d="M6.75781 17.2428L12.0008 11.9998M17.2438 6.75684L11.9998 11.9998M11.9998 11.9998L6.75781 6.75684M12.0008 11.9998L17.2438 17.2428"
                                  stroke="black"
                                  strokeWidth="1.5"
                                  strokeLinecap="round"
@@ -412,32 +443,32 @@ const ListingPage = () => {
                         </div>
                         {isOpenCategories && (
                            <div className="flex flex-col gap-2 mt-4">
-                              {[
-                                 "Basketball",
-                                 "Boots",
-                                 "Formal",
-                                 "Running",
-                                 "Sneakers",
-                              ].map((category, index) => (
-                                 <label
-                                    key={category}
-                                    className="flex items-center"
-                                 >
-                                    <input
-                                       type="checkbox"
-                                       className="mr-4 w-4 h-4 outline-none border-2 border-gray-400 rounded-sm accent-[#1F1A24]"
-                                       checked={selectedCategories.includes(
-                                          category
-                                       )}
-                                       onChange={() =>
-                                          handleCategoryChange(category)
-                                       }
-                                    />
-                                    <span className="text-secondary_black text-x[16px] font-semibold">
-                                       {category}
-                                    </span>
-                                 </label>
-                              ))}
+                              {loadingCategories ? (
+                                 <p>Loading...</p>
+                              ) : errorCategories ? (
+                                 <p className="text-red-500">{errorCategories}</p>
+                              ) : (
+                                 categories.map((category) => (
+                                    <label
+                                       key={category.category_id}
+                                       className="flex items-center"
+                                    >
+                                       <input
+                                          type="checkbox"
+                                          className="mr-4 w-4 h-4 outline-none border-2 border-gray-400 rounded-sm accent-[#1F1A24]"
+                                          checked={selectedCategories.includes(
+                                             category.category_name
+                                          )}
+                                          onChange={() =>
+                                             handleCategoryChange(category.category_name)
+                                          }
+                                       />
+                                       <span className="text-secondary_black text-x[16px] font-semibold">
+                                          {category.category_name}
+                                       </span>
+                                    </label>
+                                 ))
+                              )}
                            </div>
                         )}
                      </div>
@@ -459,7 +490,8 @@ const ListingPage = () => {
                         </div>
                         {isOpenGender && (
                            <div className="flex flex-col gap-2 mt-4">
-                              {["Men", "Women"].map((gender) => (
+                              {/* Sử dụng "Man" và "Woman" thay vì "Men" và "Women" */}
+                              {["Man", "Woman"].map((gender) => (
                                  <label
                                     key={gender}
                                     className="flex items-center"
@@ -502,7 +534,7 @@ const ListingPage = () => {
                                  max="1000"
                                  step="10"
                                  value={price}
-                                 onChange={(e) => setPrice(e.target.value)}
+                                 onChange={(e) => setPrice(Number(e.target.value))}
                                  className="w-full h-1 bg-black rounded-lg appearance-none cursor-pointer accent-primary_blue"
                                  style={{ accentColor: "blue" }}
                               />
