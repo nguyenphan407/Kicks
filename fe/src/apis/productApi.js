@@ -1,10 +1,38 @@
 import axiosClient from "./axiosClient";
 
 const productApi = {
-  getAll(params) {
+  // Hàm để lấy tất cả sản phẩm hoặc sản phẩm đã được lọc
+  getAll(filters = {}) {
     const url = "product/";
-    console.log("http://localhost:8000/api/" + url + {params})
-    return axiosClient.get(url, { params }); // Truyền params dưới dạng object
+    const params = new URLSearchParams();
+
+    if (filters.page) params.append('page', filters.page);
+    if (filters.search) params.append('name', filters.search);
+
+    if (filters.categories && filters.categories.length > 0) {
+      filters.categories.forEach(categoryId => params.append('category_id[]', categoryId));
+    }
+
+    if (filters.colors && filters.colors.length > 0) {
+      filters.colors.forEach(color => params.append('color[]', color));
+    }
+
+    if (filters.gender && filters.gender.length > 0) {
+      filters.gender.forEach(gender => params.append('gender[]', gender));
+    }
+
+    if (filters.min_price) {
+      params.append('min_price', filters.min_price);
+    }
+    if (filters.max_price) {
+      params.append('max_price', filters.max_price);
+    }
+
+    if (filters.sort && filters.sort !== 'Default') {
+      params.append('sort', filters.sort);
+    }
+
+    return axiosClient.get(url, { params });
   },
 
   get(id) {

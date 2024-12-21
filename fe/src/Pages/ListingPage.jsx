@@ -1,40 +1,28 @@
+// src/pages/ListingPage.jsx
 import React, { useContext, useEffect, useState } from "react";
-import categoryApi from "../apis/categoryApi"; // Import categoryApi
 import { icons, images } from "../assets/assets";
 import { ShopConText } from "../context/ShopContext";
-import { FiChevronUp, FiChevronDown } from "react-icons/fi";
+import { FiChevronUp } from "react-icons/fi";
 import ProductCard from "../Components/Product/ProductCard";
 import Pagination from "../Components/Pagination";
 
 const ListingPage = () => {
+   // Lấy các giá trị từ ShopContext
+   const {
+      products,
+      categories,
+      filters,
+      setFilters,
+      pagination,
+      handlePageChange,
+   } = useContext(ShopConText);
+
    // State hiển thị
-   const [searchQuery, setSearchQuery] = useState("");
+   const [searchQuery, setSearchQuery] = useState(filters.search || "");
    const [showFilter, setShowFilter] = useState(false);
-   const [filterProducts, setFilterProducts] = useState([]);
-   const { products, filters } = useContext(ShopConText);
-
-   // State mới để lưu trữ danh mục
-   const [categories, setCategories] = useState([]);
-   const [loadingCategories, setLoadingCategories] = useState(true);
-   const [errorCategories, setErrorCategories] = useState(null);
-
-   // Đặt lại filter
-   const resetFilters = () => {
-      setSelectedColors([]);
-      setPrice(0);
-      setFilterProducts(products);
-      setSelectedCategories([]);
-      setSelectedGender([]);
-      setSearchQuery("");
-   };
-
-   // Hiển thị hoặc ẩn bộ lọc
-   const handleShowFilter = () => {
-      setShowFilter(!showFilter);
-   };
 
    // Lựa chọn màu
-   const [selectedColors, setSelectedColors] = useState([]);
+   const [selectedColors, setSelectedColors] = useState(filters.colors || []);
    const colors = [
       { name: "Dark Blue", colorClass: "#4A69E2" },
       { name: "Bright Orange", colorClass: "#FFA52F" },
@@ -48,46 +36,81 @@ const ListingPage = () => {
       { name: "Light Brown", colorClass: "#BB8056" },
    ];
 
-   // Xử lý lựa chọn màu
+   // Cập nhật lựa chọn màu
    const handleColorClick = (colorClass) => {
-      setSelectedColors((prevSelectedColors) => {
-         if (prevSelectedColors.includes(colorClass)) {
-            return prevSelectedColors.filter((color) => color !== colorClass);
-         } else {
-            return [...prevSelectedColors, colorClass];
-         }
+      let updatedColors;
+      if (selectedColors.includes(colorClass)) {
+         updatedColors = selectedColors.filter((color) => color !== colorClass);
+      } else {
+         updatedColors = [...selectedColors, colorClass];
+      }
+      setSelectedColors(updatedColors);
+      setFilters((prev) => ({
+         ...prev,
+         colors: updatedColors,
+         page: 1, // Reset về trang đầu khi áp dụng bộ lọc mới
+      }));
+      console.log("Updated filters after handleColorClick:", {
+         ...filters,
+         colors: updatedColors,
+         page: 1,
       });
    };
 
-   // State lưu giá, danh mục, giới tính
-   const [price, setPrice] = useState(0);
-   const [selectedCategories, setSelectedCategories] = useState([]);
-   const [selectedGender, setSelectedGender] = useState([]);
+   // State lưu danh mục, giới tính, giá
+   const [selectedCategories, setSelectedCategories] = useState(
+      filters.categories || []
+   );
+   const [selectedGender, setSelectedGender] = useState(filters.gender || []);
+   const [minPrice, setMinPrice] = useState(filters.min_price || 0);
+   const [maxPrice, setMaxPrice] = useState(filters.max_price || 1000);
 
    // Cập nhật lựa chọn danh mục
-   const handleCategoryChange = (category) => {
-      setSelectedCategories((prevSelectedCategories) => {
-         if (prevSelectedCategories.includes(category)) {
-            return prevSelectedCategories.filter((item) => item !== category);
-         } else {
-            return [...prevSelectedCategories, category];
-         }
+   const handleCategoryChange = (categoryId) => {
+      let updatedCategories;
+      if (selectedCategories.includes(categoryId)) {
+         updatedCategories = selectedCategories.filter(
+            (id) => id !== categoryId
+         );
+      } else {
+         updatedCategories = [...selectedCategories, categoryId];
+      }
+      setSelectedCategories(updatedCategories);
+      setFilters((prev) => ({
+         ...prev,
+         categories: updatedCategories,
+         page: 1, // Reset về trang đầu khi áp dụng bộ lọc mới
+      }));
+      console.log("Updated filters after handleCategoryChange:", {
+         ...filters,
+         categories: updatedCategories,
+         page: 1,
       });
    };
 
    // Cập nhật lựa chọn giới tính
    const handleGenderChange = (gender) => {
-      setSelectedGender((prevSelectedGender) => {
-         if (prevSelectedGender.includes(gender)) {
-            return prevSelectedGender.filter((item) => item !== gender);
-         } else {
-            return [...prevSelectedGender, gender];
-         }
+      let updatedGender;
+      if (selectedGender.includes(gender)) {
+         updatedGender = selectedGender.filter((item) => item !== gender);
+      } else {
+         updatedGender = [...selectedGender, gender];
+      }
+      setSelectedGender(updatedGender);
+      setFilters((prev) => ({
+         ...prev,
+         gender: updatedGender,
+         page: 1, // Reset về trang đầu khi áp dụng bộ lọc mới
+      }));
+      console.log("Updated filters after handleGenderChange:", {
+         ...filters,
+         gender: updatedGender,
+         page: 1,
       });
    };
 
-   // State cho tuỳ chọn sắp xếp
-   const [selected, setSelected] = useState("Default");
+   // State cho tùy chọn sắp xếp
+   const [selected, setSelected] = useState(filters.sort || "Default");
    const [isOpen, setIsOpen] = useState(false);
    const options = ["Default", "a → z", "z → a", "Low to high", "High to low"];
 
@@ -114,110 +137,85 @@ const ListingPage = () => {
    // Cuộn lên đầu trang khi trang thay đổi
    useEffect(() => {
       window.scrollTo(0, 0);
-   }, [filters.page]); // Chạy lại khi `page` thay đổi
+   }, [pagination.currentPage]);
 
-   // Áp dụng bộ lọc
+   // Áp dụng bộ lọc bằng cách cập nhật filters trong ShopContext
    const applyFilter = () => {
-      let productsCopy = products.slice();
-      if (searchQuery.trim()) {
-         const query = searchQuery.toLowerCase().trim();
-         productsCopy = productsCopy.filter(
-            (item) =>
-               item.name.toLowerCase().includes(query) ||
-               (item.description &&
-                  item.description.toLowerCase().includes(query))
-         );
-      }
-      if (selectedCategories.length > 0) {
-         productsCopy = productsCopy.filter((item) =>
-            selectedCategories.includes(item.category_name)
-         );
-      }
-      if (selectedColors.length > 0) {
-         productsCopy = productsCopy.filter((item) =>
-            selectedColors.includes(item.color)
-         );
-      }
-      if (selectedGender.length > 0) {
-         productsCopy = productsCopy.filter((item) =>
-            selectedGender.includes(item.gender)
-         );
-      }
-      if (price > 0) {
-         productsCopy = productsCopy.filter(
-            (item) => parseFloat(item.price) <= parseFloat(price)
-         );
-      }
-
-      setFilterProducts(productsCopy);
+      setFilters((prev) => ({
+         ...prev,
+         search: searchQuery,
+         categories: selectedCategories,
+         colors: selectedColors,
+         gender: selectedGender,
+         min_price: minPrice,
+         max_price: maxPrice,
+         page: 1, // Reset về trang đầu khi áp dụng bộ lọc mới
+         sort: selected !== "Default" ? selected : "Default",
+      }));
+      console.log("Applied filters:", {
+         ...filters,
+         search: searchQuery,
+         categories: selectedCategories,
+         colors: selectedColors,
+         gender: selectedGender,
+         min_price: minPrice,
+         max_price: maxPrice,
+         page: 1,
+         sort: selected !== "Default" ? selected : "Default",
+      });
    };
 
-   // Thiết lập danh sách sản phẩm khi dữ liệu thay đổi
-   useEffect(() => {
-      setFilterProducts(products);
-   }, [products]);
-
-   // Áp dụng bộ lọc khi lựa chọn thay đổi
-   useEffect(() => {
-      applyFilter();
-   }, [selectedCategories, selectedColors, selectedGender, price, searchQuery]);
+   // Đặt lại bộ lọc
+   const resetFilters = () => {
+      setSearchQuery("");
+      setSelectedColors([]);
+      setSelectedCategories([]);
+      setSelectedGender([]);
+      setMinPrice(0);
+      setMaxPrice(1000);
+      setSelected("Default");
+      setFilters({
+         page: 1,
+         search: "",
+         categories: [],
+         colors: [],
+         gender: [],
+         min_price: 0,
+         max_price: 1000,
+         sort: "Default",
+      });
+      console.log("Filters reset to default:", {
+         page: 1,
+         search: "",
+         categories: [],
+         colors: [],
+         gender: [],
+         min_price: 0,
+         max_price: 1000,
+         sort: "Default",
+      });
+   };
 
    // Sắp xếp sản phẩm
-   const sortProduct = () => {
-      let fpCopy = filterProducts.slice();
-
-      switch (selected) {
-         case "Low to high":
-            setFilterProducts(
-               fpCopy.sort((a, b) => parseFloat(a.price) - parseFloat(b.price))
-            );
-            break;
-         case "High to low":
-            setFilterProducts(
-               fpCopy.sort((a, b) => parseFloat(b.price) - parseFloat(a.price))
-            );
-            break;
-         case "a → z":
-            setFilterProducts(
-               fpCopy.sort((a, b) => a.name.localeCompare(b.name))
-            );
-            break;
-         case "z → a":
-            setFilterProducts(
-               fpCopy.sort((a, b) => b.name.localeCompare(a.name))
-            );
-            break;
-         default:
-            applyFilter();
-            break;
-      }
+   const handleSortChange = (option) => {
+      setSelected(option);
+      setFilters((prev) => ({
+         ...prev,
+         sort: option,
+         page: 1, // Reset về trang đầu khi thay đổi sắp xếp
+      }));
+      console.log("Updated filters after handleSortChange:", {
+         ...filters,
+         sort: option,
+         page: 1,
+      });
    };
-   // Gọi hàm sortProduct khi `selected` thay đổi
-   useEffect(() => {
-      sortProduct();
-   }, [selected]);
 
+   // Handle search
    const handleSearch = (e) => {
       e.preventDefault();
       applyFilter();
    };
-
-   // Gọi API để lấy danh mục khi component được mount
-   useEffect(() => {
-      const fetchCategories = async () => {
-         try {
-            const response = await categoryApi.getCategories();
-            setCategories(response.data); // Giả sử API trả về { data: [...] }
-            setLoadingCategories(false);
-         } catch (error) {
-            console.error("Error fetching categories:", error);
-            setErrorCategories("Failed to load categories.");
-            setLoadingCategories(false);
-         }
-      };
-
-      fetchCategories();
-   }, []);
 
    return (
       <div className="container">
@@ -271,7 +269,7 @@ const ListingPage = () => {
                   <button
                      onClick={() => setIsOpen(!isOpen)}
                      className="flex items-center justify-between bg-[#F4F2F2] px-4 py-2 xl:p-4 font-semibold rounded-lg lg:rounded-2xl lg:font-rubik w-[160px] lg:w-[184px] text-secondary_black text-[14px] lg:text-[16px]  
-                        hover:bg-[#cccccc] transition-all xl:uppercase duration-300 ease-in-out"
+                                hover:bg-[#cccccc] transition-all xl:uppercase duration-300 ease-in-out"
                   >
                      <span>{selected}</span>
                      <svg
@@ -300,6 +298,7 @@ const ListingPage = () => {
                               onClick={() => {
                                  setSelected(option);
                                  setIsOpen(false);
+                                 handleSortChange(option);
                               }}
                               className="px-4 py-2 hover:bg-[#d0d0d0] cursor-pointer font-rubik font-semibold"
                            >
@@ -334,7 +333,7 @@ const ListingPage = () => {
                   </div>
                   {/* Filter */}
                   <div
-                     className={`${showFilter ? "" : "hidden lg:block"} absolute xl:relative transition-all lg:relative top-0 left-0 right-0 z-10 lg:z-0 xl:bg-transparent bg-[#E7E7E3]`}
+                     className={`${showFilter ? "" : "hidden lg:block"} relative xl:relative transition-all lg:relative top-0 left-0 right-0 z-10 lg:z-0 xl:bg-transparent bg-[#E7E7E3]`}
                   >
                      {/* Filter mobile */}
                      <div className="block lg:hidden bg-white xl:bg-transparent">
@@ -403,7 +402,9 @@ const ListingPage = () => {
                               Color
                            </h3>
                            <FiChevronUp
-                              className={`xl:w-6 xl:h-6 transform transition-transform duration-300 ${isOpenColor ? "rotate-180" : ""}`}
+                              className={`xl:w-6 xl:h-6 transform transition-transform duration-300 ${
+                                 isOpenColor ? "rotate-180" : ""
+                              }`}
                            />
                         </div>
                         {isOpenColor && (
@@ -411,7 +412,9 @@ const ListingPage = () => {
                               {colors.map((color) => (
                                  <div
                                     key={color.name}
-                                    onClick={() => handleColorClick(color.colorClass)}
+                                    onClick={() =>
+                                       handleColorClick(color.colorClass)
+                                    }
                                     style={{
                                        backgroundColor: color.colorClass,
                                        border: selectedColors.includes(
@@ -443,32 +446,28 @@ const ListingPage = () => {
                         </div>
                         {isOpenCategories && (
                            <div className="flex flex-col gap-2 mt-4">
-                              {loadingCategories ? (
-                                 <p>Loading...</p>
-                              ) : errorCategories ? (
-                                 <p className="text-red-500">{errorCategories}</p>
-                              ) : (
-                                 categories.map((category) => (
-                                    <label
-                                       key={category.category_id}
-                                       className="flex items-center"
-                                    >
-                                       <input
-                                          type="checkbox"
-                                          className="mr-4 w-4 h-4 outline-none border-2 border-gray-400 rounded-sm accent-[#1F1A24]"
-                                          checked={selectedCategories.includes(
-                                             category.category_name
-                                          )}
-                                          onChange={() =>
-                                             handleCategoryChange(category.category_name)
-                                          }
-                                       />
-                                       <span className="text-secondary_black text-x[16px] font-semibold">
-                                          {category.category_name}
-                                       </span>
-                                    </label>
-                                 ))
-                              )}
+                              {categories.map((category) => (
+                                 <label
+                                    key={category.category_id}
+                                    className="flex items-center"
+                                 >
+                                    <input
+                                       type="checkbox"
+                                       className="mr-4 w-4 h-4 outline-none border-2 border-gray-400 rounded-sm accent-[#1F1A24]"
+                                       checked={selectedCategories.includes(
+                                          category.category_id
+                                       )}
+                                       onChange={() =>
+                                          handleCategoryChange(
+                                             category.category_id
+                                          )
+                                       }
+                                    />
+                                    <span className="text-secondary_black text-[16px] font-semibold">
+                                       {category.category_name}
+                                    </span>
+                                 </label>
+                              ))}
                            </div>
                         )}
                      </div>
@@ -490,7 +489,6 @@ const ListingPage = () => {
                         </div>
                         {isOpenGender && (
                            <div className="flex flex-col gap-2 mt-4">
-                              {/* Sử dụng "Man" và "Woman" thay vì "Men" và "Women" */}
                               {["Man", "Woman"].map((gender) => (
                                  <label
                                     key={gender}
@@ -504,7 +502,7 @@ const ListingPage = () => {
                                           handleGenderChange(gender)
                                        }
                                     />
-                                    <span className="text-secondary_black text-x[16px] font-semibold">
+                                    <span className="text-secondary_black text-[16px] font-semibold">
                                        {gender}
                                     </span>
                                  </label>
@@ -523,28 +521,47 @@ const ListingPage = () => {
                               Price
                            </h3>
                            <FiChevronUp
-                              className={`xl:w-6 xl:h-6 transform transition-transform duration-300 ${isOpenPrice ? "rotate-180" : ""}`}
+                              className={`xl:w-6 xl:h-6 transform transition-transform duration-300 ${
+                                 isOpenPrice ? "rotate-180" : ""
+                              }`}
                            />
                         </div>
                         {isOpenPrice && (
                            <div className="w-full flex flex-col items-center mt-4">
-                              <input
-                                 type="range"
-                                 min="0"
-                                 max="1000"
-                                 step="10"
-                                 value={price}
-                                 onChange={(e) => setPrice(Number(e.target.value))}
-                                 className="w-full h-1 bg-black rounded-lg appearance-none cursor-pointer accent-primary_blue"
-                                 style={{ accentColor: "blue" }}
-                              />
-                              <div className="flex justify-between w-full mt-2">
-                                 <span className="text-[14px] text-secondary_black font-semibold">
-                                    ${price}
+                              <div className="w-full flex justify-between mb-2">
+                                 <span className="text-secondary_black font-semibold">
+                                    Min: ${minPrice}
                                  </span>
-                                 <span className="text-[14px] text-secondary_black font-semibold">
-                                    $1000
+                                 <span className="text-secondary_black font-semibold">
+                                    Max: ${maxPrice}
                                  </span>
+                              </div>
+                              <div className="w-full flex flex-col items-center">
+                                 <input
+                                    type="range"
+                                    min="0"
+                                    max="1000"
+                                    step="10"
+                                    value={minPrice}
+                                    onChange={(e) => {
+                                       const newMin = Number(e.target.value);
+                                       setMinPrice(newMin);
+                                       setFilters((prev) => ({
+                                          ...prev,
+                                          min_price: newMin,
+                                          page: 1, // Reset về trang đầu khi thay đổi bộ lọc
+                                       }));
+                                       console.log(
+                                          "Updated filters after min price change:",
+                                          {
+                                             ...filters,
+                                             min_price: newMin,
+                                             page: 1,
+                                          }
+                                       );
+                                    }}
+                                    className="w-full h-1 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-primary_blue"
+                                 />
                               </div>
                            </div>
                         )}
@@ -552,7 +569,7 @@ const ListingPage = () => {
 
                      {/* Apply & Reset cho mobile */}
                      <div className="block lg:hidden border-b-2 border-black rounded-2xl">
-                        <div className="flex justify-between items-center mx-4 xl:mx-0 mb-10  flex-1 gap-4">
+                        <div className="flex justify-between items-center mx-4 xl:mx-0 mb-10 flex-1 gap-4">
                            <button
                               className="flex-1 px-4 py-2 border border-black text-[#232321] rounded-lg font-rubik font-medium text-xs"
                               onClick={resetFilters}
@@ -561,7 +578,10 @@ const ListingPage = () => {
                            </button>
                            <button
                               className="flex-1 px-4 py-2 border border-black bg-black text-white rounded-lg font-rubik font-medium text-xs"
-                              onClick={() => setShowFilter(!showFilter)}
+                              onClick={() => {
+                                 applyFilter();
+                                 setShowFilter(false);
+                              }}
                            >
                               APPLY
                            </button>
@@ -570,17 +590,24 @@ const ListingPage = () => {
                   </div>
                </div>
             </div>
-
             <div className="flex flex-col flex-1">
                {/* Product List Section */}
-               <div className=" grid grid-cols-2 lg:grid-cols-3 gap-4">
-                  {filterProducts.map((item, index) => (
-                     <ProductCard key={index} product={item} currency="$" />
+               <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                  {products.map((item) => (
+                     <ProductCard
+                        key={item.product_id}
+                        product={item}
+                        currency="$"
+                     />
                   ))}
                </div>
 
                {/* Pagination */}
-               <Pagination></Pagination>
+               <Pagination
+                  currentPage={pagination.currentPage}
+                  totalPages={pagination.totalPages}
+                  onPageChange={handlePageChange}
+               />
             </div>
          </div>
       </div>

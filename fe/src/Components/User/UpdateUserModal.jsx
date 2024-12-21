@@ -64,8 +64,9 @@ const UpdateUserModal = ({ visible, onClose }) => {
       console.log("Updating user with data:", dataToUpdate);
       const response = await userApi.updateUser(dataToUpdate);
       
-      setUser(response.data.user);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      setUser(response.data);
+      console.log("quan", response.data)
+      localStorage.setItem("user", JSON.stringify(dataToUpdate));
       toast.success("User information has been successfully updated!");
       onClose();
     } catch (error) {

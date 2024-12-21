@@ -19,26 +19,102 @@ use Spatie\Searchable\Search;
 
 class ProductController extends Controller
 {
-    // Quân đã fix bugs ở đây
-    // 1. Lấy danh sách sản phẩm
     public function index(Request $request)
     {
-        // Lấy page từ request, mặc định là 1 nếu không có
+        // Lấy các tham số từ request với giá trị mặc định
         $page = $request->query('page', 1);
-        // Lưu cache theo từng trang, sử dụng page trong key cache
-        $cacheKey = "products_list_page_{$page}";
-        $products = Cache::remember($cacheKey, 60, function () {
-            return Product::with(['images', 'sizes'])
-                ->join("categories", "categories.category_id", '=', 'products.category_id')
-                ->paginate(12);
+        $search = $request->query('name', '');
+        $categoryIds = $request->query('category_id', []); // array
+        $colors = $request->query('color', []); // array
+        $genders = $request->query('gender', []); // array
+        $minPrice = $request->query('min_price', 0);
+        $maxPrice = $request->query('max_price', 1000);
+        $sort = $request->query('sort', 'Default');
+    
+        // Tạo một chuỗi để tạo cache key dựa trên các bộ lọc
+        $cacheKey = "products_list_page_{$page}_" . md5(json_encode([
+            'search' => $search,
+            'category_ids' => $categoryIds,
+            'colors' => $colors,
+            'genders' => $genders,
+            'min_price' => $minPrice,
+            'max_price' => $maxPrice,
+            'sort' => $sort,
+        ]));
+    
+        // Sử dụng Cache::remember để lưu cache kết quả
+        $products = Cache::remember($cacheKey, 60, function () use ($search, $categoryIds, $colors, $genders, $minPrice, $maxPrice, $sort) {
+            $query = Product::with(['images', 'sizes', 'category']);
+    
+            // Lọc theo tên sản phẩm
+            if (!empty($search)) {
+                $query->where('products.name', 'like', '%' . $search . '%');
+            }
+    
+            // Lọc theo danh mục
+            if (!empty($categoryIds)) {
+                if (is_array($categoryIds)) {
+                    $query->whereIn('products.category_id', $categoryIds);
+                } else {
+                    $query->where('products.category_id', $categoryIds);
+                }
+            }
+    
+            // Lọc theo màu sắc
+            if (!empty($colors)) {
+                if (is_array($colors)) {
+                    $query->whereIn('products.color', $colors);
+                } else {
+                    $query->where('products.color', $colors);
+                }
+            }
+    
+            // Lọc theo giới tính
+            if (!empty($genders)) {
+                if (is_array($genders)) {
+                    $query->whereIn('products.gender', $genders);
+                } else {
+                    $query->where('products.gender', $genders);
+                }
+            }
+    
+            // Lọc theo khoảng giá
+            if ($minPrice && $maxPrice) {
+                $query->whereBetween('products.price', [$minPrice, $maxPrice]);
+            } elseif ($minPrice) {
+                $query->where('products.price', '>=', $minPrice);
+            } elseif ($maxPrice) {
+                $query->where('products.price', '<=', $maxPrice);
+            }
+    
+            // Lọc theo sắp xếp
+            if ($sort && $sort !== 'Default') {
+                switch ($sort) {
+                    case 'a → z':
+                        $query->orderBy('products.name', 'asc');
+                        break;
+                    case 'z → a':
+                        $query->orderBy('products.name', 'desc');
+                        break;
+                    case 'Low to high':
+                        $query->orderBy('products.price', 'asc');
+                        break;
+                    case 'High to low':
+                        $query->orderBy('products.price', 'desc');
+                        break;
+                    default:
+                        // Không thực hiện sắp xếp nếu không hợp lệ
+                        break;
+                }
+            } else {
+                // Mặc định sắp xếp theo ngày tạo giảm dần
+                $query->orderBy('products.created_at', 'desc');
+            }
+    
+            // Phân trang với 12 sản phẩm mỗi trang
+            return $query->paginate(12);
         });
-
-        // $results = [];
-
-        // foreach ($products as $item){
-        //     $results[] = $this->formatProduct($item->toArray());
-        // }
-
+    
         return response()->json($products);
     }
 
